@@ -77,6 +77,12 @@ export default function Home() {
     { id: 3, name: "Natation", date: "2025-05-22", status: "Confirmé" },
   ];
 
+ const users= [
+    { id: 1, name: "Usopp", defit: 100 },
+    { id: 2, name: "DTeach", defit: 10 },
+    { id: 3, name: "Nico Robin", defit: 0 } 
+];	
+
   return (
     <>
       <div className="container">
@@ -127,11 +133,11 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody>
-                {activities.map(({ id, name, date, status }) => (
+                {users.map(({ id, name, defit }) => (
                   <tr key={id}>
-                    <td>{id}</td>
                     <td>{name}</td>
-                    <td>{name}</td>
+                    <td>{defit}</td>
+                    <td>{defit*3}</td>
                   </tr>
                 ))}
               </tbody>
