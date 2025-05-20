@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { BarChart2 } from "lucide-react";
-
+import { Trophy } from "lucide-react";
 
 function DefitPrice() {
   const [price, setPrice] = useState(null);
@@ -37,6 +37,34 @@ function DefitPrice() {
       Prix actuel du <strong>DEFIT</strong> : <span>${price.toFixed(4)}</span>
     </p>
   );
+}
+
+function DefitPriceValue() {
+  const [price, setPrice] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchPrice() {
+      try {
+        const res = await fetch(
+          "https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=0x428360b02c1269bc1c79fbc399ad31d58c1e8fda&vs_currencies=usd"
+        );
+        const data = await res.json();
+        const tokenData = data["0x428360b02c1269bc1c79fbc399ad31d58c1e8fda"];
+        if (tokenData && tokenData.usd) {
+          setPrice(Number(tokenData.usd).toFixed(4));
+        } else {
+          setError("Prix introuvable");
+        }
+      } catch (err) {
+        setError("Erreur de chargement");
+      }
+    }
+
+    fetchPrice();
+  }, []);
+
+  return price;
 }
 
 export default function Home() {
@@ -85,11 +113,34 @@ export default function Home() {
           </button>
         </header>
 
-	<DefitPrice /> 
         <main>
 	  <DefitPrice />
-<br/><br/>
-          <h1 className="ombre"><BarChart2 size={28} style={{ marginRight: '8px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Liste des activités</span></h1>
+<br/><br/><br/>
+<h2 className="ombre"><Trophy size={28} style={{ marginRight: '8px', verticalAlign: 'middle', marginBottom: '12px' }} /><span>Utilisateurs</span></h2>
+	<section className="activities-section">
+            <table>
+              <thead>
+                <tr>
+                  <th>Utilisateur</th>
+		  <th>Defit</th>
+		<th>Dollars $</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activities.map(({ id, name, date, status }) => (
+                  <tr key={id}>
+                    <td>{id}</td>
+                    <td>{name}</td>
+                    <td>{name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+  <br/>
+<br/>
+
+<h2 className="ombre"><BarChart2 size={28} style={{ marginRight: '8px', verticalAlign: 'middle', marginBottom: '7px' }} /><span>Liste des activités</span></h2>
 	<section className="activities-section">
             <table>
               <thead>
