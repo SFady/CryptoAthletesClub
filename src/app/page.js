@@ -116,8 +116,8 @@ export default function Home() {
         <main>
 	  <DefitPrice />
 <br/><br/><br/>
-<h2 className="ombre"><Trophy size={28} style={{ marginRight: '8px', verticalAlign: 'middle', marginBottom: '12px' }} /><span>Utilisateurs</span></h2>
-	<section className="activities-section">
+<h2 className="ombre"><Trophy size={20} style={{ marginRight: '8px', verticalAlign: 'middle', marginBottom: '8px' }} /><span>Utilisateurs</span></h2>
+	<section className="utilisateurs-section">
             <table>
               <thead>
                 <tr>
@@ -138,9 +138,9 @@ export default function Home() {
             </table>
           </section>
   <br/>
-<br/>
+<br/><br/>
 
-<h2 className="ombre"><BarChart2 size={28} style={{ marginRight: '8px', verticalAlign: 'middle', marginBottom: '7px' }} /><span>Liste des activités</span></h2>
+<h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '8px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Liste des activités</span></h2>
 	<section className="activities-section">
             <table>
               <thead>
@@ -336,6 +336,11 @@ export default function Home() {
           margin-top: 20px;
           max-width: 1200px;
         }
+	
+	.utilisateurs-section {
+          margin-top: 20px;
+          max-width: 800px;
+        }	
 
         .activities-section h2 {
           margin-bottom: 0.5rem;
