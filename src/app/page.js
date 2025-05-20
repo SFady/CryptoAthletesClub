@@ -116,7 +116,7 @@ export default function Home() {
         <main>
 	  <DefitPrice />
 <br/><br/><br/>
-<h2 className="ombre"><Trophy size={20} style={{ marginRight: '8px', verticalAlign: 'middle', marginBottom: '8px' }} /><span>Utilisateurs</span></h2>
+<h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
 	<section className="utilisateurs-section">
             <table>
               <thead>
@@ -140,7 +140,7 @@ export default function Home() {
   <br/>
 <br/><br/>
 
-<h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '8px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Liste des activités</span></h2>
+<h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '-1px' }} /><span>Liste des activités</span></h2>
 	<section className="activities-section">
             <table>
               <thead>
@@ -388,12 +388,14 @@ background-color: #5821B4;
 }
 
 .ombre {
-  //text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
- color: white/* texte violet très clair mais pas blanc */
-  //text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+  color: white;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: 700;
   letter-spacing: 0.5px;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.85); /* solid dark shadow only */
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .details-texte {
