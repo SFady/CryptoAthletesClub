@@ -33,8 +33,8 @@ function DefitPrice() {
   if (price === null) return <p className="price-loading">Chargement...</p>;
 
   return (
-    <p className="defit-price">
-      Prix actuel du <strong>DEFIT</strong> : <span>${price.toFixed(4)}</span>
+    <p className="defit-price" style={{ marginTop: '20px' }}>
+      Prix actuel du <strong>DEFIT</strong> : <span>${price.toFixed(4)}</span><span>&nbsp;(Calculs à 0.0675)</span>
     </p>
   );
 }
@@ -72,33 +72,34 @@ export default function Home() {
 
 	// Exemple de données
   const activities = [
-{ id: 1, date: "02/04/2025", utilisateur: "Usopp", activite: "Running", defit: 51.44, participation: "100%", defitnet: 51.44 },
-{ id: 2, date: "08/04/2025", utilisateur: "Usopp", activite: "Running", defit: 250.63, participation: "100%", defitnet: 250.63 },
-{ id: 3, date: "09/04/2025", utilisateur: "Usopp", activite: "Running", defit: 70.54, participation: "100%", defitnet: 70.54 },
-{ id: 4, date: "13/04/2025", utilisateur: "Usopp", activite: "Running", defit: 335.07, participation: "100%", defitnet: 335.07 },
-{ id: 5, date: "16/04/2025", utilisateur: "Usopp", activite: "Running", defit: 85.71, participation: "100%", defitnet: 85.71 },
-{ id: 6, date: "21/04/2025", utilisateur: "Usopp", activite: "Running", defit: 7.35, participation: "100%", defitnet: 7.35 },
-{ id: 7, date: "21/04/2025", utilisateur: "Usopp", activite: "Running", defit: 48.77, participation: "100%", defitnet: 48.77 },
-{ id: 8, date: "28/04/2025", utilisateur: "DTeach", activite: "Running", defit: 11.33, participation: "50%", defitnet: 5.67 },
-{ id: 9, date: "28/04/2025", utilisateur: "Usopp", activite: "Running", defit: 10.29, participation: "100%", defitnet: 10.29 },
-{ id: 10, date: "04/05/2025", utilisateur: "Usopp", activite: "Running", defit: 98.61, participation: "100%", defitnet: 98.61 },
-{ id: 11, date: "06/05/2025", utilisateur: "Usopp", activite: "Running", defit: 45.56, participation: "100%", defitnet: 45.56 },
-{ id: 12, date: "08/05/2025", utilisateur: "Usopp", activite: "Running", defit: 82.44, participation: "100%", defitnet: 82.44 },
-{ id: 13, date: "11/05/2025", utilisateur: "Usopp", activite: "Running", defit: 191.05, participation: "100%", defitnet: 191.05 },
-{ id: 14, date: "12/05/2025", utilisateur: "DTeach", activite: "Running", defit: 13.67, participation: "50%", defitnet: 6.84 },
-{ id: 15, date: "13/05/2025", utilisateur: "DTeach", activite: "Running", defit: 3, participation: "50%", defitnet: 1.50 },
-{ id: 16, date: "15/05/2025", utilisateur: "DTeach", activite: "Running", defit: 7.79, participation: "50%", defitnet: 3.90 },
-{ id: 17, date: "17/05/2025", utilisateur: "DTeach", activite: "Running", defit: 63.93, participation: "50%", defitnet: 31.97 },
-{ id: 18, date: "18/05/2025", utilisateur: "Usopp", activite: "Running", defit: 169.74, participation: "100%", defitnet: 169.74 },
-{ id: 19, date: "19/05/2025", utilisateur: "DTeach", activite: "Running", defit: 37.13, participation: "50%", defitnet: 18.57 },
-{ id: 20, date: "20/05/2025", utilisateur: "Usopp", activite: "Running", defit: 96.19, participation: "100%", defitnet: 96.19 },
+{ id: 23, date: "24/05/2025", utilisateur: "DTeach", activite: "Running", defit: 27.03, participation: "50%", defitnet: 13.52 },
+{ id: 22, date: "23/05/2025", utilisateur: "DTeach", activite: "Running", defit: 6.21, participation: "50%", defitnet: 3.11 },
 { id: 21, date: "21/05/2025", utilisateur: "DTeach", activite: "Running", defit: 7.64, participation: "50%", defitnet: 3.82 },
-
+{ id: 20, date: "20/05/2025", utilisateur: "Usopp", activite: "Running", defit: 96.19, participation: "100%", defitnet: 96.19 },
+{ id: 19, date: "19/05/2025", utilisateur: "DTeach", activite: "Running", defit: 37.13, participation: "50%", defitnet: 18.57 },
+{ id: 18, date: "18/05/2025", utilisateur: "Usopp", activite: "Running", defit: 169.74, participation: "100%", defitnet: 169.74 },
+{ id: 17, date: "17/05/2025", utilisateur: "DTeach", activite: "Running", defit: 63.93, participation: "50%", defitnet: 31.97 },
+{ id: 16, date: "15/05/2025", utilisateur: "DTeach", activite: "Running", defit: 7.79, participation: "50%", defitnet: 3.90 },
+{ id: 15, date: "13/05/2025", utilisateur: "DTeach", activite: "Running", defit: 3, participation: "50%", defitnet: 1.50 },
+{ id: 14, date: "12/05/2025", utilisateur: "DTeach", activite: "Running", defit: 13.67, participation: "50%", defitnet: 6.84 },
+{ id: 13, date: "11/05/2025", utilisateur: "Usopp", activite: "Running", defit: 191.05, participation: "100%", defitnet: 191.05 },
+{ id: 12, date: "08/05/2025", utilisateur: "Usopp", activite: "Running", defit: 82.44, participation: "100%", defitnet: 82.44 },
+{ id: 11, date: "06/05/2025", utilisateur: "Usopp", activite: "Running", defit: 45.56, participation: "100%", defitnet: 45.56 },
+{ id: 10, date: "04/05/2025", utilisateur: "Usopp", activite: "Running", defit: 98.61, participation: "100%", defitnet: 98.61 },
+{ id: 9, date: "28/04/2025", utilisateur: "Usopp", activite: "Running", defit: 10.29, participation: "100%", defitnet: 10.29 },
+{ id: 8, date: "28/04/2025", utilisateur: "DTeach", activite: "Running", defit: 11.33, participation: "50%", defitnet: 5.67 },
+{ id: 7, date: "21/04/2025", utilisateur: "Usopp", activite: "Running", defit: 48.77, participation: "100%", defitnet: 48.77 },
+{ id: 6, date: "21/04/2025", utilisateur: "Usopp", activite: "Running", defit: 7.35, participation: "100%", defitnet: 7.35 },
+{ id: 5, date: "16/04/2025", utilisateur: "Usopp", activite: "Running", defit: 85.71, participation: "100%", defitnet: 85.71 },
+{ id: 4, date: "13/04/2025", utilisateur: "Usopp", activite: "Running", defit: 335.07, participation: "100%", defitnet: 335.07 },
+{ id: 3, date: "09/04/2025", utilisateur: "Usopp", activite: "Running", defit: 70.54, participation: "100%", defitnet: 70.54 },
+{ id: 2, date: "08/04/2025", utilisateur: "Usopp", activite: "Running", defit: 250.63, participation: "100%", defitnet: 250.63 },
+{ id: 1, date: "02/04/2025", utilisateur: "Usopp", activite: "Running", defit: 51.44, participation: "100%", defitnet: 51.44 },
   ];
 
  const users= [
     { id: 1, name: "Usopp", defit: 1543.39 },
-    { id: 2, name: "DTeach", defit: 72.25 },
+    { id: 2, name: "DTeach", defit: 88.86 },
     { id: 3, name: "Nico Robin", defit: 0 } 
 ];	
 
@@ -140,6 +141,9 @@ export default function Home() {
 
         <main>
 	  <DefitPrice />
+	   <p>
+      		Maj 26-05-2025 8:00
+	    </p>
 <br/><br/><br/>
 <h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
 	<section className="utilisateurs-section">
@@ -156,7 +160,7 @@ export default function Home() {
                   <tr key={id}>
                     <td>{name}</td>
                     <td>{defit}</td>
-                    <td>{(defit*0.07).toFixed(2)}</td>
+                    <td>{(defit*0.0675).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -188,7 +192,7 @@ export default function Home() {
                     <td>{defit}</td>
                     <td>{participation}</td>
                     <td>{defitnet}</td>
-                    <td>{(defitnet*0.07).toFixed(2)}</td>
+                    <td>{(defitnet*0.0675).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -347,7 +351,7 @@ export default function Home() {
             display: flex;
           }
         }
-
+	
         main {
           padding: 100px 20px 20px;
           position: relative;
