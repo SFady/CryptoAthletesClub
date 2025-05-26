@@ -37,9 +37,8 @@ export default function Home() {
   ];
 
  const { price: defitPrice, error } = useDefitPrice();
-
  const users= [
-    { id: 1, name: "Usopp", defit: 1543.39 },
+    { id: 1, name: "Usopp", defit: 1632.25 },
     { id: 2, name: "DTeach", defit: 88.86 },
     { id: 3, name: "Nico Robin", defit: 0 } 
 ];	
