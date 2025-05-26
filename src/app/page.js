@@ -3,69 +3,8 @@
 import { useEffect, useState } from "react";
 import { BarChart2 } from "lucide-react";
 import { Trophy } from "lucide-react";
+import { useDefitPrice } from "./useDefitPrice";
 
-function DefitPrice() {
-  const [price, setPrice] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function fetchPrice() {
-      try {
-        const res = await fetch(
-          "https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=0x428360b02c1269bc1c79fbc399ad31d58c1e8fda&vs_currencies=usd"
-        );
-        const data = await res.json();
-        const tokenData = data["0x428360b02c1269bc1c79fbc399ad31d58c1e8fda"];
-        if (tokenData && tokenData.usd) {
-          setPrice(tokenData.usd);
-        } else {
-          setError("Prix introuvable");
-        }
-      } catch (err) {
-        setError("Erreur de chargement");
-      }
-    }
-
-    fetchPrice();
-  }, []);
-
-  if (error) return <p className="price-error">{error}</p>;
-  if (price === null) return <p className="price-loading">Chargement...</p>;
-
-  return (
-    <p className="defit-price" style={{ marginTop: '20px' }}>
-      Prix actuel du <strong>DEFIT</strong> : <span>${price.toFixed(4)}</span><span>&nbsp;(Calculs à 0.0675)</span>
-    </p>
-  );
-}
-
-function DefitPriceValue() {
-  const [price, setPrice] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function fetchPrice() {
-      try {
-        const res = await fetch(
-          "https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=0x428360b02c1269bc1c79fbc399ad31d58c1e8fda&vs_currencies=usd"
-        );
-        const data = await res.json();
-        const tokenData = data["0x428360b02c1269bc1c79fbc399ad31d58c1e8fda"];
-        if (tokenData && tokenData.usd) {
-          setPrice(Number(tokenData.usd).toFixed(4));
-        } else {
-          setError("Prix introuvable");
-        }
-      } catch (err) {
-        setError("Erreur de chargement");
-      }
-    }
-
-    fetchPrice();
-  }, []);
-
-  return price;
-}
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -96,6 +35,8 @@ export default function Home() {
 { id: 2, date: "08/04/2025", utilisateur: "Usopp", activite: "Running", defit: 250.63, participation: "100%", defitnet: 250.63 },
 { id: 1, date: "02/04/2025", utilisateur: "Usopp", activite: "Running", defit: 51.44, participation: "100%", defitnet: 51.44 },
   ];
+
+ const { price: defitPrice, error } = useDefitPrice();
 
  const users= [
     { id: 1, name: "Usopp", defit: 1543.39 },
@@ -140,32 +81,50 @@ export default function Home() {
         </header>
 
         <main>
-	  <DefitPrice />
+	    {error ? (
+            <p className="price-error">{error}</p>
+          ) : defitPrice === null ? (
+            <p className="price-loading">Chargement...</p>
+          ) : (
+            <p className="defit-price" style={{ marginTop: "20px" }}>
+              Prix actuel du <strong>DEFIT</strong> :{" "}
+              <span>${defitPrice.toFixed(4)}</span>
+            </p>
+          )}
 	   <p>
       		Maj 26-05-2025 8:00
 	    </p>
 <br/><br/><br/>
 <h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
-	<section className="utilisateurs-section">
-            <table>
-              <thead>
-                <tr>
-                  <th>Utilisateur</th>
-		  <th>Defit</th>
-		<th>Dollars $</th>
+
+<section className="utilisateurs-section">
+        {error ? (
+          <p>{error}</p>
+        ) : defitPrice === null ? (
+          <p>Chargement...</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Defit</th>
+                <th>Dollars $</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(({ id, name, defit }) => (
+                <tr key={id}>
+                  <td>{name}</td>
+                  <td>{defit}</td>
+                  <td>{(defit * defitPrice).toFixed(2)}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {users.map(({ id, name, defit }) => (
-                  <tr key={id}>
-                    <td>{name}</td>
-                    <td>{defit}</td>
-                    <td>{(defit*0.0675).toFixed(2)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>	
+
+
   <br/>
 <br/><br/>
 
