@@ -11,6 +11,7 @@ export default function Home() {
 
 	// Exemple de données
   const activities = [
+{ id: 46, date: "27/05/2025", utilisateur: "Nico Robin", activite: "Running", defit: 18.61, participation: "50%", defitnet: 9.31 },
 { id: 45, date: "24/05/2025", utilisateur: "DTeach", activite: "Running", defit: 27.03, participation: "50%", defitnet: 13.52 },
 { id: 44, date: "23/05/2025", utilisateur: "DTeach", activite: "Running", defit: 6.21, participation: "50%", defitnet: 3.11 },
 { id: 43, date: "21/05/2025", utilisateur: "DTeach", activite: "Running", defit: 7.64, participation: "50%", defitnet: 3.82 },
@@ -56,13 +57,14 @@ export default function Home() {
 { id: 3, date: "12/01/2025", utilisateur: "Usopp", activite: "Running", defit: 27.11, participation: "100%", defitnet: 27.11 },
 { id: 2, date: "05/01/2025", utilisateur: "Usopp", activite: "Running", defit: 29.83, participation: "100%", defitnet: 29.83 },
 { id: 1, date: "02/01/2025", utilisateur: "Usopp", activite: "Running", defit: 26.21, participation: "100%", defitnet: 26.21 },
+
   ];
 
  const { price: defitPrice, error } = useDefitPrice();
  const users= [
     { id: 1, name: "Usopp", defit: 2652.33 },
     { id: 2, name: "DTeach", defit: 88.86 },
-    { id: 3, name: "Nico Robin", defit: 0 } 
+    { id: 3, name: "Nico Robin", defit: 9.31 } 
 ];	
 
   return (
@@ -113,7 +115,7 @@ export default function Home() {
             </p>
           )}
 	   <p>
-      		Maj 26-05-2025 8:00
+      		Maj 27-05-2025 21:00
 	    </p>
 <br/><br/><br/>
 <h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
