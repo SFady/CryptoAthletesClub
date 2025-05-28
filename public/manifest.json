@@ -6,4 +6,5 @@
   "background_color": "#4608ad",  // Match your main background color
   "theme_color": "#4608ad",       // Match your header/main theme
   "orientation": "portrait",
+  "display": "fullscreen"
 }
