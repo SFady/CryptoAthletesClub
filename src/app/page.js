@@ -353,7 +353,7 @@ export default function Home() {
         }
 	
         main {
-          padding: 100px 20px 20px;
+          padding: 100px 20px 80px;
           position: relative;
           z-index: 10;
           min-height: 100vh;
