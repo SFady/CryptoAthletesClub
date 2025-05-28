@@ -243,7 +243,7 @@ export default function Home() {
           top: 0;
           left: 0;
           right: 0;
-          background: rgba(70, 8, 173, 0.9);
+          background: rgba(70, 8, 173, 1);
           backdrop-filter: blur(5px);
           color: white;
           display: flex;
@@ -251,6 +251,7 @@ export default function Home() {
           justify-content: space-between;
           padding: 1rem 2rem;
           z-index: 1000;
+	  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
        .logo {
