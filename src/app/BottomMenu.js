@@ -15,7 +15,7 @@ const BottomMenu = () => {
           display: flex;
           justify-content: space-around;
           align-items: center;
-          border-top: 1px solid #ccc;
+          border-top: 0px solid #ccc;
           z-index: 1000;
         }
 
