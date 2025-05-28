@@ -117,7 +117,7 @@ export default function Home() {
             </p>
           )}
 	   <p>
-      		Maj 28-05-2025 12:00
+      		Maj : 28-05-2025 12:00
 	    </p>
 <br/><br/><br/>
 <h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
