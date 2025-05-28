@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { BarChart2 } from "lucide-react";
 import { Trophy } from "lucide-react";
 import { useDefitPrice } from "./useDefitPrice";
+import BottomMenu from './BottomMenu'; // adjust the path
 
 
 export default function Home() {
@@ -183,6 +184,7 @@ export default function Home() {
           </section>
 
         </main>
+	 <BottomMenu />
       </div>
 
       <style jsx>{`
