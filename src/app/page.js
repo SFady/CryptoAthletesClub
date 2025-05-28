@@ -175,7 +175,7 @@ export default function Home() {
                     <td>{defit}</td>
                     <td>{participation}</td>
                     <td>{defitnet}</td>
-                    <td>{(defitnet*0.0675).toFixed(2)}</td>
+                    <td>{(defitnet*defitPrice).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
