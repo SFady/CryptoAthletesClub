@@ -81,7 +81,7 @@ export default function Home() {
  const users= [
     { id: 1, name: "Usopp", defit: 3725.79 },
     { id: 2, name: "DTeach", defit: 91.72 },
-    { id: 3, name: "Nico Robin", defit: 40.04 } 
+    { id: 3, name: "Nico Robin", defit: 20.02 } 
 ];	
 
   return (
