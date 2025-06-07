@@ -13,6 +13,7 @@ export default function Home() {
 	// Exemple de données
   const activities = [
 
+{ id: 61, date: "07/06/2025", utilisateur: "Nico Robin", activite: "Running", defit: 17.28, participation: "50%", defitnet: 8.64 },
 { id: 60, date: "29/05/2025", utilisateur: "Nico Robin", activite: "Running", defit: 4.15, participation: "50%", defitnet: 2.08 },
 { id: 59, date: "28/05/2025", utilisateur: "DTeach", activite: "Running", defit: 5.71, participation: "50%", defitnet: 2.86 },
 { id: 58, date: "27/05/2025", utilisateur: "Nico Robin", activite: "Running", defit: 18.61, participation: "50%", defitnet: 9.31 },
@@ -74,14 +75,13 @@ export default function Home() {
 { id: 2, date: "13/10/2024", utilisateur: "Usopp", activite: "Running", defit: 251.2, participation: "100%", defitnet: 251.20 },
 { id: 1, date: "02/10/2024", utilisateur: "Usopp", activite: "Running", defit: 158, participation: "100%", defitnet: 158.00 },
 
-
   ];
 
  const { price: defitPrice, error } = useDefitPrice();
  const users= [
     { id: 1, name: "Usopp", defit: 3725.79 },
     { id: 2, name: "DTeach", defit: 91.72 },
-    { id: 3, name: "Nico Robin", defit: 11.38 } 
+    { id: 3, name: "Nico Robin", defit: 40.04 } 
 ];	
 
   return (
