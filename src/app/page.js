@@ -99,7 +99,7 @@ export default function Home() {
           </div>
 
           <nav className={`nav ${open ? "nav-open" : ""}`}>
-            <a href="#menu1" onClick={() => setOpen(false)}>
+            <a href="/jeu" onClick={() => setOpen(false)}>
               Menu1
             </a>
             <a href="#menu2" onClick={() => setOpen(false)}>
