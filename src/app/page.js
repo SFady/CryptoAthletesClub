@@ -12,7 +12,7 @@ export default function Home() {
 
 	// Exemple de données
   const activities = [
-
+{ id: 62, date: "10/06/2025", utilisateur: "Nico Robin", activite: "Running", defit: 18.9, participation: "50%", defitnet: 9.45 },
 { id: 61, date: "07/06/2025", utilisateur: "Nico Robin", activite: "Running", defit: 17.28, participation: "50%", defitnet: 8.64 },
 { id: 60, date: "29/05/2025", utilisateur: "Nico Robin", activite: "Running", defit: 4.15, participation: "50%", defitnet: 2.08 },
 { id: 59, date: "28/05/2025", utilisateur: "DTeach", activite: "Running", defit: 5.71, participation: "50%", defitnet: 2.86 },
@@ -81,7 +81,7 @@ export default function Home() {
  const users= [
     { id: 1, name: "Usopp", defit: 3725.79 },
     { id: 2, name: "DTeach", defit: 91.72 },
-    { id: 3, name: "Nico Robin", defit: 20.02 } 
+    { id: 3, name: "Nico Robin", defit: 29.47 } 
 ];	
 
   return (
@@ -132,7 +132,7 @@ export default function Home() {
             </p>
           )}
 	   <p>
-      		Maj : 29-05-2025 18:00
+      		Maj : 10-06-2025 20:20
 	    </p>
 <br/><br/><br/>
 <h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
