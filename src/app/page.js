@@ -12,6 +12,8 @@ export default function Home() {
 
 	// Exemple de données
   const activities = [
+
+{ id: 63, date: "13/06/2025", utilisateur: "Usopp", activite: "Running", defit: 90.38, participation: "100%", defitnet: 90.38 },
 { id: 62, date: "10/06/2025", utilisateur: "Nico Robin", activite: "Running", defit: 18.9, participation: "50%", defitnet: 9.45 },
 { id: 61, date: "07/06/2025", utilisateur: "Nico Robin", activite: "Running", defit: 17.28, participation: "50%", defitnet: 8.64 },
 { id: 60, date: "29/05/2025", utilisateur: "Nico Robin", activite: "Running", defit: 4.15, participation: "50%", defitnet: 2.08 },
@@ -75,11 +77,12 @@ export default function Home() {
 { id: 2, date: "13/10/2024", utilisateur: "Usopp", activite: "Running", defit: 251.2, participation: "100%", defitnet: 251.20 },
 { id: 1, date: "02/10/2024", utilisateur: "Usopp", activite: "Running", defit: 158, participation: "100%", defitnet: 158.00 },
 
+
   ];
 
  const { price: defitPrice, error } = useDefitPrice();
  const users= [
-    { id: 1, name: "Usopp", defit: 3725.79 },
+    { id: 1, name: "Usopp", defit: 3816.17 },
     { id: 2, name: "DTeach", defit: 91.72 },
     { id: 3, name: "Nico Robin", defit: 29.47 } 
 ];	
@@ -132,7 +135,7 @@ export default function Home() {
             </p>
           )}
 	   <p>
-      		Maj : 10-06-2025 20:20
+      		Maj : 13-06-2025 09:00
 	    </p>
 <br/><br/><br/>
 <h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
