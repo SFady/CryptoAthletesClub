@@ -20,7 +20,16 @@ export default function Home() {
     { id: 1, name: "Usopp", defit: 3816.17 },
     { id: 2, name: "DTeach", defit: 91.72 },
     { id: 3, name: "Nico Robin", defit: 39.79 } 
-];	
+];
+
+function sommeDefiNetParUtilisateur(defis) {
+  return defis.reduce((acc, { utilisateur, defitnet }) => {
+    acc[utilisateur] = (acc[utilisateur] || 0) + defitnet;
+    return acc;
+  }, {});
+}
+
+const defitSums = sommeDefiNetParUtilisateur(activities);
 
   return (
     <>
@@ -89,15 +98,18 @@ export default function Home() {
                 <th>Dollars $</th>
               </tr>
             </thead>
-            <tbody>
-              {users.map(({ id, name, defit }) => (
-                <tr key={id}>
-                  <td>{name}</td>
-                  <td>{defit}</td>
-                  <td>{(defit * defitPrice).toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
+	    <tbody>
+  		{users.map(({ id, name }) => {
+		    const defit = defitSums[name] || 0;
+		    return (
+		      <tr key={id}>
+		        <td>{name}</td>
+		        <td>{defit.toFixed(2)}</td>
+		        <td>{(defit.toFixed(2) * defitPrice).toFixed(2)}</td>
+		      </tr>
+		    );
+		  })}
+	     </tbody>
           </table>
         )}
       </section>	
