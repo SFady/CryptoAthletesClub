@@ -8,8 +8,11 @@ import BottomMenu from './BottomMenu'; // adjust the path
 
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
 
+  const buildDate = process.env.BUILD_DATE;
+
+  const [open, setOpen] = useState(false);
+	
 	// Exemple de données
   const activities = [
 
@@ -136,7 +139,7 @@ export default function Home() {
             </p>
           )}
 	   <p>
-      		Maj : 14-06-2025 12:00
+      		Maj : {new Date(buildDate).toLocaleString()}
 	    </p>
 <br/><br/><br/>
 <h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
