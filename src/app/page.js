@@ -12,9 +12,9 @@ export default function Home() {
   const { price: defitPrice, error } = useDefitPrice();
 
   const users = [
-    { id: 1, name: "Usopp", defit: 3816.17 },
-    { id: 2, name: "DTeach", defit: 91.72 },
-    { id: 3, name: "Nico Robin", defit: 39.79 }
+    { id: 1, name: "Usopp", defit: 0 },
+    { id: 2, name: "DTeach", defit: 0 },
+    { id: 3, name: "Nico Robin", defit: 0 }
   ];
 
   function sommeDefiNetParUtilisateur(defis) {
