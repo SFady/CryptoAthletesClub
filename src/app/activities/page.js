@@ -49,6 +49,8 @@ export default function ActivitiesPage() {
         </header>
 
         <main>
+<br/>
+<br/>
           <h2 className="ombre">
             <BarChart2 size={20} style={{ marginRight: "3px", verticalAlign: "middle", marginBottom: "-1px" }} />
             <span>Liste des activités</span>
