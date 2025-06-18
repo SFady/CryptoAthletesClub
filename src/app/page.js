@@ -42,7 +42,48 @@ export default function Home() {
 	useEffect(() => {
 	  localStorage.setItem("userFilter", userFilter);
 	}, [userFilter]);  
+	
+  const [periode, setPeriode] = useState("annee");
+  
+  // 🔁 Lire le filtre depuis localStorage au montage
+  useEffect(() => {
+    const savedPeriode = localStorage.getItem("periodFilter");
+    if (savedPeriode) setPeriode(savedPeriode);
+  }, []);
 
+  // 💾 Enregistrer dans localStorage dès que ça change
+  useEffect(() => {
+    localStorage.setItem("periodFilter", periode);
+  }, [periode]);
+
+  function parseDateFR(str) {
+    const [jour, mois, annee] = str.split("/").map(Number);
+    return new Date(annee, mois - 1, jour);
+  }
+
+  function getWeekNumber(date) {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  }
+
+  function sommeKmParUtilisateur(activities, periodeType) {
+    const maintenant = new Date();
+    return activities.reduce((acc, { utilisateur, date, km = 0 }) => {
+      const d = parseDateFR(date);
+      const match =
+        (periodeType === "annee" && d.getFullYear() === maintenant.getFullYear()) ||
+        (periodeType === "mois" && d.getFullYear() === maintenant.getFullYear() && d.getMonth() === maintenant.getMonth()) ||
+        (periodeType === "semaine" && d.getFullYear() === maintenant.getFullYear() && getWeekNumber(d) === getWeekNumber(maintenant));
+      if (!match) return acc;
+      acc[utilisateur] = (acc[utilisateur] || 0) + km;
+      return acc;
+    }, {});
+  }
+
+  const kmParUtilisateur = sommeKmParUtilisateur(activities, periode);
 
   return (
     <>
@@ -96,8 +137,8 @@ export default function Home() {
                   return (
                     <tr key={id}>
                       <td>{name}</td>
-                      <td>{defit.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-		      <td>{(defit * defitPrice).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                      <td>{defit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(',', ' ')}</td>
+		      <td>{(defit * defitPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(',', ' ')}</td>
                     </tr>
                   );
                 })}
@@ -105,17 +146,14 @@ export default function Home() {
             </table>
           </section>
 
-          <br /><br /><br />
-          <h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '-1px' }} /><span>Liste des activités</span></h2>
-	  <br/>
-          <div style={{ marginBottom: '1rem', display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-            {uniqueUsers.map((user) => (
-              <button
-                key={user}
-                onClick={() => setUserFilter(user)}
-                className={`filter-button ${userFilter === user ? "active" : ""}`}
-              >
-                {user}
+
+	<br /><br /><br />
+          <h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '5px', verticalAlign: 'middle' }} />Classement</h2>
+	<br/>
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+            {["annee", "mois", "semaine"].map(p => (
+              <button key={p} onClick={() => setPeriode(p)} className={`filter-button ${periode === p ? 'active' : ''}`}>
+                {p === 'annee' ? 'Année' : p === 'mois' ? 'Mois' : 'Semaine'}
               </button>
             ))}
           </div>
@@ -124,30 +162,29 @@ export default function Home() {
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Utilisateur</th>
-                  <th>Activité</th>
-                  <th>Gain Brut (Defit)</th>
-                  <th>Participation</th>
-                  <th>Gain Net (Defit)</th>
-                  <th>Gain Net ($)</th>
+                  <th>Place</th>
+		  <th>Utilisateur</th>
+                  <th>Kilomètres</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredActivities.map(({ id, date, utilisateur, activite, defit, participation, defitnet }) => (
-                  <tr key={id}>
-                    <td>{date}</td>
-                    <td>{utilisateur}</td>
-                    <td>{activite}</td>
-                    <td>{defit}</td>
-                    <td>{participation}</td>
-                    <td>{defitnet}</td>
-                    <td>{(defitnet * defitPrice).toFixed(2)}</td>
-                  </tr>
-                ))}
+{Object.entries(kmParUtilisateur)
+  .sort((a, b) => b[1] - a[1])
+  .map(([utilisateur, km], index) => (
+    <tr key={utilisateur}>
+      <td>{index+1}</td>
+      <td>{utilisateur}</td>
+      <td>{km.toFixed(2)}</td>
+    </tr>
+))}
               </tbody>
             </table>
           </section>
+
+
+
+
+          
         </main>
         <BottomMenu />
       </div>
