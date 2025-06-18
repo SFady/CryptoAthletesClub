@@ -96,8 +96,8 @@ export default function Home() {
                   return (
                     <tr key={id}>
                       <td>{name}</td>
-                      <td>{defit.toFixed(2)}</td>
-                      <td>{(defit * defitPrice).toFixed(2)}</td>
+                      <td>{defit.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+		      <td>{(defit * defitPrice).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     </tr>
                   );
                 })}
