@@ -1,48 +1,30 @@
+// /app/activities/page.jsx
 "use client";
 
 import { useState, useEffect } from "react";
-import { BarChart2, Trophy } from "lucide-react";
-import { useDefitPrice } from "./useDefitPrice";
-import BottomMenu from './BottomMenu';
-import { activities } from './activities';
+import { BarChart2 } from "lucide-react";
+import { useDefitPrice } from "../useDefitPrice"; // adapte le chemin selon ton arborescence
+import { activities } from "../activities";
+import BottomMenu from "../BottomMenu"; // adapte ce chemin aussi
 
-export default function Home() {
-  const buildDate = process.env.BUILD_DATE;
-  const [open, setOpen] = useState(false);
+export default function ActivitiesPage() {
   const { price: defitPrice, error } = useDefitPrice();
-
-  const users = [
-    { id: 1, name: "Usopp", defit: 0 },
-    { id: 2, name: "DTeach", defit: 0 },
-    { id: 3, name: "Nico_Robin", defit: 0 }
-  ];
-
-  function sommeDefiNetParUtilisateur(defis) {
-    return defis.reduce((acc, { utilisateur, defitnet }) => {
-      acc[utilisateur] = (acc[utilisateur] || 0) + defitnet;
-      return acc;
-    }, {});
-  }
-
-  const defitSums = sommeDefiNetParUtilisateur(activities);
-
-  const uniqueUsers = ["Tous", ...new Set(activities.map(a => a.utilisateur))];
-
-
   const [userFilter, setUserFilter] = useState("Tous");
-  const filteredActivities = activities.filter(a => userFilter === "Tous" || a.utilisateur === userFilter);
+  const [open, setOpen] = useState(false);
 
-  // Lire la dernière sélection depuis localStorage au montage
-	useEffect(() => {
-	  const savedFilter = localStorage.getItem("userFilter");
-	  if (savedFilter) setUserFilter(savedFilter);
-	}, []);
+  const uniqueUsers = ["Tous", ...new Set(activities.map((a) => a.utilisateur))];
+  const filteredActivities = activities.filter(
+    (a) => userFilter === "Tous" || a.utilisateur === userFilter
+  );
 
-  // Sauvegarder dans localStorage dès que userFilter change
-	useEffect(() => {
-	  localStorage.setItem("userFilter", userFilter);
-	}, [userFilter]);  
+  useEffect(() => {
+    const savedFilter = localStorage.getItem("userFilter");
+    if (savedFilter) setUserFilter(savedFilter);
+  }, []);
 
+  useEffect(() => {
+    localStorage.setItem("userFilter", userFilter);
+  }, [userFilter]);
 
   return (
     <>
@@ -50,14 +32,14 @@ export default function Home() {
         <div className="background-image" />
         <div className="gradient-overlay" />
 
-        <header className="header">
+	<header className="header">
           <div className="logo">
             <img src="/images/CAC.png" alt="Logo CAC" className="logo-icon" />
             <h1 className="crypto-title">The Crypto Athletes Club</h1>
           </div>
 
           <nav className={`nav ${open ? "nav-open" : ""}`}>
-            <a href="/" onClick={() => setOpen(false)}>Accueil</a>
+              <a href="/" onClick={() => setOpen(false)}>Accueil</a>
             <a href="/activities" onClick={() => setOpen(false)}>Activités</a>
             <a href="/divers" onClick={() => setOpen(false)}>Divers</a>
           </nav>
@@ -67,92 +49,58 @@ export default function Home() {
         </header>
 
         <main>
-          {error ? (
-            <p className="price-error">{error}</p>
-          ) : defitPrice === null ? (
-            <p className="price-loading">Chargement...</p>
-          ) : (
-            <p className="defit-price" style={{ marginTop: "20px" }}>
-              Prix actuel du <strong>DEFIT</strong> : <span>${defitPrice.toFixed(4)}</span>
-            </p>
-          )}
-          <p>Maj : {new Date(buildDate).toLocaleString()}</p>
-
-          <br /><br /><br />
-          <h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
-
-          <section className="utilisateurs-section">
-            <table>
-              <thead>
-                <tr>
-                  <th>Utilisateur</th>
-                  <th>Defit</th>
-                  <th>Dollars $</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map(({ id, name }) => {
-                  const defit = defitSums[name] || 0;
-                  return (
-                    <tr key={id}>
-                      <td>{name}</td>
-                      <td>{defit.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-		      <td>{(defit * defitPrice).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </section>
-
-          <br /><br /><br />
-          <h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '-1px' }} /><span>Liste des activités</span></h2>
-	  <br/>
-          <div style={{ marginBottom: '1rem', display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+          <h2 className="ombre">
+            <BarChart2 size={20} style={{ marginRight: "3px", verticalAlign: "middle", marginBottom: "-1px" }} />
+            <span>Liste des activités</span>
+          </h2>
+          <br />
+          <div style={{ marginBottom: "1rem", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
             {uniqueUsers.map((user) => (
-              <button
-                key={user}
-                onClick={() => setUserFilter(user)}
-                className={`filter-button ${userFilter === user ? "active" : ""}`}
-              >
+              <button key={user} onClick={() => setUserFilter(user)} className={`filter-button ${userFilter === user ? "active" : ""}`}>
                 {user}
               </button>
             ))}
           </div>
 
           <section className="activities-section">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Utilisateur</th>
-                  <th>Activité</th>
-                  <th>Gain Brut (Defit)</th>
-                  <th>Participation</th>
-                  <th>Gain Net (Defit)</th>
-                  <th>Gain Net ($)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredActivities.map(({ id, date, utilisateur, activite, defit, participation, defitnet }) => (
-                  <tr key={id}>
-                    <td>{date}</td>
-                    <td>{utilisateur}</td>
-                    <td>{activite}</td>
-                    <td>{defit}</td>
-                    <td>{participation}</td>
-                    <td>{defitnet}</td>
-                    <td>{(defitnet * defitPrice).toFixed(2)}</td>
+            {error ? (
+              <p className="price-error">{error}</p>
+            ) : defitPrice === null ? (
+              <p className="price-loading">Chargement prix DEFIT...</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Utilisateur</th>
+                    <th>Activité</th>
+                    <th>Gain Brut (Defit)</th>
+                    <th>Participation</th>
+                    <th>Gain Net (Defit)</th>
+                    <th>Gain Net ($)</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredActivities.map(({ id, date, utilisateur, activite, defit, participation, defitnet }) => (
+                    <tr key={id}>
+                      <td>{date}</td>
+                      <td>{utilisateur}</td>
+                      <td>{activite}</td>
+                      <td>{defit}</td>
+                      <td>{participation}</td>
+                      <td>{defitnet}</td>
+                      <td>{(defitnet * defitPrice).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </section>
         </main>
+
         <BottomMenu />
       </div>
-
-      <style jsx>{`
+ <style jsx>{`
         /* LE RESTE DE TON CSS ORIGINAL ICI : */
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
