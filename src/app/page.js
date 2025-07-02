@@ -12,7 +12,7 @@ export default function Home() {
   const { price: defitPrice, error } = useDefitPrice();
 
   const users = [
-    { id: 1, name: "Usopp", defit: 0 },
+    { id: 1, name: "Usopp", defit: 10 },
     { id: 2, name: "Nico_Robin", defit: 0 },
     { id: 3, name: "DTeach", defit: 0 }
   ];
