@@ -13,8 +13,8 @@ export default function Home() {
 
   const users = [
     { id: 1, name: "Usopp", defit: 0 },
-    { id: 2, name: "DTeach", defit: 0 },
-    { id: 3, name: "Nico_Robin", defit: 0 }
+    { id: 2, name: "Nico_Robin", defit: 0 },
+    { id: 3, name: "DTeach", defit: 0 }
   ];
 
   function sommeDefiNetParUtilisateur(defis) {
