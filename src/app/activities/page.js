@@ -43,9 +43,6 @@ export default function ActivitiesPage() {
             <a href="/activities" onClick={() => setOpen(false)}>Activités</a>
             <a href="/divers" onClick={() => setOpen(false)}>Divers</a>
           </nav>
-          <button className={`burger ${open ? "burger-open" : ""}`} onClick={() => setOpen(!open)} aria-label="Toggle menu">
-            <span /><span /><span />
-          </button>
         </header>
 
         <main>

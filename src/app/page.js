@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BarChart2, Trophy } from "lucide-react";
+import { BarChart2, User } from "lucide-react";
 import { useDefitPrice } from "./useDefitPrice";
 import BottomMenu from './BottomMenu';
 import { activities } from './activities';
@@ -12,7 +12,7 @@ export default function Home() {
   const { price: defitPrice, error } = useDefitPrice();
 
   const users = [
-    { id: 1, name: "Usopp", defit: 10 },
+    { id: 1, name: "Usopp", defit: 0 },
     { id: 2, name: "Nico_Robin", defit: 0 },
     { id: 3, name: "DTeach", defit: 0 }
   ];
@@ -102,9 +102,6 @@ export default function Home() {
             <a href="/activities" onClick={() => setOpen(false)}>Activités</a>
             <a href="/divers" onClick={() => setOpen(false)}>Divers</a>
           </nav>
-          <button className={`burger ${open ? "burger-open" : ""}`} onClick={() => setOpen(!open)} aria-label="Toggle menu">
-            <span /><span /><span />
-          </button>
         </header>
 
         <main>
@@ -120,7 +117,7 @@ export default function Home() {
           <p>Maj : {new Date(buildDate).toLocaleString()}</p>
 
           <br /><br /><br />
-          <h2 className="ombre"><Trophy size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
+          <h2 className="ombre"><User size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
 
           <section className="utilisateurs-section">
             <table>
