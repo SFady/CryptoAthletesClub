@@ -124,8 +124,22 @@ export default function Home() {
                   return (
                     <tr key={id}>
                       <td>{name}</td>
-                      <td>{defit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(',', ' ')}</td>
-		      <td>{(defit * defitPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(',', ' ')}</td>
+                      <td>
+                        {typeof defit === "number"
+                          ? defit.toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).replace(",", " ")
+                          : "?"}
+                      </td>
+                      <td>
+                        {typeof defitPrice === "number" && typeof defit === "number"
+                          ? (defit * defitPrice).toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).replace(",", " ")
+                          : "?"}
+                      </td>
                     </tr>
                   );
                 })}
