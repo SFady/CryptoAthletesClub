@@ -101,7 +101,10 @@ export default function Home() {
             <p className="price-loading">Chargement...</p>
           ) : (
             <p className="defit-price" style={{ marginTop: "20px" }}>
-              Prix actuel du <strong>DEFIT</strong> : <span>${defitPrice.toFixed(4)}</span>
+              Prix actuel du <strong>DEFIT</strong> : 
+              <span>
+                {typeof defitPrice === 'number' ? `$${defitPrice.toFixed(4)}` : "?"}
+              </span>
             </p>
           )}
           <p>Maj : {buildDate ? new Date(buildDate).toLocaleString() : "Date inconnue"}</p>
