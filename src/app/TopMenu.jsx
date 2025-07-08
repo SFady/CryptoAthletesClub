@@ -6,6 +6,7 @@ export default function TopMenu() {
   const [open, setOpen] = useState(false);
 
   return (
+    <>
          <header className="header">
           <div className="logo">
             <img src="/images/CAC.png" alt="Logo CAC" className="logo-icon" />
@@ -18,5 +19,6 @@ export default function TopMenu() {
             <a href="/divers" onClick={() => setOpen(false)}>Divers</a>
           </nav>
         </header>
+        </>
   );
 }
