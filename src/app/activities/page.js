@@ -5,7 +5,8 @@ import { useState, useEffect } from "react";
 import { BarChart2 } from "lucide-react";
 import { useDefitPrice } from "../useDefitPrice"; // adapte le chemin selon ton arborescence
 import { activities } from "../activities";
-import BottomMenu from "../BottomMenu"; // adapte ce chemin aussi
+import BottomMenu from "../BottomMenu"; // adapte ce chemin aussi^
+import TopMenu from '../TopMenu';
 
 export default function ActivitiesPage() {
   const { price: defitPrice, error } = useDefitPrice();
@@ -32,18 +33,7 @@ export default function ActivitiesPage() {
         <div className="background-image" />
         <div className="gradient-overlay" />
 
-	<header className="header">
-          <div className="logo">
-            <img src="/images/CAC.png" alt="Logo CAC" className="logo-icon" />
-            <h1 className="crypto-title">The Crypto Athletes Club</h1>
-          </div>
-
-          <nav className={`nav ${open ? "nav-open" : ""}`}>
-              <a href="/" onClick={() => setOpen(false)}>Accueil</a>
-            <a href="/activities" onClick={() => setOpen(false)}>Activités</a>
-            <a href="/divers" onClick={() => setOpen(false)}>Divers</a>
-          </nav>
-        </header>
+        <TopMenu />
 
         <main>
 <br/>
