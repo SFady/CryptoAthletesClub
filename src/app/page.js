@@ -104,7 +104,7 @@ export default function Home() {
               Prix actuel du <strong>DEFIT</strong> : <span>${defitPrice.toFixed(4)}</span>
             </p>
           )}
-          <p>Maj : {new Date(buildDate).toLocaleString()}</p>
+          <p>Maj : {buildDate ? new Date(buildDate).toLocaleString() : "Date inconnue"}</p>
 
           <br /><br /><br />
           <h2 className="ombre"><User size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
