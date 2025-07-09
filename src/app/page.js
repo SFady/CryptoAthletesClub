@@ -95,6 +95,16 @@ export default function Home() {
        <TopMenu />
 
         <main>
+
+          
+            <br></br>
+            <h2>Le système de mise à jour du niveau (gold, platinum etc ...) a été bloqué par defit. On garde les mêmes revenus pour le moment.</h2>
+            
+          <br></br>
+          
+
+
+
           {error ? (
             <p className="price-error">{error}</p>
           ) : defitPrice === null ? (
