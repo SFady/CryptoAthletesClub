@@ -113,7 +113,7 @@ export default function Home() {
             <p className="defit-price" style={{ marginTop: "20px" }}>
               Prix actuel du <strong>DEFIT</strong> : 
               <span>
-                {typeof defitPrice === 'number' ? `$${defitPrice.toFixed(4)}` : "?"}
+                {typeof defitPrice === 'number' ? ` ${defitPrice.toFixed(4)} $` : "?"}
               </span>
             </p>
           )}
