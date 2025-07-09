@@ -98,7 +98,7 @@ export default function Home() {
 
           
             <br></br>
-            <h2>Le système de mise à jour du niveau (gold, platinum etc ...) a été bloqué par defit. On garde les mêmes revenus pour le moment.</h2>
+            <h2>Bone nouvelle : Le système de mise à jour du niveau (gold, platinum etc ...) en fonction du cours du Defit a été bloqué par Defit. On garde les mêmes revenus pour le moment.</h2>
             
           <br></br>
           
