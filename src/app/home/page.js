@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from "react";
 import { BarChart2, User } from "lucide-react";
-import { useDefitPrice } from "../useDefitPrice";
+import { useDefitPrice } from "../components/useDefitPrice";
 import { activities } from '../activities';
 
 export default function Home() {

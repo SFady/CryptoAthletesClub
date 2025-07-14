@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from "react";
 import { BarChart2 } from "lucide-react";
-import { useDefitPrice } from "../useDefitPrice"; // adapte le chemin selon ton arborescence
+import { useDefitPrice } from "../components/useDefitPrice"; // adapte le chemin selon ton arborescence
 import { activities } from "../activities";
 
 export default function ActivitiesPage() {

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useCryptoPrices } from "../useCryptoPrices"; // adjust path
+import { useCryptoPrices } from "../components/useCryptoPrices"; // adjust path
 
 export default function ProfilePage() {
   const { prices, error, tokenMap } = useCryptoPrices();
