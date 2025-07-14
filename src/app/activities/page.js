@@ -9,8 +9,6 @@ import { useState, useEffect } from "react";
 import { BarChart2 } from "lucide-react";
 import { useDefitPrice } from "../useDefitPrice"; // adapte le chemin selon ton arborescence
 import { activities } from "../activities";
-import BottomMenu from "../BottomMenu"; // adapte ce chemin aussi^
-import TopMenu from '../TopMenu';
 
 export default function ActivitiesPage() {
   const { price: defitPrice, error } = useDefitPrice();

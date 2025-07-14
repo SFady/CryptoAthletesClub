@@ -8,8 +8,6 @@
 import { useState, useEffect } from "react";
 import { BarChart2, User } from "lucide-react";
 import { useDefitPrice } from "../useDefitPrice";
-import BottomMenu from '../BottomMenu';
-import TopMenu from '../TopMenu';
 import { activities } from '../activities';
 
 export default function Home() {
