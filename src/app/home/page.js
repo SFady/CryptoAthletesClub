@@ -126,7 +126,7 @@ export default function Home() {
   Maj : {buildDate ? new Date(buildDate).toLocaleString() : "Date inconnue"}
 </p>
 
-          <br /><br /><br />
+          <br />
           <h2 className="ombre"><User size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
 
           <section className="utilisateurs-section">
@@ -168,7 +168,7 @@ export default function Home() {
           </section>
 
 
-	<br /><br /><br />
+	<br /><br />
           <h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '5px', verticalAlign: 'middle' }} />Classement</h2>
 	<br/>
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>

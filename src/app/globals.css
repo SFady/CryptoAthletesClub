@@ -58,6 +58,7 @@ html, body {
   padding: 1rem 2rem;
   z-index: 1000;
   border-bottom: 1px solid rgba(255 255 255 / 0.1);
+  height: 75px;
 }
 
 .logo {
@@ -170,7 +171,7 @@ html, body {
   }
 
   main {
-    padding-top: 140px !important;/* ajuste si ton header est plus ou moins haut */
+    padding-top: 110px !important;/* ajuste si ton header est plus ou moins haut */
   }
 }
 
