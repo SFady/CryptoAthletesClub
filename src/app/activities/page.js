@@ -43,7 +43,6 @@ export default function ActivitiesPage() {
             <BarChart2 size={20} style={{ marginRight: "3px", verticalAlign: "middle", marginBottom: "-1px" }} />
             <span>Liste des activités</span>
           </h2>
-          <br />
           <div style={{ marginBottom: "1rem", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
             {uniqueUsers.map((user) => (
               <button key={user} onClick={() => setUserFilter(user)} className={`filter-button ${userFilter === user ? "active" : ""}`}>

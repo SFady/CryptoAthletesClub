@@ -170,7 +170,7 @@ export default function Home() {
 
 	<br /><br />
           <h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '5px', verticalAlign: 'middle' }} />Classement</h2>
-	<br/>
+	{/* <br/> */}
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
             {["annee", "mois", "semaine"].map(p => (
               <button key={p} onClick={() => setPeriode(p)} className={`filter-button ${periode === p ? 'active' : ''}`}>
