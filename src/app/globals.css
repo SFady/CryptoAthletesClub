@@ -176,7 +176,7 @@ html, body {
 
 /* MAIN content */
 main {
-  padding-top: 160px !important;/* augmenter si nécessaire */
+  padding-top: 120px;/* augmenter si nécessaire */
   padding-left: 20px;
   padding-right: 20px;
   padding-bottom: 80px;
