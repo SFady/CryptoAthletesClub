@@ -7,7 +7,6 @@ export function useDefitPrice() {
   useEffect(() => {
     async function fetchPrice() {
       try {
-        console.log("API Key:", process.env.NEXT_PUBLIC_COINGECKO_API_KEY);
         const res = await fetch(
           "https://api.coingecko.com/api/v3/simple/token_price/polygon-pos?contract_addresses=0x428360b02c1269bc1c79fbc399ad31d58c1e8fda&vs_currencies=usd",
           {
