@@ -1,5 +1,7 @@
+// app/layout.js
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import LayoutClient from "./components/LayoutClient"; // <-- wrapper with usePathname
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,14 +16,18 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "The Crypto Athletes Club",
   description: "Sport for Crypto",
-  manifest: '/manifest.json',
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="static-class">
-        {children}
+      <body>
+      <div className="background-image" />
+        <div className="gradient-overlay" />
+        <main>
+          <LayoutClient>{children}</LayoutClient>
+        </main>
       </body>
     </html>
   );

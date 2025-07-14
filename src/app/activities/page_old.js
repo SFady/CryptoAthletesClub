@@ -1,7 +1,3 @@
-// export default function ActivitiesPage() {
-//   return <p><br />Voici les activités</p>;
-// }
-
 // /app/activities/page.jsx
 "use client";
 
@@ -33,12 +29,15 @@ export default function ActivitiesPage() {
 
   return (
     <>
-      
+      <div className="container">
+        <div className="background-image" />
+        <div className="gradient-overlay" />
 
+        <TopMenu />
 
-      
-{/* <br/>
-<br/> */}
+        <main>
+<br/>
+<br/>
           <h2 className="ombre">
             <BarChart2 size={20} style={{ marginRight: "3px", verticalAlign: "middle", marginBottom: "-1px" }} />
             <span>Liste des activités</span>
@@ -86,10 +85,10 @@ export default function ActivitiesPage() {
               </table>
             )}
           </section>
-     
+        </main>
 
-     
-     
+        <BottomMenu />
+      </div>
     </>
   );
 }

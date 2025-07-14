@@ -1,11 +1,16 @@
+// export default function ActivitiesPage() {
+//   return <p><br />Voici la home</p>;
+// }
+
+
 "use client";
 
 import { useState, useEffect } from "react";
 import { BarChart2, User } from "lucide-react";
-import { useDefitPrice } from "./useDefitPrice";
-import BottomMenu from './BottomMenu';
-import TopMenu from './TopMenu';
-import { activities } from './activities';
+import { useDefitPrice } from "../useDefitPrice";
+import BottomMenu from '../BottomMenu';
+import TopMenu from '../TopMenu';
+import { activities } from '../activities';
 
 export default function Home() {
   const buildDate = process.env.BUILD_DATE;
@@ -88,36 +93,38 @@ export default function Home() {
 
   return (
     <>
-      <div className="container">
-        <div className="background-image" />
-        <div className="gradient-overlay" />
+      {/* <div className="container"> */}
+        {/* <div className="background-image" />
+        <div className="gradient-overlay" /> */}
 
-       <TopMenu />
+      
 
-        <main>
+      
 
           
             {/* <br></br>
             <h2>Bonne nouvelle : Le système de mise à jour du niveau (gold, platinum etc ...) en fonction du cours du Defit a été bloqué par Defit. On garde les mêmes revenus pour le moment.</h2> */}
             
-          <br></br>
+          {/* <br></br> */}
           
 
 
 
           {error ? (
-            <p className="price-error">{error}</p>
-          ) : defitPrice === null ? (
-            <p className="price-loading">Chargement...</p>
-          ) : (
-            <p className="defit-price" style={{ marginTop: "20px" }}>
-              Prix actuel du <strong>DEFIT</strong> : 
-              <span>
-                {typeof defitPrice === 'number' ? ` ${defitPrice.toFixed(4)} $` : "?"}
-              </span>
-            </p>
-          )}
-          <p>Maj : {buildDate ? new Date(buildDate).toLocaleString() : "Date inconnue"}</p>
+  <p className="price-error" style={{ marginBottom: 0 }}>{error}</p>
+) : defitPrice === null ? (
+  <p className="price-loading" style={{ marginBottom: 0 }}>Chargement...</p>
+) : (
+  <p className="defit-price" style={{ marginTop: "20px", marginBottom: 0 }}>
+    Prix actuel du <strong>DEFIT</strong> : 
+    <span>
+      {typeof defitPrice === 'number' ? ` ${defitPrice.toFixed(4)} $` : "?"}
+    </span>
+  </p>
+)}
+<p style={{ marginTop: 2 }}>
+  Maj : {buildDate ? new Date(buildDate).toLocaleString() : "Date inconnue"}
+</p>
 
           <br /><br /><br />
           <h2 className="ombre"><User size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
@@ -199,9 +206,9 @@ export default function Home() {
 
 
           
-        </main>
-        <BottomMenu />
-      </div>
+        
+  
+      {/* </div> */}
 
     </>
   );
