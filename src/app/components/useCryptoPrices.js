@@ -15,7 +15,12 @@ export function useCryptoPrices() {
     async function fetchPrices() {
       try {
         const res = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${Object.keys(TOKEN_IDS).join(",")}&vs_currencies=usd`
+          `https://api.coingecko.com/api/v3/simple/price?ids=${Object.keys(TOKEN_IDS).join(",")}&vs_currencies=usd`,
+          {
+            headers: {
+              "x-cg-demo-api-key": process.env.NEXT_PUBLIC_COINGECKO_API_KEY,
+            },
+          }
         );
         const data = await res.json();
 
