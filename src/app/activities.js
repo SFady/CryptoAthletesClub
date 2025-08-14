@@ -1,4 +1,5 @@
 export const activities = [
+{ id: 264, date: "14/08/2025", utilisateur: "Usopp", activite: "Running", defit: 93.37, participation: "100%", defitnet: 93.37, km: 13.80 },
 { id: 263, date: "13/08/2025", utilisateur: "Nico_Robin", activite: "Running", defit: 83.6, participation: "50%", defitnet: 41.80, km: 8.70 },
 { id: 262, date: "12/08/2025", utilisateur: "Usopp", activite: "Running", defit: 33.29, participation: "100%", defitnet: 33.29, km: 9.60 },
 { id: 261, date: "12/08/2025", utilisateur: "Nico_Robin", activite: "Running", defit: 91.94, participation: "50%", defitnet: 45.97, km: 13.60 },
