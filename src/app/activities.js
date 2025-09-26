@@ -1,7 +1,8 @@
 export const activities = [
-{ id: 287, date: "25/09/2025", utilisateur: "Nico_Robin", activite: "Marche", defit: 52.72, participation: "50%", defitnet: 26.36, km: 13.00 },
-{ id: 286, date: "24/09/2025", utilisateur: "Usopp", activite: "Running", defit: 141.81, participation: "100%", defitnet: 141.81, km: 12.20 },
-{ id: 285, date: "23/09/2025", utilisateur: "Nico_Robin", activite: "Running", defit: 223.71, participation: "50%", defitnet: 111.86, km: 16.40 },
+{ id: 288, date: "25/09/2025", utilisateur: "Nico_Robin", activite: "Marche", defit: 52.72, participation: "50%", defitnet: 26.36, km: 13.00 },
+{ id: 287, date: "24/09/2025", utilisateur: "Usopp", activite: "Running", defit: 141.81, participation: "100%", defitnet: 141.81, km: 12.20 },
+{ id: 286, date: "23/09/2025", utilisateur: "Nico_Robin", activite: "Running", defit: 223.71, participation: "50%", defitnet: 111.86, km: 16.40 },
+{ id: 285, date: "21/09/2025", utilisateur: "Nico_Robin", activite: "Marche", defit: 52.83, participation: "50%", defitnet: 26.42, km: 6.60 },
 { id: 284, date: "21/09/2025", utilisateur: "Usopp", activite: "Running", defit: 185.43, participation: "100%", defitnet: 185.43, km: 16.50 },
 { id: 283, date: "20/09/2025", utilisateur: "Nico_Robin", activite: "Running", defit: 226.27, participation: "50%", defitnet: 113.14, km: 13.70 },
 { id: 282, date: "18/09/2025", utilisateur: "Usopp", activite: "Running", defit: 82.41, participation: "100%", defitnet: 82.41, km: 15.40 },
