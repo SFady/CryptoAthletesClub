@@ -134,6 +134,8 @@ export default function Home() {
                   <th>Utilisateur</th>
                   <th>Defit</th>
                   <th>Dollars $</th>
+                  <th>BTC</th>
+                  <th>EURC (5% interets)</th>
                 </tr>
               </thead>
               <tbody>
@@ -158,6 +160,8 @@ export default function Home() {
                             }).replace(",", " ")
                           : "?"}
                       </td>
+                      <td>0</td>
+                      <td>0</td>
                     </tr>
                   );
                 })}
