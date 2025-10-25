@@ -135,7 +135,7 @@ export default function Home() {
                   <th>Defit</th>
                   <th>Dollars $</th>
                   <th>BTC</th>
-                  <th>EURC (5% interets)</th>
+                  <th>EURC (TAEG 5%)</th>
                 </tr>
               </thead>
               <tbody>
