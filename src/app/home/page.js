@@ -135,7 +135,7 @@ export default function Home() {
                   <th>Defit</th>
                   <th>Dollars $</th>
                   <th>BTC</th>
-                  <th>EURC<br/>(Tx 5%)</th>
+                  {/* <th>EURC<br/>(Tx 5%)</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -161,7 +161,7 @@ export default function Home() {
                           : "?"}
                       </td>
                       <td>0</td>
-                      <td>0</td>
+                      {/* <td>0</td> */}
                     </tr>
                   );
                 })}
