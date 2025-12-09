@@ -135,20 +135,26 @@ export default function Home() {
                 <tr>
                   <th>Utilisateur</th>
                   <th>Defit</th>
-                  <th>Dollars $</th>
-                  <th>BTC</th>
+                  <th>En $</th>
+                  <th>$ dispo</th>
                   {/* <th>EURC<br/>(Tx 5%)</th> */}
                 </tr>
               </thead>
               <tbody>
                 {users.map(({ id, name }) => {
                   const defit = defitSums[name] || 0;
+                  const defitSold = {
+                    1: 12442.23,
+                    2: 2016.95,
+                    3: 45.88,
+                    4: 38.95,
+                  };
                   return (
                     <tr key={id}>
                       <td>{name}</td>
                       <td>
                         {typeof defit === "number"
-                          ? defit.toLocaleString("en-US", {
+                          ? (defit).toLocaleString("en-US", {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
                             }).replace(",", " ")
@@ -156,13 +162,33 @@ export default function Home() {
                       </td>
                       <td>
                         {typeof defitPrice === "number" && typeof defit === "number"
-                          ? (defit * defitPrice).toLocaleString("en-US", {
+                          ? ((defit-defitSold[id]) * defitPrice).toLocaleString("en-US", {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
                             }).replace(",", " ")
                           : "?"}
                       </td>
-                      <td>0</td>
+                      <td>{id === 1
+                        ? 444.60.toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).replace(",", " ")
+                        : id === 2
+                        ? 72.07.toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).replace(",", " ")
+                        : id === 3
+                        ? 1.64.toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).replace(",", " ")
+                        : id === 4
+                        ? 1.39.toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).replace(",", " ")
+                        : 0}</td>
                       {/* <td>0</td> */}
                     </tr>
                   );
