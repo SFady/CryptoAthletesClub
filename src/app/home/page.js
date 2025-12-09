@@ -154,7 +154,7 @@ export default function Home() {
                       <td>{name}</td>
                       <td>
                         {typeof defit === "number"
-                          ? (defit).toLocaleString("en-US", {
+                          ? (defit-defitSold[id]).toLocaleString("en-US", {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
                             }).replace(",", " ")
