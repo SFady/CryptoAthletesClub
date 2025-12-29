@@ -39,18 +39,18 @@ export default function Home() {
   const filteredActivities = activities.filter(a => userFilter === "Tous" || a.utilisateur === userFilter);
 
   // Lire la dernière sélection depuis localStorage au montage
-	useEffect(() => {
-	  const savedFilter = localStorage.getItem("userFilter");
-	  if (savedFilter) setUserFilter(savedFilter);
-	}, []);
+  useEffect(() => {
+    const savedFilter = localStorage.getItem("userFilter");
+    if (savedFilter) setUserFilter(savedFilter);
+  }, []);
 
   // Sauvegarder dans localStorage dès que userFilter change
-	useEffect(() => {
-	  localStorage.setItem("userFilter", userFilter);
-	}, [userFilter]);  
-	
+  useEffect(() => {
+    localStorage.setItem("userFilter", userFilter);
+  }, [userFilter]);
+
   const [periode, setPeriode] = useState("annee");
-  
+
   // 🔁 Lire le filtre depuis localStorage au montage
   useEffect(() => {
     const savedPeriode = localStorage.getItem("periodFilter");
@@ -94,150 +94,158 @@ export default function Home() {
   return (
     <>
       {/* <div className="container"> */}
-        {/* <div className="background-image" />
+      {/* <div className="background-image" />
         <div className="gradient-overlay" /> */}
 
-      
 
-      
 
-          
-            {/* <br></br>
+
+
+
+      {/* <br></br>
             <h2>Bonne nouvelle : Le système de mise à jour du niveau (gold, platinum etc ...) en fonction du cours du Defit a été bloqué par Defit. On garde les mêmes revenus pour le moment.</h2> */}
-            
-          {/* <br></br> */}
-          
+
+      {/* <br></br> */}
 
 
 
-          {error ? (
-  <p className="price-error" style={{ marginBottom: 0 }}>{error}</p>
-) : defitPrice === null ? (
-  <p className="price-loading" style={{ marginBottom: 0 }}>Chargement...</p>
-) : (
-  <p className="defit-price" style={{ marginTop: "20px", marginBottom: 0 }}>
-    Prix actuel du <strong>DEFIT</strong> : 
-    <span>
-      {typeof defitPrice === 'number' ? ` ${defitPrice.toFixed(4)} $` : "?"}
-    </span>
-  </p>
-)}
-<p style={{ marginTop: 2 }}>
-  Maj : {buildDate ? new Date(buildDate).toLocaleString() : "Date inconnue"}
-</p>
 
-          <br />
-          <h2 className="ombre"><User size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
+      {error ? (
+        <p className="price-error" style={{ marginBottom: 0 }}>{error}</p>
+      ) : defitPrice === null ? (
+        <p className="price-loading" style={{ marginBottom: 0 }}>Chargement...</p>
+      ) : (
+        <p className="defit-price" style={{ marginTop: "20px", marginBottom: 0 }}>
+          Prix actuel du <strong>DEFIT</strong> :
+          <span>
+            {typeof defitPrice === 'number' ? ` ${defitPrice.toFixed(4)} $` : "?"}
+          </span>
+        </p>
+      )}
+      <p style={{ marginTop: 2 }}>
+        Maj : {buildDate ? new Date(buildDate).toLocaleString() : "Date inconnue"}
+      </p>
 
-          <section className="utilisateurs-section">
-            <table>
-              <thead>
-                <tr>
-                  <th>Utilisateur</th>
-                  <th>Defit</th>
-                  <th>En $</th>
-                  <th>$ dispo</th>
-                  {/* <th>EURC<br/>(Tx 5%)</th> */}
-                </tr>
-              </thead>
-              <tbody>
-                {users.map(({ id, name }) => {
-                  const defit = defitSums[name] || 0;
-                  const defitSold = {
-                    1: 12442.23,
-                    2: 2016.95,
-                    3: 45.88,
-                    4: 38.95,
-                  };
-                  return (
-                    <tr key={id}>
-                      <td>{name}</td>
-                      <td>
-                        {typeof defit === "number"
-                          ? (defit-defitSold[id]).toLocaleString("en-US", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }).replace(",", " ")
-                          : "?"}
-                      </td>
-                      <td>
-                        {typeof defitPrice === "number" && typeof defit === "number"
-                          ? ((defit-defitSold[id]) * defitPrice).toLocaleString("en-US", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }).replace(",", " ")
-                          : "?"}
-                      </td>
-                      <td>{id === 1
-                        ? 444.60.toLocaleString("en-US", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }).replace(",", " ")
-                        : id === 2
-                        ? 72.07.toLocaleString("en-US", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }).replace(",", " ")
-                        : id === 3
-                        ? 1.64.toLocaleString("en-US", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }).replace(",", " ")
+      <br />
+      <h2 className="ombre"><User size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
+
+      <section className="utilisateurs-section">
+        <table>
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Defit</th>
+              <th>En $</th>
+              <th>$ dispo</th>
+              {/* <th>EURC<br/>(Tx 5%)</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {users.map(({ id, name }) => {
+              const defit = defitSums[name] || 0;
+              const defitSold = {
+                1: 25966.64,
+                2: 4734.42,
+                3: 91.76,
+                4: 120.08,
+              };
+              return (
+                <tr key={id}>
+                  <td>{name}</td>
+                  <td>
+                    {typeof defit === "number"
+                      ? Math.abs(defit - defitSold[id]) < 0.005
+                        ? "0.00"
+                        : (defit - defitSold[id])
+                          .toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })
+                          .replace(",", " ")
+                      : "?"}
+                  </td>
+                  <td>
+                    {typeof defit === "number"
+                      ? Math.abs(defit - defitSold[id]) < 0.005
+                        ? "0.00"
+                        : (defit - defitSold[id])
+                          .toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })
+                          .replace(",", " ")
+                      : "?"}
+                  </td>
+                  <td>{id === 1
+                    ? 774.89.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).replace(",", " ")
+                    : id === 2
+                      ? 140.00.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).replace(",", " ")
+                      : id === 3
+                        ? 2.76.toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }).replace(",", " ")
                         : id === 4
-                        ? 1.39.toLocaleString("en-US", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }).replace(",", " ")
-                        : 0}</td>
-                      {/* <td>0</td> */}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </section>
-
-
-	<br /><br />
-          <h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '5px', verticalAlign: 'middle' }} />Classement</h2>
-	{/* <br/> */}
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-            {["annee", "mois", "semaine"].map(p => (
-              <button key={p} onClick={() => setPeriode(p)} className={`filter-button ${periode === p ? 'active' : ''}`}>
-                {p === 'annee' ? 'Année' : p === 'mois' ? 'Mois' : 'Semaine'}
-              </button>
-            ))}
-          </div>
-
-          <section className="activities-section">
-            <table>
-              <thead>
-                <tr>
-                  <th>Place</th>
-		  <th>Utilisateur</th>
-                  <th>Kilomètres</th>
+                          ? 3.37.toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).replace(",", " ")
+                          : 0}</td>
+                  {/* <td>0</td> */}
                 </tr>
-              </thead>
-              <tbody>
-{Object.entries(kmParUtilisateur)
-  .sort((a, b) => b[1] - a[1])
-  .map(([utilisateur, km], index) => (
-    <tr key={utilisateur}>
-      <td>{index+1}</td>
-      <td>{utilisateur}</td>
-      <td>{km.toFixed(2)}</td>
-    </tr>
-))}
-              </tbody>
-            </table>
-          </section>
+              );
+            })}
+          </tbody>
+        </table>
+      </section>
+
+
+      <br /><br />
+      <h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '5px', verticalAlign: 'middle' }} />Classement</h2>
+      {/* <br/> */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        {["annee", "mois", "semaine"].map(p => (
+          <button key={p} onClick={() => setPeriode(p)} className={`filter-button ${periode === p ? 'active' : ''}`}>
+            {p === 'annee' ? 'Année' : p === 'mois' ? 'Mois' : 'Semaine'}
+          </button>
+        ))}
+      </div>
+
+      <section className="activities-section">
+        <table>
+          <thead>
+            <tr>
+              <th>Place</th>
+              <th>Utilisateur</th>
+              <th>Kilomètres</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(kmParUtilisateur)
+              .sort((a, b) => b[1] - a[1])
+              .map(([utilisateur, km], index) => (
+                <tr key={utilisateur}>
+                  <td>{index + 1}</td>
+                  <td>{utilisateur}</td>
+                  <td>{km.toFixed(2)}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </section>
 
 
 
 
-          
-        
-  
+
+
+
       {/* </div> */}
 
     </>
