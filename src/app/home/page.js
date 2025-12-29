@@ -166,9 +166,9 @@ export default function Home() {
                   </td>
                   <td>
                     {typeof defit === "number"
-                      ? Math.abs(defit - defitSold[id]) < 0.005
+                      ? Math.abs((defit-defitSold[id]) * defitPrice) < 0.005
                         ? "0.00"
-                        : (defit - defitSold[id])
+                        : ((defit-defitSold[id]) * defitPrice)
                           .toLocaleString("en-US", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
