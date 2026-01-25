@@ -1,0 +1,5 @@
+{
+  "/api/get-user-defit-amount/route": "app/api/get-user-defit-amount/route.js",
+  "/home/page": "app/home/page.js",
+  "/page": "app/page.js"
+}

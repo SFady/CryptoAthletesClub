@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///c:/Users/BMenez/Documents/Site/testsfy/src/app/page.js"],"sourcesContent":["\"use client\"; // must be client-side\r\nimport { useEffect } from \"react\";\r\n\r\nexport default function RootPage() {\r\n  useEffect(() => {\r\n    window.location.href = `/home`;\r\n  }, []);\r\n}\r\n"],"names":[],"mappings":";;;;AACA;AADA,cAAc,sBAAsB;;AAGrB,SAAS;IACtB,IAAA,kNAAS,EAAC;QACR,OAAO,QAAQ,CAAC,IAAI,GAAG,CAAC,KAAK,CAAC;IAChC,GAAG,EAAE;AACP"}}]
+}

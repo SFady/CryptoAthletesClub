@@ -1,0 +1,3 @@
+{
+  "/api/get-users-activities/route": "app/api/get-users-activities/route.js"
+}

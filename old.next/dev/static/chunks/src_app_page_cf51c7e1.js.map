@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["c:/Users/BMenez/Documents/Site/testsfy/src/app/page.js"],"sourcesContent":["\"use client\"; // must be client-side\r\nimport { useEffect } from \"react\";\r\n\r\nexport default function RootPage() {\r\n  useEffect(() => {\r\n    window.location.href = `/home`;\r\n  }, []);\r\n}\r\n"],"names":["c","_c","useEffect","RootPage","$","$i","Symbol","for","t0","_RootPageUseEffect","window","location","href"],"mappings":";;;;AAAc,sBAAA;AAAA,SAAAA,CAAA,IAAAC,EAAA;AACd,SAASC,SAAS,QAAQ,OAAO;;AADjC,YAAY;;;AAGG;;IAAA,MAAAE,CAAA,OAAAH,gLAAA,EAAA;IAAA,IAAAG,CAAA,CAAA,EAAA,KAAA,oEAAA;QAAA,IAAA,IAAAC,EAAA,GAAA,GAAAA,EAAA,GAAA,GAAAA,EAAA,IAAA,EAAA;YAAAD,CAAA,CAAAC,EAAA,CAAA,GAAAC,MAAA,CAAAC,GAAA,CAAA;QAAA;QAAAH,CAAA,CAAA,EAAA,GAAA;IAAA;IAAA,IAAAI,EAAA;IAAA,IAAAJ,CAAA,CAAA,EAAA,KAAAE,MAAA,CAAAC,GAAA,CAAA,8BAAA;QAGVC,EAAA,GAAA,EAAE;QAAAJ,CAAA,CAAA,EAAA,GAAAI,EAAA;IAAA,OAAA;QAAAA,EAAA,GAAAJ,CAAA,CAAA,EAAA;IAAA;IAFLF,8KAAS,EAACO,kBAET,EAAED,EAAE,CAAC;AAAA;;KAHOL,SAAA;AAAA,SAAAM,mBAAA;IAEXC,MAAM,CAAAC,QAAS,CAAAC,IAAA,GAAQ,OAAH;AAAA","ignoreList":[]}}]
+}

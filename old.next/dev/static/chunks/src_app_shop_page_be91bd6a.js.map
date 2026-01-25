@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["C:/Users/BMenez/Documents/Site/testsfy/src/app/shop/page.js"],"sourcesContent":["\"use client\";\r\n\r\nimport Image from \"next/image\";\r\nimport { useEffect, useState } from \"react\";\r\n\r\nexport default function Home() {\r\n\r\n  return (\r\n    <main className=\"flex flex-col items-center pt-24 px-6 md:px-16 w-full h-full\">\r\n      Boutique\r\n    </main>\r\n  );\r\n}\r\n"],"names":["c","_c","Image","useEffect","useState","Home","$","$i","Symbol","for","t0"],"mappings":";;;;;AAAa,SAAAA,CAAA,IAAAC,EAAA;AAEb,OAAOC,KAAK,MAAM,YAAY;AAC9B,SAASC,SAAS,EAAEC,QAAQ,QAAQ,OAAO;AAH3C,YAAY;;;;;AAKG;IAAA,MAAAE,CAAA,OAAAL,gLAAA,EAAA;IAAA,IAAAK,CAAA,CAAA,EAAA,KAAA,oEAAA;QAAA,IAAA,IAAAC,EAAA,GAAA,GAAAA,EAAA,GAAA,GAAAA,EAAA,IAAA,EAAA;YAAAD,CAAA,CAAAC,EAAA,CAAA,GAAAC,MAAA,CAAAC,GAAA,CAAA;QAAA;QAAAH,CAAA,CAAA,EAAA,GAAA;IAAA;IAAA,IAAAI,EAAA;IAAA,IAAAJ,CAAA,CAAA,EAAA,KAAAE,MAAA,CAAAC,GAAA,CAAA,8BAAA;QAGXC,EAAA,iBAAA,6LAAA,IAEO;YAFS,SAA8D,EAA9D,8DAA8D;sBAAC,QAE/E,EAFA,IAEO;;;;;;QAAAJ,CAAA,CAAA,EAAA,GAAAI,EAAA;IAAA,OAAA;QAAAA,EAAA,GAAAJ,CAAA,CAAA,EAAA;IAAA;IAAA,OAFPI,EAEO;AAAA;KALIL,KAAA","ignoreList":[]}}]
+}

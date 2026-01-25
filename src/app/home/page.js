@@ -1,253 +1,242 @@
-// export default function ActivitiesPage() {
-//   return <p><br />Voici la home</p>;
-// }
-
-
 "use client";
 
-import { useState, useEffect } from "react";
-import { BarChart2, User } from "lucide-react";
-import { useDefitPrice } from "../components/useDefitPrice";
-import { activities } from '../activities';
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 
 export default function Home() {
-  const buildDate = process.env.BUILD_DATE;
-  const [open, setOpen] = useState(false);
+
+  const [defitAmount, setDefitAmount] = useState(0);
+  const [dollarAmount, setDollarAmount] = useState(0);
+  const [user_liquidity, setUserLiquidity] = useState(0);
+
+  const [selected, setSelected] = useState("1");
+
   const { price: defitPrice, error } = useDefitPrice();
 
-  const users = [
-    { id: 1, name: "Usopp", defit: 0 },
-    { id: 2, name: "Nico_Robin", defit: 0 },
-    { id: 3, name: "DTeach", defit: 0 },
-    { id: 4, name: "Jinbe", defit: 0 },
+  const fetchDefitAmount = async (athleteId) => {
+    try {
+      const res = await fetch(`/api/get-user-defit-amount?id=${athleteId}`);
+      const data = await res.json();
+      setDefitAmount(Number(data.defits) ?? 0);
+      setDollarAmount(Number(data.dollars) ?? 0);
+      setUserLiquidity(Number(data.user_liquidity) ?? 0);
+    } catch (error) {
+      console.error("Erreur fetch DEFIT:", error);
+    }
+  };
 
-  ];
-
-  function sommeDefiNetParUtilisateur(defis) {
-    return defis.reduce((acc, { utilisateur, defitnet }) => {
-      acc[utilisateur] = (acc[utilisateur] || 0) + defitnet;
-      return acc;
-    }, {});
-  }
-
-  const defitSums = sommeDefiNetParUtilisateur(activities);
-
-  const uniqueUsers = ["Tous", ...new Set(activities.map(a => a.utilisateur))];
-
-
-  const [userFilter, setUserFilter] = useState("Tous");
-  const filteredActivities = activities.filter(a => userFilter === "Tous" || a.utilisateur === userFilter);
-
-  // Lire la dernière sélection depuis localStorage au montage
   useEffect(() => {
-    const savedFilter = localStorage.getItem("userFilter");
-    if (savedFilter) setUserFilter(savedFilter);
+    const stored = localStorage.getItem("selectedAthlete");
+    const finalId = stored || "1";
+    setSelected(finalId);
+    if (!stored) localStorage.setItem("selectedAthlete", finalId);
+
+    fetchDefitAmount(finalId);
   }, []);
 
-  // Sauvegarder dans localStorage dès que userFilter change
-  useEffect(() => {
-    localStorage.setItem("userFilter", userFilter);
-  }, [userFilter]);
+  const handleSelect = (e) => {
+    const id = e.target.value;
+    setSelected(id);
+    localStorage.setItem("selectedAthlete", id);
+    fetchDefitAmount(id);
+  };
 
-  const [periode, setPeriode] = useState("annee");
+  // Liste des éléments du tableau
+  const rows = ["T-Shirt", "Short", "Chaussettes", "Chaussures", "Montre", "Personnage"];
 
-  // 🔁 Lire le filtre depuis localStorage au montage
-  useEffect(() => {
-    const savedPeriode = localStorage.getItem("periodFilter");
-    if (savedPeriode) setPeriode(savedPeriode);
-  }, []);
+  // Valeurs pour chaque ID (1 à 4)
+  const dataBySelected = {
+    "1": {
+      "T-Shirt": ["A", "0"],
+      "Short": ["A", "0"],
+      "Chaussettes": ["A", "0"],
+      "Chaussures": ["A", "0"],
+      "Montre": ["A", "0"],
+      "Personnage": ["A", "0"],
+    },
+    "2": {
+      "T-Shirt": [,],
+      "Short": [,],
+      "Chaussettes": [,],
+      "Chaussures": [,],
+      "Montre": [,],
+      "Personnage": [,],
+    },
+    "3": {
+      "T-Shirt": ["A", "0"],
+      "Short": [,],
+      "Chaussettes": ["A", "0"],
+      "Chaussures": [,],
+      "Montre": [,],
+      "Personnage": [,],
+    },
+    "4": {
+      "T-Shirt": [,],
+      "Short": [,],
+      "Chaussettes": [,],
+      "Chaussures": [,],
+      "Montre": [,],
+      "Personnage": [,],
+    },
+  };
 
-  // 💾 Enregistrer dans localStorage dès que ça change
-  useEffect(() => {
-    localStorage.setItem("periodFilter", periode);
-  }, [periode]);
-
-  function parseDateFR(str) {
-    const [jour, mois, annee] = str.split("/").map(Number);
-    return new Date(annee, mois - 1, jour);
-  }
-
-  function getWeekNumber(date) {
-    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-  }
-
-  function sommeKmParUtilisateur(activities, periodeType) {
-    const maintenant = new Date();
-    return activities.reduce((acc, { utilisateur, date, km = 0 }) => {
-      const d = parseDateFR(date);
-      const match =
-        (periodeType === "annee" && d.getFullYear() === maintenant.getFullYear()) ||
-        (periodeType === "mois" && d.getFullYear() === maintenant.getFullYear() && d.getMonth() === maintenant.getMonth()) ||
-        (periodeType === "semaine" && d.getFullYear() === maintenant.getFullYear() && getWeekNumber(d) === getWeekNumber(maintenant));
-      if (!match) return acc;
-      acc[utilisateur] = (acc[utilisateur] || 0) + km;
-      return acc;
-    }, {});
-  }
-
-  const kmParUtilisateur = sommeKmParUtilisateur(activities, periode);
 
   return (
-    <>
-      {/* <div className="container"> */}
-      {/* <div className="background-image" />
-        <div className="gradient-overlay" /> */}
+    <main className="relative w-full max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 md:pt-0 md:pb-0 min-h-[calc(100vh-96px)] overflow-y-auto md:overflow-visible">
 
-
-
-
-
-
-      {/* <br></br>
-            <h2>Bonne nouvelle : Le système de mise à jour du niveau (gold, platinum etc ...) en fonction du cours du Defit a été bloqué par Defit. On garde les mêmes revenus pour le moment.</h2> */}
-
-      {/* <br></br> */}
-
-
-
-
-      {error ? (
-        <p className="price-error" style={{ marginBottom: 0 }}>{error}</p>
-      ) : defitPrice === null ? (
-        <p className="price-loading" style={{ marginBottom: 0 }}>Chargement...</p>
-      ) : (
-        <p className="defit-price" style={{ marginTop: "20px", marginBottom: 0 }}>
-          Prix actuel du <strong>DEFIT</strong> :
-          <span>
-            {typeof defitPrice === 'number' ? ` ${defitPrice.toFixed(4)} $` : "?"}
-          </span>
-        </p>
-      )}
-      <p style={{ marginTop: 2 }}>
-        Maj : {buildDate ? new Date(buildDate).toLocaleString() : "Date inconnue"}
-      </p>
-
-      <br />
-      <h2 className="ombre"><User size={20} style={{ marginRight: '3px', verticalAlign: 'middle', marginBottom: '3px' }} /><span>Utilisateurs</span></h2>
-
-      <section className="utilisateurs-section">
-        <table>
-          <thead>
-            <tr>
-              <th>Utilisateur</th>
-              <th>Defit</th>
-              <th>En $</th>
-              <th>$ dispo</th>
-              {/* <th>EURC<br/>(Tx 5%)</th> */}
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(({ id, name }) => {
-              const defit = defitSums[name] || 0;
-              const defitSold = {
-                1: 25966.64,
-                2: 4734.42,
-                3: 91.76,
-                4: 120.08,
-              };
-              return (
-                <tr key={id}>
-                  <td>{name}</td>
-                  <td>
-                    {typeof defit === "number"
-                      ? Math.abs(defit - defitSold[id]) < 0.005
-                        ? "0.00"
-                        : (defit - defitSold[id])
-                          .toLocaleString("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
-                          .replace(",", " ")
-                      : "?"}
-                  </td>
-                  <td>
-                    {typeof defit === "number"
-                      ? Math.abs((defit-defitSold[id]) * defitPrice) < 0.005
-                        ? "0.00"
-                        : ((defit-defitSold[id]) * defitPrice)
-                          .toLocaleString("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
-                          .replace(",", " ")
-                      : "?"}
-                  </td>
-                  <td>{id === 1
-                    ? 774.89.toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }).replace(",", " ")
-                    : id === 2
-                      ? 140.00.toLocaleString("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).replace(",", " ")
-                      : id === 3
-                        ? 2.76.toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }).replace(",", " ")
-                        : id === 4
-                          ? 3.37.toLocaleString("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).replace(",", " ")
-                          : 0}</td>
-                  {/* <td>0</td> */}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </section>
-
-
-      <br /><br />
-      <h2 className="ombre"><BarChart2 size={20} style={{ marginRight: '5px', verticalAlign: 'middle' }} />Classement</h2>
-      {/* <br/> */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-        {["annee", "mois", "semaine"].map(p => (
-          <button key={p} onClick={() => setPeriode(p)} className={`filter-button ${periode === p ? 'active' : ''}`}>
-            {p === 'annee' ? 'Année' : p === 'mois' ? 'Mois' : 'Semaine'}
-          </button>
-        ))}
+      {/* Sélecteur d’athlète centré au-dessus de l’image */}
+      <div className="flex justify-center mb-4 mt-2 md:mt-10">
+        <select
+          value={selected}
+          onChange={handleSelect}
+          className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20 
+               focus:outline-none focus:ring-2 focus:ring-white/30
+               md:px-4 md:py-2 md:text-base"
+        >
+          <option value="1" className="bg-[#8d6bf2] text-[#f3f0ff]">Usopp</option>
+          <option value="3" className="bg-[#8d6bf2] text-[#f3f0ff]">Nico Robin</option>
+          <option value="2" className="bg-[#8d6bf2] text-[#f3f0ff]">DTeach</option>
+          <option value="4" className="bg-[#8d6bf2] text-[#f3f0ff]">Jinbe</option>
+        </select>
       </div>
 
-      <section className="activities-section">
-        <table>
-          <thead>
-            <tr>
-              <th>Place</th>
-              <th>Utilisateur</th>
-              <th>Kilomètres</th>
-            </tr>
-          </thead>
+
+      <div className="flex justify-center items-start gap-2 mb-4">
+
+        {/* IMAGE À GAUCHE avec position relative */}
+        {/* <div className="rounded-2xl inline-block relative">
+          <Image
+            src="/images/runner_init2.png"
+            alt="Athlete"
+            width={200}
+            height={400}
+            loading="eager"
+          /> */}
+
+        {/* TRAIT partant du milieu horizontal de la tête */}
+        {/* <div
+            className="absolute bg-gray-600 h-px"
+            style={{
+              top: "20px",       // milieu de la tête
+              left: "50%",       // milieu horizontal de l'image
+              width: "80px"      // longueur du trait vers le texte
+            }}
+          /> */}
+        {/* </div> */}
+        <div className="rounded-2xl inline-block relative -ml-10">
+          <Image
+            src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
+            alt="Athlete"
+            width={200}
+            height={400}
+            loading="eager"
+          />
+        </div>
+
+        {/* TEXTE À DROITE, encore plus proche du trait */}
+        <div className="-ml-8 flex flex-col justify-start" style={{ marginTop: "50px" }}>
+          <table className="border-collapse text-center text-xs">
+            <thead>
+              <tr>
+                <th className="px-2 py-1">Element</th>
+                <th className="px-2 py-1">Classe</th>
+                <th className="px-2 py-1">Niveau</th>
+              </tr>
+            </thead>
+            {/* <tbody>
+              <tr>
+                <td className="px-2 py-1">T-Shirt</td>
+                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
+                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
+              </tr>
+              <tr>
+                <td className="px-2 py-1">Short</td>
+                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
+                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
+              </tr>
+              <tr>
+                <td className="px-2 py-1">Chaussettes</td>
+                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
+                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
+              </tr>
+              <tr>
+                <td className="px-2 py-1">Chaussures</td>
+                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
+                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
+              </tr>
+              <tr>
+                <td className="px-2 py-1">Montre</td>
+                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
+                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
+              </tr>
+              <tr>
+                <td className="px-2 py-1">Personnage</td>
+                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
+                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
+              </tr>
+            </tbody> */}
+            <tbody>
+              {rows.map((item) => {
+                const [col1 = "_", col2 = "_"] = dataBySelected[selected]?.[item] ?? ["_", "_"];
+                return (
+                  <tr key={item}>
+                    <td className="px-2 py-1">{item}</td>
+                    <td className="px-2 py-1">{col1}</td>
+                    <td className="px-2 py-1">{col2}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {/* <h3 className="text-sm leading-snug">Chaussures : Classe A / Niveau 0</h3> */}
+        </div>
+
+      </div>
+
+      {/* Tableau des stats */}
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 mb-6 w-full max-w-sm mx-auto">
+        <table className="w-full text-base">
           <tbody>
-            {Object.entries(kmParUtilisateur)
-              .sort((a, b) => b[1] - a[1])
-              .map(([utilisateur, km], index) => (
-                <tr key={utilisateur}>
-                  <td>{index + 1}</td>
-                  <td>{utilisateur}</td>
-                  <td>{km.toFixed(2)}</td>
-                </tr>
-              ))}
+            <tr className="border-b border-white/20">
+              <td className="py-3 px-2">DEFIT</td>
+              <td className="py-3 px-2 text-right font-semibold">
+                {Number(defitAmount * defitPrice)?.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }) + " $" ?? "..."}
+              </td>
+            </tr>
+            <tr className="border-b border-white/20">
+              <td className="py-3 px-2">Améliorations</td>
+              <td className="py-3 px-2 text-right font-semibold">
+                {Number(user_liquidity)?.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }).replace(",", " ") + " $" ?? "..."}
+              </td>
+            </tr>
+            <tr className="border-b border-white/20">
+              <td className="py-3 px-2">Disponible</td>
+              <td className="py-3 px-2 text-right font-semibold">
+                {Number(dollarAmount)?.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }).replace(",", " ") + " $" ?? "..."}
+              </td>
+            </tr>
+            <tr className="border-t-4 border-transparent text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
+              <td className="py-2 px-2 font-bold">TOTAL</td>
+              <td className="py-2 px-2 text-right font-semibold">
+                {Number((defitAmount * defitPrice) + dollarAmount + user_liquidity)?.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }).replace(",", " ") + " $" ?? "..."}
+              </td>
+            </tr>
           </tbody>
         </table>
-      </section>
-
-
-
-
-
-
-
-      {/* </div> */}
-
-    </>
+      </div>
+    </main>
   );
 }
