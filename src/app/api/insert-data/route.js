@@ -11,50 +11,57 @@ export async function POST(req) {
     //const [day, month, year] = rawDate.split("/");
     const date_claimed = rawDate
 
-    const defit_amount = formData.get("defit_amount");
+    const defit_amount = Number(formData.get("defit_amount"));
     const activity_type = formData.get("activity_type");
     const participation_percentage = formData.get("participation_percentage");
     const kilometers = formData.get("kilometers");
+    const current_liquidity = Number(formData.get("current_liquidity"));
+    const out_of_pool_usdc = formData.get("out_of_pool_usdc");
+    const pool_usdc = formData.get("pool_usdc");
 
-//     const activityResult = await sql`
-//   SELECT id FROM activity_type WHERE name = ${activityName} LIMIT 1;
-// `;
+    const [row1] = await sql`
+      SELECT sum(boost) as boost
+      FROM user_activities
+      WHERE boost_treated IS NULL
+      LIMIT 1;
+    `;
+    const distributed_fees=Number(row1?.boost ?? 0);
+    const available_fees = Number(out_of_pool_usdc) + Number(pool_usdc) - Number(distributed_fees)
 
-//     const activity_type = activityResult[0]?.id;
+    const [row2]  = await sql`
+      SELECT initial_liquidity
+      FROM liquidity
+      LIMIT 1;
+    `;
+    const initial_liquidity=Number(row2?.initial_liquidity ?? 0);
+    
+    const [row3]  = await sql`
+      SELECT initial_liquidity
+      FROM users
+      where id=${user_id}
+      LIMIT 1;
+    `;
+    const initial_user_liquidity=Number(row3?.initial_liquidity ?? 0);
+    
+    const liquidity_percentage=initial_user_liquidity/initial_liquidity;
+
+    const [row4]  = await sql`
+      SELECT max_defits
+      FROM users
+      where id=${user_id}
+      LIMIT 1;
+    `;
+    const max_defits=Number(row4?.max_defits ?? 0);
+    const defit_percentage=defit_amount/max_defits;
+
+    const boost=liquidity_percentage*defit_percentage*0.5*available_fees;
 
     const result = await sql`
-      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers) 
-        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers});
+      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, out_of_pool_usdc, pool_usdc) 
+        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${out_of_pool_usdc}, ${pool_usdc});
     `;
 
     return Response.json({ message: '✅ Insert OK', result: result[0] });
-
-    // get fees f
-    // Combien il en reste (-distributed)
-    // pourcentage liquidité pour joueur : p
-    // P2 : pourcentage par rapport au max defit
-    // P2 
-
-
-    // totalFees = formData.get("out_of_pool_usdc") + formData.get("usdc_fees") ;
-    // liquidity_start=top 1 liquidity_start from liquidity order by liquidity_start desc
-    // globalInitialLiquidity=top 1 initial_liquidity from liquidity order by liquidity_start desc
-    // upgradePercentage=top 1 upgradePercentage from liquidity order by liquidity_start desc
-    // distributedFees = sum(boost) where date_claimed>=liquidity_start 
-    // remainingFees = totalFees - distributedFees
-    // liquidityPercentage = users.initial_liquidity/globalInitialLiquidity
-    // defitPercentage = formData.get("defit_amount") / users.max_defits
-    // upgradeDollars=(liquidityPercentage*defitPercentage*remainingFees)*(upgradePercentage/100)
-    // boost=(liquidityPercentage*defitPercentage*remainingFees)-upgradeDollars
-
-    // ajouter boost dans user_activities
-    // ajouter aux dollars
-    // ajouter à upgradeDollars
-
-
-
-
-
 
   } catch (err) {
     console.error('❌ DB error:', err);
