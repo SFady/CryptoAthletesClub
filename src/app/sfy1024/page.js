@@ -60,6 +60,15 @@ export default function Sfy1024() {
 
         <input
           type="text"
+          name="current_liquidity"
+          placeholder="current_liquidity"
+          required
+          className="px-3 py-2 rounded text-black"
+        />
+
+
+        <input
+          type="text"
           name="out_of_pool_usdc"
           placeholder="out_of_pool_usdc"
           required
@@ -67,6 +76,14 @@ export default function Sfy1024() {
         />
 
         <input
+          type="text"
+          name="pool_usdc"
+          placeholder="pool_usdc"
+          required
+          className="px-3 py-2 rounded text-black"
+        />
+
+        {/* <input
           type="text"
           name="weth_liquidity"
           placeholder="weth_liquidity"
@@ -80,15 +97,9 @@ export default function Sfy1024() {
           placeholder="usdc_liquidity"
           required
           className="px-3 py-2 rounded text-black"
-        />
+        /> */}
 
-        <input
-          type="text"
-          name="usdc_fees"
-          placeholder="usdc_fees"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
+        
 
         <button
           type="submit"
