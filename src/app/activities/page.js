@@ -54,6 +54,7 @@ export default function Home() {
               <th className="py-3 px-4">Date</th>
               <th className="py-3 px-4">Athlete</th>
               <th className="py-3 px-4">Activité</th>
+              <th className="py-3 px-4">Effort</th>
               <th className="py-3 px-4">Gain brut (Defit)</th>
               <th className="py-3 px-4">Gain net Defit ($)</th>
               <th className="py-3 px-4">Boost ($)</th>
@@ -70,6 +71,7 @@ export default function Home() {
                   </td>
                   <td className="text-white py-3 px-4">{row.user_name}</td>
                   <td className="text-white py-3 px-4">{row.activity_name}</td>
+                  <td className="text-white py-3 px-4">XX %</td>
                   <td className="text-white py-3 px-4">{row.defit_amount}</td>
                   <td className="text-white py-3 px-4">{(row.defit_amount * row.participation_percentage * defitPrice / 100).toFixed(2)}</td>
                   <td className="text-white py-3 px-4">{Number(row.boost).toFixed(2)}</td>
