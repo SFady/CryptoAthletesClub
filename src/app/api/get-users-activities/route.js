@@ -16,7 +16,8 @@ export async function GET(req) {
           act.name as activity_name, 
           uac.defit_amount, 
           uac.participation_percentage,
-          uac.boost
+          uac.boost,
+          usr.max_defits
         from user_activities uac
         inner join users usr on uac.user_id = usr.id
         inner join activity_type act on uac.activity_type = act.id
@@ -31,7 +32,8 @@ export async function GET(req) {
           act.name as activity_name, 
           uac.defit_amount, 
           uac.participation_percentage,
-          uac.boost
+          uac.boost,
+          usr.max_defits
         from user_activities uac
         inner join users usr on uac.user_id = usr.id
         inner join activity_type act on uac.activity_type = act.id
