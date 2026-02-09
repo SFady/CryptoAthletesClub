@@ -60,17 +60,24 @@ export default function Sfy1024() {
 
         <input
           type="text"
+          name="out_of_pool_usdc"
+          placeholder="out_of_pool_usdc"
+          required
+          className="px-3 py-2 rounded text-black"
+        />
+
+        <input
+          type="text"
           name="current_liquidity"
           placeholder="current_liquidity"
           required
           className="px-3 py-2 rounded text-black"
         />
 
-
         <input
           type="text"
-          name="out_of_pool_usdc"
-          placeholder="out_of_pool_usdc"
+          name="pool_weth"
+          placeholder="pool_weth"
           required
           className="px-3 py-2 rounded text-black"
         />
