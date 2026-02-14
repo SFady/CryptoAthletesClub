@@ -47,7 +47,8 @@ export async function POST(req) {
 
     const current_liquidity_without_fees = current_liquidity - (pool_usdc + pool_weth);
 
-    const liquidity_percentage = (current_liquidity_without_fees / initial_liquidity) * (initial_user_liquidity / initial_liquidity);
+    let liquidity_percentage = (current_liquidity_without_fees / initial_liquidity) * (initial_user_liquidity / initial_liquidity);
+    if (liquidity_percentage>100) liquidity_percentage=100;
 
     const [row4] = await sql`
       SELECT max_defits
