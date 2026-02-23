@@ -35,7 +35,7 @@ export async function POST(req) {
       LIMIT 1;
     `;
     const distributed_fees = Number(row1?.boost ?? 0);
-    const available_fees = Number(out_of_pool_usdc) + Number(pool_usdc) - Number(distributed_fees)
+    let available_fees = Number(out_of_pool_usdc) + Number(pool_usdc) - Number(distributed_fees)
     if (available_fees<0) available_fees=0;
 
     const [row2] = await sql`
@@ -53,10 +53,17 @@ export async function POST(req) {
     `;
     const initial_user_liquidity = Number(row3?.initial_liquidity ?? 0);
 
+    const [row5] = await sql`
+      SELECT sum(initial_liquidity)+sum(starting_offered_liquidity) as total_user_liquidity
+      FROM users
+      LIMIT 1;
+    `;
+    const total_users_liquidity = Number(row5?.total_user_liquidity ?? 0);
 
     const current_liquidity_without_fees = current_liquidity - (pool_usdc + pool_weth);
 
-    let liquidity_percentage = (current_liquidity_without_fees / initial_liquidity) * ((initial_user_liquidity+starting_offered_liquidity) / initial_liquidity);
+    // TODO attention si > initial liquidity
+    let liquidity_percentage = (current_liquidity_without_fees / initial_liquidity) * ((initial_user_liquidity+starting_offered_liquidity)/total_users_liquidity);
     if (liquidity_percentage>100) liquidity_percentage=100;
 
     const [row4] = await sql`
@@ -67,6 +74,8 @@ export async function POST(req) {
     `;
     const max_defits = Number(row4?.max_defits ?? 0);
     const defit_percentage = defit_amount / max_defits;
+
+    //Boost = (current liquidty without fees / Initial Liquidity) * (defit/max_defit) * (user_liquidity/Total user_liquidity) * available_fees
 
     const boost = liquidity_percentage * defit_percentage * 0.5 * available_fees;
     const defitsToAdd = defit_amount * Number(participation_percentage) / 100;
@@ -94,7 +103,7 @@ export async function POST(req) {
       WHERE id = ${user_id}
     `;
     
-    return Response.json({ message: '✅ Insert OK', result: result[0] });
+    return Response.json({ message: '✅ Insert OK', boost, liquidity_percentage, defit_percentage, available_fees, defit_amount, max_defits });
 
   } catch (err) {
     console.error('❌ DB error:', err);
