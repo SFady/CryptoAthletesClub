@@ -36,6 +36,7 @@ export async function POST(req) {
     `;
     const distributed_fees = Number(row1?.boost ?? 0);
     const available_fees = Number(out_of_pool_usdc) + Number(pool_usdc) - Number(distributed_fees)
+    if (available_fees<0) available_fees=0;
 
     const [row2] = await sql`
       SELECT initial_liquidity
