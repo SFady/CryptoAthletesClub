@@ -20,6 +20,14 @@ export async function POST(req) {
     const pool_usdc = Number(formData.get("pool_usdc"));
     const pool_weth = Number(formData.get("pool_weth"));
 
+    const [row0] = await sql`
+      SELECT starting_offered_liquidity
+      FROM users
+      where id=${user_id}
+      LIMIT 1;
+    `;
+    const starting_offered_liquidity = Number(row0?.starting_offered_liquidity ?? 0);
+
     const [row1] = await sql`
       SELECT sum(boost) as boost
       FROM user_activities
@@ -47,7 +55,7 @@ export async function POST(req) {
 
     const current_liquidity_without_fees = current_liquidity - (pool_usdc + pool_weth);
 
-    let liquidity_percentage = (current_liquidity_without_fees / initial_liquidity) * (initial_user_liquidity / initial_liquidity);
+    let liquidity_percentage = (current_liquidity_without_fees / initial_liquidity) * ((initial_user_liquidity+starting_offered_liquidity) / initial_liquidity);
     if (liquidity_percentage>100) liquidity_percentage=100;
 
     const [row4] = await sql`
@@ -63,6 +71,7 @@ export async function POST(req) {
     const defitsToAdd = defit_amount * Number(participation_percentage) / 100;
 
     const ameliorations_update = current_liquidity_without_fees / initial_liquidity
+    
     const new_liquidity = initial_user_liquidity * ameliorations_update;
 
     const result = await sql`
