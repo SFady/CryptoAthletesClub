@@ -32,7 +32,7 @@ export async function POST(req) {
       SELECT sum(boost) as boost
       FROM user_activities
       WHERE boost_treated IS NULL
-      LIMIT 1;
+      LIMIT 1
     `;
     const distributed_fees = Number(row1?.boost ?? 0);
     let available_fees = Number(out_of_pool_usdc) + Number(pool_usdc) - Number(distributed_fees)
@@ -103,7 +103,7 @@ export async function POST(req) {
       WHERE id = ${user_id}
     `;
     
-    return Response.json({ message: '✅ Insert OK', boost, liquidity_percentage, defit_percentage, available_fees, defit_amount, max_defits });
+    return Response.json({ message: '✅ Insert OK', boost, liquidity_percentage, defit_percentage, available_fees, defit_amount, max_defits, distributed_fees });
 
   } catch (err) {
     console.error('❌ DB error:', err);
