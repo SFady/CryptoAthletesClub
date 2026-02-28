@@ -35,7 +35,16 @@ export async function POST(req) {
       LIMIT 1
     `;
     const distributed_fees = Number(row1?.boost ?? 0);
-    let available_fees = Number(out_of_pool_usdc) + Number(pool_usdc) - Number(distributed_fees)
+    
+    const [row6] = await sql`
+      SELECT sum(liquidity_repair) as liquidity_repair
+      FROM user_activities
+      WHERE liquidity_repair_treated IS NULL
+      LIMIT 1
+    `;
+    const liquidity_repair_sum = Number(row6?.liquidity_repair ?? 0);
+    
+    let available_fees = Number(out_of_pool_usdc) + Number(pool_usdc) - Number(distributed_fees) - Number(liquidity_repair_sum)
     if (available_fees<0) available_fees=0;
 
     const [row2] = await sql`
@@ -62,7 +71,6 @@ export async function POST(req) {
 
     const current_liquidity_without_fees = current_liquidity - (pool_usdc + pool_weth);
 
-    // TODO attention si > initial liquidity
     let liquidity_percentage = (current_liquidity_without_fees / initial_liquidity) * ((initial_user_liquidity+starting_offered_liquidity)/total_users_liquidity);
     if (liquidity_percentage>100) liquidity_percentage=100;
 
@@ -75,18 +83,21 @@ export async function POST(req) {
     const max_defits = Number(row4?.max_defits ?? 0);
     const defit_percentage = defit_amount / max_defits;
 
-    //Boost = (current liquidty without fees / Initial Liquidity) * (defit/max_defit) * (user_liquidity/Total user_liquidity) * available_fees
+    
 
     const boost = liquidity_percentage * defit_percentage * 0.5 * available_fees;
+    const liquidity_repair = boost * (3/5);
+
     const defitsToAdd = defit_amount * Number(participation_percentage) / 100;
 
     const ameliorations_update = current_liquidity_without_fees / initial_liquidity
     
-    const new_liquidity = initial_user_liquidity * ameliorations_update;
+    // ToDo ne pas depasser la liquidité initiale
+    const new_liquidity = (initial_user_liquidity * ameliorations_update) + liquidity_repair;
 
     const result = await sql`
-      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, out_of_pool_usdc, pool_usdc) 
-        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${out_of_pool_usdc}, ${pool_usdc});
+      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, out_of_pool_usdc, pool_usdc, liquidity_repair) 
+        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${out_of_pool_usdc}, ${pool_usdc}, ${liquidity_repair});
     `;
 
     const result2 = await sql`
