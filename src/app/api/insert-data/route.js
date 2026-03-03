@@ -86,7 +86,8 @@ export async function POST(req) {
     
 
     const boost = liquidity_percentage * defit_percentage * 0.5 * available_fees;
-    const liquidity_repair = boost * (3/5);
+    let liquidity_repair = boost * (3/5);
+    if (initial_user_liquidity==0) liquidity_repair=0;
 
     const defitsToAdd = defit_amount * Number(participation_percentage) / 100;
 
