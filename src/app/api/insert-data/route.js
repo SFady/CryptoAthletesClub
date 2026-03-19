@@ -6,19 +6,21 @@ export async function POST(req) {
     const formData = await req.formData();
 
     const user_id = formData.get("user_id");
-
     const rawDate = formData.get("date_claimed"); // "25/12/2025"
-    //const [day, month, year] = rawDate.split("/");
     const date_claimed = rawDate
-
     const defit_amount = Number(formData.get("defit_amount"));
     const activity_type = formData.get("activity_type");
     const participation_percentage = formData.get("participation_percentage");
     const kilometers = formData.get("kilometers");
     let current_liquidity = Number(formData.get("current_liquidity"));
-    const out_of_pool_usdc = formData.get("out_of_pool_usdc");
+    const weth_value = Number(formData.get("weth_value"));
     const pool_usdc = Number(formData.get("pool_usdc"));
     const pool_weth = Number(formData.get("pool_weth"));
+    const rewards_usdc = Number(formData.get("rewards_usdc"));
+    const rewards_weth = Number(formData.get("rewards_weth"));
+
+
+    // Initilal liquidity
 
     const [row0] = await sql`
       SELECT starting_offered_liquidity
@@ -28,32 +30,6 @@ export async function POST(req) {
     `;
     const starting_offered_liquidity = Number(row0?.starting_offered_liquidity ?? 0);
 
-    const [row1] = await sql`
-      SELECT sum(boost) as boost
-      FROM user_activities
-      WHERE boost_treated IS NULL
-      LIMIT 1
-    `;
-    const distributed_fees = Number(row1?.boost ?? 0);
-    
-    const [row6] = await sql`
-      SELECT sum(liquidity_repair) as liquidity_repair
-      FROM user_activities
-      WHERE liquidity_repair_treated IS NULL
-      LIMIT 1
-    `;
-    const liquidity_repair_sum = Number(row6?.liquidity_repair ?? 0);
-    
-    let available_fees = Number(out_of_pool_usdc) + Number(pool_usdc) - Number(distributed_fees) - Number(liquidity_repair_sum)
-    if (available_fees<0) available_fees=0;
-
-    const [row2] = await sql`
-      SELECT initial_liquidity
-      FROM liquidity
-      LIMIT 1;
-    `;
-    const initial_liquidity = Number(row2?.initial_liquidity ?? 0);
-
     const [row3] = await sql`
       SELECT initial_liquidity
       FROM users
@@ -62,17 +38,52 @@ export async function POST(req) {
     `;
     const initial_user_liquidity = Number(row3?.initial_liquidity ?? 0);
 
-    const [row5] = await sql`
-      SELECT sum(initial_liquidity)+sum(starting_offered_liquidity) as total_user_liquidity
-      FROM users
-      LIMIT 1;
+
+
+    // Percentage allocated
+
+    const percent_global = (100 + 135 + 885) / 2180.85;
+    const percent = (starting_offered_liquidity + initial_user_liquidity) / (100 + 135 + 885);
+
+
+
+    // Distributed
+
+    const [row1] = await sql`
+      SELECT sum(benef) as benef
+      FROM user_activities
+      WHERE boost_treated IS NULL
+      LIMIT 1
     `;
-    const total_users_liquidity = Number(row5?.total_user_liquidity ?? 0);
+    const distributed_benef = Number(row1?.benef ?? 0);
 
-    const current_liquidity_without_fees = current_liquidity - (pool_usdc + pool_weth);
+    const [row7] = await sql`
+      SELECT sum(upgrade) as upgrade
+      FROM user_activities
+      WHERE boost_treated IS NULL
+      LIMIT 1
+    `;
+    const distributed_upgrade = Number(row7?.upgrade ?? 0);
 
-    let liquidity_percentage = (current_liquidity_without_fees / initial_liquidity) * ((initial_user_liquidity+starting_offered_liquidity)/total_users_liquidity);
-    if (liquidity_percentage>100) liquidity_percentage=100;
+    const [row8] = await sql`
+      SELECT sum(bonus) as bonus
+      FROM user_activities
+      WHERE boost_treated IS NULL
+      LIMIT 1
+    `;
+    const distributed_bonus = Number(row8?.bonus ?? 0);
+
+    const [row9] = await sql`
+      SELECT sum(boost) as boost
+      FROM user_activities
+      WHERE boost_treated IS NULL
+      LIMIT 1
+    `;
+    const distributed_boost = Number(row9?.boost ?? 0);
+
+
+
+    // Available fees
 
     const [row4] = await sql`
       SELECT max_defits
@@ -83,22 +94,47 @@ export async function POST(req) {
     const max_defits = Number(row4?.max_defits ?? 0);
     const defit_percentage = defit_amount / max_defits;
 
-    
+    const liquidity_adjusted = (pool_weth * 2332) + (rewards_weth * 2332) + pool_usdc + rewards_usdc;
+    let available_fees = liquidity_adjusted - 2180.85;
+    available_fees = available_fees * defit_percentage;
+    if (available_fees < 0) available_fees = 0;
 
-    const boost = liquidity_percentage * defit_percentage * 0.5 * available_fees;
-    let liquidity_repair = boost * (3/5);
-    if (initial_user_liquidity==0) liquidity_repair=0;
+
+    // Fees spread  
+
+    let benef = 0.20 * percent * percent_global * available_fees;
+    let upgrade = 0.10 * percent * percent_global * available_fees;
+    let bonus = 0.10 * percent * percent_global * available_fees;
+    let boost = 0.60 * percent * percent_global * available_fees;
+    benef = Math.floor(benef * 100) / 100;
+    upgrade = Math.floor(upgrade * 100) / 100;
+    bonus = Math.floor(bonus * 100) / 100;
+    boost = Math.floor(boost * 100) / 100;
+
+
+
+    // Defits to add
 
     const defitsToAdd = defit_amount * Number(participation_percentage) / 100;
 
-    const ameliorations_update = current_liquidity_without_fees / initial_liquidity
-    
-    // ToDo ne pas depasser la liquidité initiale
-    const new_liquidity = (initial_user_liquidity * ameliorations_update) + liquidity_repair;
+
+
+    // New liquidity
+
+    // let new_liquidity = initial_user_liquidity * ( weth_value / 2332 );
+    // if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
+    let new_liquidity = (current_liquidity / 3151) * initial_user_liquidity;
+    if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
+
+
+
+
+
+    // Insert
 
     const result = await sql`
-      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, out_of_pool_usdc, pool_usdc, liquidity_repair) 
-        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${out_of_pool_usdc}, ${pool_usdc}, ${liquidity_repair});
+      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus) 
+        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${weth_value}, ${benef}, ${upgrade}, ${bonus});
     `;
 
     const result2 = await sql`
@@ -114,8 +150,8 @@ export async function POST(req) {
       SET liquidity = ${new_liquidity}
       WHERE id = ${user_id}
     `;
-    
-    return Response.json({ message: '✅ Insert OK', boost, liquidity_percentage, defit_percentage, available_fees, defit_amount, max_defits, distributed_fees });
+
+    return Response.json({ message: '✅ Insert OK', starting_offered_liquidity, initial_user_liquidity, percent_global, available_fees, benef, upgrade, bonus, fees: boost });
 
   } catch (err) {
     console.error('❌ DB error:', err);

@@ -50,7 +50,7 @@ export default function Sfy1024() {
           <option value="100" className="bg-[#8d6bf2] text-[#f3f0ff]">100%</option>
         </select>
 
-          <input
+        <input
           type="text"
           name="kilometers"
           placeholder="kilometers"
@@ -58,10 +58,17 @@ export default function Sfy1024() {
           className="px-3 py-2 rounded text-black"
         />
 
-        <input
+        {/* <input
           type="text"
           name="out_of_pool_usdc"
           placeholder="out_of_pool_usdc"
+          required
+          className="px-3 py-2 rounded text-black"
+        /> */}
+        <input
+          type="text"
+          name="weth_value"
+          placeholder="weth_value"
           required
           className="px-3 py-2 rounded text-black"
         />
@@ -90,6 +97,25 @@ export default function Sfy1024() {
           className="px-3 py-2 rounded text-black"
         />
 
+        <input
+          type="text"
+          name="rewards_weth"
+          placeholder="rewards_weth"
+          required
+          className="px-3 py-2 rounded text-black"
+        />
+
+        <input
+          type="text"
+          name="rewards_usdc"
+          placeholder="rewards_usdc"
+          required
+          className="px-3 py-2 rounded text-black"
+        />
+
+
+
+
         {/* <input
           type="text"
           name="weth_liquidity"
@@ -106,7 +132,7 @@ export default function Sfy1024() {
           className="px-3 py-2 rounded text-black"
         /> */}
 
-        
+
 
         <button
           type="submit"
