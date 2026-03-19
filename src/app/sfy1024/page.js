@@ -18,21 +18,27 @@ export default function Sfy1024() {
           <option value="4" className="bg-[#8d6bf2] text-[#f3f0ff]">Jinbe</option>
         </select>
 
-        <input
-          type="date"
-          name="date_claimed"
-          required
-          defaultValue={new Date().toISOString().split("T")[0]}
-          className="px-3 py-2 rounded text-black"
-        />
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Date : </label>
+          <input
+            type="date"
+            name="date_claimed"
+            required
+            defaultValue={new Date().toISOString().split("T")[0]}
+            className="px-3 py-2 rounded text-black"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="defit_amount"
-          placeholder="defit_amount"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Defit amount : </label>
+          <input
+            type="text"
+            name="defit_amount"
+            placeholder="defit_amount"
+            required
+            className="px-3 py-2 rounded text-black"
+          />
+        </div>
 
         <select name="activity_type" className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20 
                focus:outline-none focus:ring-2 focus:ring-white/30
@@ -50,89 +56,82 @@ export default function Sfy1024() {
           <option value="100" className="bg-[#8d6bf2] text-[#f3f0ff]">100%</option>
         </select>
 
-        <input
-          type="text"
-          name="kilometers"
-          placeholder="kilometers"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Kilometers : </label>
+          <input
+            type="text"
+            name="kilometers"
+            placeholder="kilometers"
+            required
+            className="px-3 py-2 rounded text-black"
+          />
+        </div>
 
-        {/* <input
-          type="text"
-          name="out_of_pool_usdc"
-          placeholder="out_of_pool_usdc"
-          required
-          className="px-3 py-2 rounded text-black"
-        /> */}
-        <input
-          type="text"
-          name="weth_value"
-          placeholder="weth_value"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Weth_value : </label>
+          <input
+            type="text"
+            name="weth_value"
+            placeholder="weth_value"
+            required
+            className="px-3 py-2 rounded text-black"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="current_liquidity"
-          placeholder="current_liquidity"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Current_liquidity : </label>
+          <input
+            type="text"
+            name="current_liquidity"
+            placeholder="current_liquidity"
+            required
+            className="px-3 py-2 rounded text-black"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="pool_weth"
-          placeholder="pool_weth"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Pool_weth : </label>
+          <input
+            type="text"
+            name="pool_weth"
+            placeholder="pool_weth"
+            required
+            className="px-3 py-2 rounded text-black"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="pool_usdc"
-          placeholder="pool_usdc"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Pool_usdc : </label>
+          <input
+            type="text"
+            name="pool_usdc"
+            placeholder="pool_usdc"
+            required
+            className="px-3 py-2 rounded text-black"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="rewards_weth"
-          placeholder="rewards_weth"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Rewards_weth : </label>
+          <input
+            type="text"
+            name="rewards_weth"
+            placeholder="rewards_weth"
+            required
+            className="px-3 py-2 rounded text-black"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="rewards_usdc"
-          placeholder="rewards_usdc"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
-
-
-
-
-        {/* <input
-          type="text"
-          name="weth_liquidity"
-          placeholder="weth_liquidity"
-          required
-          className="px-3 py-2 rounded text-black"
-        />
-
-        <input
-          type="text"
-          name="usdc_liquidity"
-          placeholder="usdc_liquidity"
-          required
-          className="px-3 py-2 rounded text-black"
-        /> */}
-
-
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Rewards_usdc : </label>
+          <input
+            type="text"
+            name="rewards_usdc"
+            placeholder="rewards_usdc"
+            required
+            className="px-3 py-2 rounded text-black"
+          />
+        </div>
 
         <button
           type="submit"
