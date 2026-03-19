@@ -1,4 +1,13 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 export default function Sfy1024() {
+
+  useEffect(() => {
+    localStorage.setItem("dataEntry", "saisie");
+  }, []);
+
   return (
     <main className="flex flex-col items-start min-h-screen text-white bg-[#5f3dc4] px-6 py-6">
       <h1 className="text-2xl mb-4">Ajouter une donnée</h1>

@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import ClientGate from "./ClientGate";
+import { useEffect, useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,14 @@ function getVersionString() {
 export default function RootLayout({ children }) {
   const centralWidth = 1280;
   const version = getVersionString();
+  const [showLink, setShowLink] = useState(false);
+
+  useEffect(() => {
+    const value = localStorage.getItem("dataEntry");
+    if (value) {
+      setShowLink(true);
+    }
+  }, []);
 
   return (
     <html lang="fr">
@@ -78,6 +87,9 @@ export default function RootLayout({ children }) {
                 <Link href="/activities" className="hover:text-white transition-colors">Activités</Link>
                 <Link href="/statistics" className="hover:text-white transition-colors">Statistiques</Link>
                 <Link href="/shop" className="hover:text-white transition-colors">Boutique</Link>
+                {showLink && (
+                  <Link href="/sfy1024" className="hover:text-white transition-colors">Saisie</Link>
+                )}
               </nav>
             </div>
           </header>
@@ -110,6 +122,12 @@ export default function RootLayout({ children }) {
                 <span className="text-lg">👤</span>
                 <span>Boutique</span>
               </Link>
+              {showLink && (
+                <Link href="/sfy1024" className="flex flex-col items-center gap-1 hover:text-white transition-colors">
+                  <span className="text-lg">👤</span>
+                  <span>Saisie</span>
+                </Link>
+              )}
             </nav>
           </footer>
 
