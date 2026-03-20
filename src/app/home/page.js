@@ -14,6 +14,8 @@ export default function Home() {
 
   const { price: defitPrice, error } = useDefitPrice();
 
+  const [open, setOpen] = useState(false);
+
   const fetchDefitAmount = async (athleteId) => {
     try {
       const res = await fetch(`/api/get-user-defit-amount?id=${athleteId}`);
@@ -199,7 +201,24 @@ export default function Home() {
         <table className="w-full text-base">
           <tbody>
             <tr className="border-b border-white/20">
-              <td className="py-3 px-2">DEFIT</td>
+              <td className="py-3 px-2">
+                <span className="inline-flex items-center">
+                  DEFIT
+                  <span
+                    onClick={() => setOpen(!open)}
+                    className="ml-1 relative inline-flex items-center justify-center 
+                     w-4 h-4 text-xs border border-white/50 rounded-full cursor-pointer align-middle"
+                  >
+                    ?
+                    {open && (
+                      <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 
+                             bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                        Defits actuellement bloqués et non récupérables.
+                      </span>
+                    )}
+                  </span>
+                </span>
+              </td>
               <td className="py-3 px-2 text-right font-semibold">
                 {Number(defitAmount * defitPrice)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
