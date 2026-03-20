@@ -215,11 +215,12 @@ export default function Home() {
                     {open && (
                       <span
                         className="absolute bottom-full mb-2 
-                     left-0 sm:left-1/2 sm:-translate-x-1/2
-                     max-w-[200px] px-2 py-1 
-                     bg-black text-white text-xs rounded 
-                     whitespace-pre-line text-left sm:text-center
-                     shadow-lg z-10"
+           left-0 sm:left-1/2 sm:-translate-x-1/2
+           w-[230px] sm:w-[300px] lg:w-[350px]
+           px-3 py-2 
+           bg-black text-white text-xs rounded 
+           whitespace-pre-line text-left sm:text-center
+           shadow-lg z-10"
                       >
                         Defits actuellement bloqués{`\n`}et non récupérables.
                       </span>
