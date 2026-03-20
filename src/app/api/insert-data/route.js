@@ -96,6 +96,7 @@ export async function POST(req) {
 
     const liquidity_adjusted = (pool_weth * 2332) + (rewards_weth * 2332) + pool_usdc + rewards_usdc;
     let available_fees = liquidity_adjusted - 2180.85;
+    available_fees = available_fees - (distributed_benef + distributed_upgrade + distributed_bonus + distributed_boost);
     available_fees = available_fees * defit_percentage;
     if (available_fees < 0) available_fees = 0;
 
