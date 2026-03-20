@@ -72,10 +72,10 @@ export default function Home() {
                   <td className="text-white py-3 px-4">{row.user_name}</td>
                   <td className="text-white py-3 px-4">{row.activity_name}</td>
                   <td className="text-white py-3 px-4">{Math.min(Math.round(row.defit_amount / row.max_defits * 100), 100)} %</td>
-                  <td className="text-white py-3 px-4">{row.defit_amount}</td>
-                  <td className="text-white py-3 px-4">{(row.defit_amount * row.participation_percentage * defitPrice / 100).toFixed(2)}</td>
+                  <td className="text-gray-400 py-3 px-4">{row.defit_amount}</td>
+                  <td className="text-gray-400 py-3 px-4">{(row.defit_amount * row.participation_percentage * defitPrice / 100).toFixed(2)}</td>
                   <td className="text-white py-3 px-4">{Number(row.boost).toFixed(2)}</td>
-                  <td className="text-white py-3 px-4">{(Number(row.boost)+(row.defit_amount * row.participation_percentage * defitPrice / 100)).toFixed(2)}</td>
+                  <td className="text-white py-3 px-4">{(Number(row.boost)).toFixed(2)}</td>
                 </tr>
               );
             })}

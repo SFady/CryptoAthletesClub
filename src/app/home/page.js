@@ -222,13 +222,14 @@ export default function Home() {
                           whitespace-pre-line text-left sm:text-center
                           shadow-lg z-10"
                       >
-                        Defits actuellement bloqués{`\n`}et non récupérables.
+                        Defits actuellement bloqués et non récupérables.
+                        {`\n`}Non comptés dans le total.
                       </span>
                     )}
                   </span>
                 </span>
               </td>
-              <td className="py-3 px-2 text-right font-semibold">
+              <td className="py-3 px-2 text-right font-semibold text-gray-400">
                 {Number(defitAmount * defitPrice)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
@@ -256,7 +257,7 @@ export default function Home() {
             <tr className="border-t-4 border-transparent text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
               <td className="py-2 px-2 font-bold">TOTAL</td>
               <td className="py-2 px-2 text-right font-semibold">
-                {Number((defitAmount * defitPrice) + dollarAmount + user_liquidity)?.toLocaleString("en-US", {
+                {Number(dollarAmount + user_liquidity)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 }).replace(",", " ") + " $" ?? "..."}
