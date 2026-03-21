@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function ClientGate({ children }) {
     const [ready, setReady] = useState(false);
@@ -9,6 +10,8 @@ export default function ClientGate({ children }) {
 
     const STORAGE_KEY = "infoMessage2";
     const DEADLINE = new Date("2026-03-28T00:00:00");
+
+    const pathname = usePathname();
 
     useEffect(() => {
         
@@ -30,7 +33,7 @@ export default function ClientGate({ children }) {
 
         // animation
         setTimeout(() => setShowModal(true), 50);
-    }, []);
+    }, [pathname]);
 
     if (!ready) return null;
 
