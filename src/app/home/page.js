@@ -106,26 +106,6 @@ export default function Home() {
 
       <div className="flex justify-center items-start gap-2 mb-4">
 
-        {/* IMAGE À GAUCHE avec position relative */}
-        {/* <div className="rounded-2xl inline-block relative">
-          <Image
-            src="/images/runner_init2.png"
-            alt="Athlete"
-            width={200}
-            height={400}
-            loading="eager"
-          /> */}
-
-        {/* TRAIT partant du milieu horizontal de la tête */}
-        {/* <div
-            className="absolute bg-gray-600 h-px"
-            style={{
-              top: "20px",       // milieu de la tête
-              left: "50%",       // milieu horizontal de l'image
-              width: "80px"      // longueur du trait vers le texte
-            }}
-          /> */}
-        {/* </div> */}
         <div className="rounded-2xl inline-block relative -ml-10">
           <Image
             src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
@@ -146,38 +126,6 @@ export default function Home() {
                 <th className="px-2 py-1">Niveau</th>
               </tr>
             </thead>
-            {/* <tbody>
-              <tr>
-                <td className="px-2 py-1">T-Shirt</td>
-                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
-                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
-              </tr>
-              <tr>
-                <td className="px-2 py-1">Short</td>
-                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
-                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
-              </tr>
-              <tr>
-                <td className="px-2 py-1">Chaussettes</td>
-                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
-                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
-              </tr>
-              <tr>
-                <td className="px-2 py-1">Chaussures</td>
-                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
-                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
-              </tr>
-              <tr>
-                <td className="px-2 py-1">Montre</td>
-                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
-                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
-              </tr>
-              <tr>
-                <td className="px-2 py-1">Personnage</td>
-                <td className="px-2 py-1">{selected === "1" ? "A" : "_"}</td>
-                <td className="px-2 py-1">{selected === "1" ? "0" : "_"}</td>
-              </tr>
-            </tbody> */}
             <tbody>
               {rows.map((item) => {
                 const [col1 = "_", col2 = "_"] = dataBySelected[selected]?.[item] ?? ["_", "_"];
@@ -189,9 +137,10 @@ export default function Home() {
                   </tr>
                 );
               })}
+              <tr><td colSpan={3}>&nbsp;</td></tr>
+              <tr><td colSpan={3}><button className="bg-purple-500/80 hover:bg-purple-600 text-white px-3 py-1 rounded-lg transition">Améliorations</button></td></tr>
             </tbody>
           </table>
-          {/* <h3 className="text-sm leading-snug">Chaussures : Classe A / Niveau 0</h3> */}
         </div>
 
       </div>
