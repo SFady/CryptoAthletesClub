@@ -7,10 +7,13 @@ export default function ClientGate({ children }) {
     const [allowed, setAllowed] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
-    const STORAGE_KEY = "infoMessage1";
+    const STORAGE_KEY = "infoMessage2";
     const DEADLINE = new Date("2026-03-28T00:00:00");
 
     useEffect(() => {
+        
+        localStorage.removeItem("infoMessage1");
+        
         const now = new Date();
         const stored = localStorage.getItem(STORAGE_KEY);
 
