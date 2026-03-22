@@ -87,7 +87,7 @@ export default function Home() {
         <table className="w-full table-auto text-center border-collapse bg-[#5C42A6] shadow-lg p-4">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
-              <th className="py-2 px-3">Bonus en cours</th>
+              <th className="py-2 px-3">Bonus en cours (du 23/03 au 29/03)</th>
             </tr>
           </thead>
           <tbody className="text-gray-200">
