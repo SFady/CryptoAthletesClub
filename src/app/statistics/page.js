@@ -8,6 +8,7 @@ export default function Home() {
 
   const [totals, setTotals] = useState([]);
   const [totals2, setTotals2] = useState([]);
+  const [bonus, setBonus] = useState([]);
   const [selected, setSelected] = useState(1);
   const [selected2, setSelected2] = useState(1);
 
@@ -31,9 +32,20 @@ export default function Home() {
     }
   };
 
+  const fetchBonus = async () => {
+    try {
+      const res = await fetch(`/api/get-weekly-distance-bonus`);
+      const data = await res.json();
+      setBonus(data || []);
+    } catch (error) {
+      console.error("Erreur fetchBonus:", error);
+    }
+  };
+
   useEffect(() => {
     fetchTotals(selected);
     fetchTotals2(selected2);
+    fetchBonus();
   }, [selected, selected2]);
 
   // ✅ TRI GAINS
@@ -63,8 +75,25 @@ export default function Home() {
           </thead>
           <tbody className="text-gray-200">
             <tr>
-              <td className="py-2 px-3">
+              <td className="text-gray-400 py-2 px-3">
                 {defitPrice?.toFixed(4) ?? "..."} $
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br /><br />
+
+        <table className="w-full table-auto text-center border-collapse bg-[#5C42A6] shadow-lg p-4">
+          <thead>
+            <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
+              <th className="py-2 px-3">Bonus en cours</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-200">
+            <tr>
+              <td className="py-2 px-3">
+                Meilleure Distance hebdomadaire : {bonus[0]?.bonus ? Number(bonus[0].bonus).toFixed(2) : "..."} $
               </td>
             </tr>
           </tbody>
