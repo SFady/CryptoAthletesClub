@@ -62,27 +62,16 @@ export default function Home() {
     return kmB - kmA;
   });
 
+  const sortedDefits = [...totals].sort((a, b) => {
+  const defitA = (defitPrice ?? 0) * (a.defit_amount ?? 0);
+  const defitB = (defitPrice ?? 0) * (b.defit_amount ?? 0);
+
+  return defitB - defitA; // ordre décroissant
+});
+
   return (
     <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-4 pb-4">
-      <div className="max-w-[800px] w-full mx-auto">
-
-        {/* TABLEAU PRIX DEFIT */}
-        <table className="w-full table-auto text-center border-collapse bg-[#5C42A6] shadow-lg p-4">
-          <thead>
-            <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
-              <th className="py-2 px-3">Cours du Defit</th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-200">
-            <tr>
-              <td className="text-gray-400 py-2 px-3">
-                {defitPrice?.toFixed(4) ?? "..."} $
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <br /><br />
+      <div className="max-w-[800px] w-full mx-auto">        
 
         <table className="w-full table-auto text-center border-collapse bg-[#5C42A6] shadow-lg p-4">
           <thead>
@@ -103,7 +92,7 @@ export default function Home() {
 
         {/* GAINS */}
         <h2 className="text-white text-lg font-semibold mb-2">
-          Gains
+          Gains ($)
         </h2>
 
         <div className="flex justify-start gap-2 mb-2">
@@ -126,9 +115,9 @@ export default function Home() {
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
               <th className="py-2 px-3">Athlete</th>
-              <th className="py-2 px-3 text-right">Defits</th>
+              {/* <th className="py-2 px-3 text-right">Defits</th>
               <th className="py-2 px-3 text-right">Defits ($)</th>
-              <th className="py-2 px-3 text-right">Boost ($)</th>
+              <th className="py-2 px-3 text-right">Boost ($)</th> */}
               <th className="py-2 px-3 text-right">Total ($)</th>
             </tr>
           </thead>
@@ -149,7 +138,7 @@ export default function Home() {
                       {row.name}
                     </td>
 
-                    <td className="text-gray-400 py-1 px-3 text-right">
+                    {/* <td className="text-gray-400 py-1 px-3 text-right">
                       {(row.defit_amount ?? 0).toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -168,7 +157,7 @@ export default function Home() {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       }).replace(",", " ")}
-                    </td>
+                    </td> */}
 
                     <td className="py-1 px-3 text-right">
                       {total.toLocaleString("en-US", {
@@ -248,6 +237,96 @@ export default function Home() {
                 </td>
               </tr>
             )}
+          </tbody>
+        </table>
+
+        <br /><br />
+
+        {/* TABLEAU PRIX DEFIT */}
+        <table className="w-full table-auto text-center border-collapse bg-[#5C42A6] shadow-lg p-4">
+          <thead>
+            <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
+              <th className="py-2 px-3">Cours du Defit</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-200">
+            <tr>
+              <td className="text-gray-400 py-2 px-3">
+                {defitPrice?.toFixed(4) ?? "..."} $
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br /><br />
+
+        {/* GAINS */}
+        <h2 className="text-white text-lg font-semibold mb-2">
+          Gains (Defits)
+        </h2>
+
+        <div className="flex justify-start gap-2 mb-2">
+          {[1, 2, 3].map((id) => (
+            <button
+              key={id}
+              onClick={() => setSelected(id)}
+              className={`px-3 py-1 text-sm rounded transition
+                ${selected === id
+                  ? "bg-[#D6C48A] text-[#2A2550]"
+                  : "bg-[#6B5FA7] text-white hover:bg-[#7569B3]"}
+              `}
+            >
+              {id === 1 ? "Année" : id === 2 ? "Mois" : "Semaine"}
+            </button>
+          ))}
+        </div>
+
+        <table className="w-full table-auto text-left border-collapse bg-[#5C42A6] shadow-lg p-4">
+          <thead>
+            <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
+              <th className="py-2 px-3">Athlete</th>
+              <th className="py-2 px-3 text-right">Defits</th>
+              <th className="py-2 px-3 text-right">Defits ($)</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-200">
+{sortedDefits.length > 0 ? (
+  sortedDefits.map((row, idx) => {
+    const defit = Number(defitPrice * (row.defit_amount ?? 0));
+
+    return (
+      <tr key={idx}>
+        <td className="py-1 px-3">
+          {idx === 0 && "🥇 "}
+          {idx === 1 && "🥈 "}
+          {idx === 2 && "🥉 "}
+          {idx > 2 && `\u00A0${idx + 1}\u00A0\u00A0\u00A0`}
+          {row.name}
+        </td>
+
+        <td className="text-gray-400 py-1 px-3 text-right">
+          {(row.defit_amount ?? 0).toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).replace(",", " ")}
+        </td>
+
+        <td className="text-gray-400 py-1 px-3 text-right">
+          {defit.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).replace(",", " ")}
+        </td>
+      </tr>
+    );
+  })
+) : (
+  <tr>
+    <td colSpan={3} className="py-2 text-gray-400">
+      Chargement...
+    </td>
+  </tr>
+)}
           </tbody>
         </table>
 
