@@ -145,7 +145,7 @@ export default function Home() {
                       {idx === 0 && "🥇 "}
                       {idx === 1 && "🥈 "}
                       {idx === 2 && "🥉 "}
-                      {/* {idx > 2 && `${idx + 1} - `} */}
+                      {idx > 2 && `\u00A0${idx + 1}\u00A0\u00A0\u00A0`}
                       {row.name}
                     </td>
 
@@ -227,7 +227,7 @@ export default function Home() {
                     {idx === 0 && "🥇 "}
                     {idx === 1 && "🥈 "}
                     {idx === 2 && "🥉 "}
-                    {/* {idx > 2 && `${idx + 1} - `} */}
+                     {idx > 2 && `\u00A0${idx + 1}\u00A0\u00A0\u00A0`}
                     {row.name}
                   </td>
 
