@@ -52,7 +52,7 @@ export async function POST(req) {
     const [row1] = await sql`
       SELECT sum(benef) as benef
       FROM user_activities
-      WHERE boost_treated IS NULL
+      WHERE benef_treated IS NULL
       LIMIT 1
     `;
     const distributed_benef = Number(row1?.benef ?? 0);
@@ -60,7 +60,7 @@ export async function POST(req) {
     const [row7] = await sql`
       SELECT sum(upgrade) as upgrade
       FROM user_activities
-      WHERE boost_treated IS NULL
+      WHERE upgrade_treated IS NULL
       LIMIT 1
     `;
     const distributed_upgrade = Number(row7?.upgrade ?? 0);
@@ -68,7 +68,7 @@ export async function POST(req) {
     const [row8] = await sql`
       SELECT sum(bonus) as bonus
       FROM user_activities
-      WHERE boost_treated IS NULL
+      WHERE bonus_treated IS NULL
       LIMIT 1
     `;
     const distributed_bonus = Number(row8?.bonus ?? 0);
@@ -135,8 +135,8 @@ export async function POST(req) {
     // Insert
 
     const result = await sql`
-      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus, liquidity_repair) 
-        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${weth_value}, ${benef}, ${upgrade}, ${bonus}, ${liquidity_repair});
+      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus, liquidity_repair, pool_usdc, pool_weth, rewards_usdc, rewards_weth) 
+        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${weth_value}, ${benef}, ${upgrade}, ${bonus}, ${liquidity_repair}, ${pool_usdc}, ${pool_weth}, ${rewards_usdc}, ${rewards_weth});
     `;
 
     const result2 = await sql`
