@@ -85,7 +85,7 @@ export default function Home() {
 
 
   return (
-    <main className="relative w-full max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 md:pt-0 md:pb-0 min-h-[calc(100vh-96px)] overflow-y-auto md:overflow-visible">
+    <main className="relative w-full max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 md:pt-0 md:pb-0 md:min-h-[calc(100vh-96px)] overflow-y-auto md:overflow-visible">
 
       {/* Sélecteur d’athlète centré au-dessus de l’image */}
       <div className="flex justify-center mb-4 mt-2 md:mt-10">
