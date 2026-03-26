@@ -45,7 +45,7 @@ export default function Home() {
   const totalPages = Math.ceil(rows.length / rowsPerPage);
 
   return (
-    <main className="flex flex-col justify-start w-full max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-y-auto">
+    <main className="flex flex-col justify-start w-full max-w-[100vw] md:max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-x-hidden overflow-y-auto">
 
       {/* FILTER + CHECKBOX */}
       <div className="mb-4 flex items-center gap-4 flex-wrap">
@@ -74,8 +74,47 @@ export default function Home() {
 
       </div>
 
-      {/* TABLE */}
-      <div className="bg-[#5C42A6] rounded-2xl shadow-lg p-6 mb-6 w-full overflow-x-auto">
+      {/* CARDS — mobile uniquement */}
+      <div className="flex flex-col gap-3 mb-6 w-full md:hidden">
+        {currentRows.map((row) => (
+          <div key={row.id} className="bg-[#5C42A6] rounded-2xl shadow-lg px-4 py-3 text-sm text-white">
+            <div className="flex justify-between items-center mb-2">
+              <span className="font-semibold text-[#D6C48A]">
+                {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
+              </span>
+              <span className="text-gray-300">{row.user_name}</span>
+            </div>
+            <div className="flex justify-between text-gray-300 mb-1">
+              <span>{row.activity_name}</span>
+              <span>Effort : {Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100)} %</span>
+            </div>
+            {showGains && (
+              <div className="flex justify-between text-gray-400 mb-1">
+                <span>Defit : {row.defit_amount}</span>
+                <span>
+                  {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between font-semibold border-t border-white/20 pt-2 mt-1">
+              <span>Boost : {Number(row.boost).toFixed(2)} $</span>
+              <span>Total : {Number(row.boost).toFixed(2)} $</span>
+            </div>
+          </div>
+        ))}
+
+        {/* PAGINATION mobile */}
+        <div className="flex justify-center items-center gap-2 flex-wrap">
+          <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">←</button>
+          {[...Array(totalPages)].map((_, i) => (
+            <button key={i} onClick={() => setCurrentPage(i + 1)} className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-[#D6C48A] text-[#2A2550]" : "bg-white/10 text-white hover:bg-white/20"}`}>{i + 1}</button>
+          ))}
+          <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">→</button>
+        </div>
+      </div>
+
+      {/* TABLE — desktop uniquement */}
+      <div className="hidden md:block bg-[#5C42A6] rounded-2xl shadow-lg p-6 mb-6 w-full overflow-x-auto">
         <table className="w-full table-auto text-left border-collapse">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
@@ -97,90 +136,41 @@ export default function Home() {
           </thead>
 
           <tbody className="text-gray-200">
-            {currentRows.map((row, idx) => {
-              const rowClass = `hover:bg-white/10 transition-colors border-b border-white/20`;
+            {currentRows.map((row) => (
+              <tr key={row.id} className="hover:bg-white/10 transition-colors border-b border-white/20">
+                <td className="text-white py-3 px-4">
+                  {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
+                </td>
+                <td className="text-white py-3 px-4">{row.user_name}</td>
+                <td className="text-white py-3 px-4">{row.activity_name}</td>
+                <td className="text-white py-3 px-4">
+                  {Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100)} %
+                </td>
 
-              return (
-                <tr key={row.id} className={rowClass}>
-                  <td className="text-white py-3 px-4">
-                    {isClient
-                      ? new Date(row.date_claimed).toLocaleDateString("fr-FR")
-                      : row.date_claimed}
-                  </td>
+                {showGains && (
+                  <>
+                    <td className="text-gray-400 py-3 px-4">{row.defit_amount}</td>
+                    <td className="text-gray-400 py-3 px-4">
+                      {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)}
+                    </td>
+                  </>
+                )}
 
-                  <td className="text-white py-3 px-4">{row.user_name}</td>
-                  <td className="text-white py-3 px-4">{row.activity_name}</td>
-
-                  <td className="text-white py-3 px-4">
-                    {Math.min(
-                      Math.round((row.defit_amount / row.max_defits) * 100),
-                      100
-                    )} %
-                  </td>
-
-                  {showGains && (
-                    <>
-                      <td className="text-gray-400 py-3 px-4">
-                        {row.defit_amount}
-                      </td>
-
-                      <td className="text-gray-400 py-3 px-4">
-                        {(
-                          (row.defit_amount *
-                            row.participation_percentage *
-                            defitPrice) /
-                          100
-                        ).toFixed(2)}
-                      </td>
-                    </>
-                  )}
-
-                  <td className="text-white py-3 px-4">
-                    {Number(row.boost).toFixed(2)}
-                  </td>
-
-                  <td className="text-white py-3 px-4">
-                    {Number(row.boost).toFixed(2)}
-                  </td>
-                </tr>
-              );
-            })}
+                <td className="text-white py-3 px-4">{Number(row.boost).toFixed(2)}</td>
+                <td className="text-white py-3 px-4">{Number(row.boost).toFixed(2)}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
 
-        {/* PAGINATION */}
+        {/* PAGINATION desktop */}
         <div className="flex justify-center items-center gap-2 mt-4 flex-wrap">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20"
-          >
-            ←
-          </button>
-
+          <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">←</button>
           {[...Array(totalPages)].map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === i + 1
-                  ? "bg-[#D6C48A] text-[#2A2550]"
-                  : "bg-white/10 text-white hover:bg-white/20"
-              }`}
-            >
-              {i + 1}
-            </button>
+            <button key={i} onClick={() => setCurrentPage(i + 1)} className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-[#D6C48A] text-[#2A2550]" : "bg-white/10 text-white hover:bg-white/20"}`}>{i + 1}</button>
           ))}
-
-          <button
-            onClick={() =>
-              setCurrentPage((p) => Math.min(p + 1, totalPages))
-            }
-            className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20"
-          >
-            →
-          </button>
+          <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">→</button>
         </div>
-
       </div>
     </main>
   );
