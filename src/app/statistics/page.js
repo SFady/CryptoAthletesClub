@@ -73,7 +73,8 @@ export default function Home() {
     <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-4 pb-4">
       <div className="max-w-[800px] w-full mx-auto">        
 
-        <table className="w-full table-auto text-center border-collapse bg-[#5C42A6] shadow-lg p-4">
+        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <table className="w-full table-auto text-center border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
               <th className="py-2 px-3">Bonus en cours (du 23/03 au 29/03)</th>
@@ -87,6 +88,7 @@ export default function Home() {
             </tr>
           </tbody>
         </table>
+        </div>
 
         <br /><br />
 
@@ -111,7 +113,8 @@ export default function Home() {
           ))}
         </div>
 
-        <table className="w-full table-auto text-left border-collapse bg-[#5C42A6] shadow-lg p-4">
+        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <table className="w-full table-auto text-left border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
               <th className="py-2 px-3">Athlete</th>
@@ -177,6 +180,7 @@ export default function Home() {
             )}
           </tbody>
         </table>
+        </div>
 
         <br /><br />
 
@@ -201,7 +205,8 @@ export default function Home() {
           ))}
         </div>
 
-        <table className="w-full table-auto text-left border-collapse bg-[#5C42A6] shadow-lg p-4">
+        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <table className="w-full table-auto text-left border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
               <th className="py-2 px-3">Athlete</th>
@@ -239,11 +244,13 @@ export default function Home() {
             )}
           </tbody>
         </table>
+        </div>
 
         <br /><br />
 
         {/* TABLEAU PRIX DEFIT */}
-        <table className="w-full table-auto text-center border-collapse bg-[#5C42A6] shadow-lg p-4">
+        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <table className="w-full table-auto text-center border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
               <th className="py-2 px-3">Cours du Defit</th>
@@ -257,6 +264,7 @@ export default function Home() {
             </tr>
           </tbody>
         </table>
+        </div>
 
         <br /><br />
 
@@ -281,7 +289,8 @@ export default function Home() {
           ))}
         </div>
 
-        <table className="w-full table-auto text-left border-collapse bg-[#5C42A6] shadow-lg p-4">
+        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <table className="w-full table-auto text-left border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
               <th className="py-2 px-3">Athlete</th>
@@ -329,6 +338,7 @@ export default function Home() {
 )}
           </tbody>
         </table>
+        </div>
 
       </div>
     </main>
