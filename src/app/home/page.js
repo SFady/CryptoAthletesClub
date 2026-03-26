@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+
 import { useEffect, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 
@@ -106,15 +106,14 @@ export default function Home() {
 
       <div className="flex justify-center items-start gap-2 mb-4">
 
-        <div className="rounded-2xl inline-block relative -ml-10">
-          <Image
-            src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
-            alt="Athlete"
-            width={200}
-            height={400}
-            loading="eager"
-          />
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
+          alt="Athlete"
+          width={200}
+          className="rounded-2xl -ml-10"
+          loading="eager"
+        />
 
         {/* TEXTE À DROITE, encore plus proche du trait */}
         <div className="-ml-8 flex flex-col justify-start" style={{ marginTop: "50px" }}>
