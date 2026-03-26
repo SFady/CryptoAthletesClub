@@ -81,7 +81,7 @@ export default function Home() {
       {/* CARDS — mobile uniquement */}
       <div className="flex flex-col gap-3 mb-6 w-full md:hidden">
         {currentRows.map((row) => (
-          <div key={row.id} className="bg-[#5C42A6] rounded-2xl shadow-lg px-4 py-3 text-sm text-white">
+          <div key={row.id} className="bg-[#5C42A6] rounded-2xl shadow-lg px-4 py-3 text-white">
             <div className="flex justify-between items-center mb-2">
               <span className="font-semibold text-[#D6C48A]">
                 {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
