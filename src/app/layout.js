@@ -3,6 +3,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import ClientGate from "./ClientGate";
 import { useEffect, useState } from "react";
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
   const centralWidth = 1280;
   const version = getVersionString();
   const [showLink, setShowLink] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const value = localStorage.getItem("dataEntry");
@@ -104,30 +106,30 @@ export default function RootLayout({ children }) {
           </main>
 
           {/* FOOTER MOBILE */}
-          <footer className="fixed bottom-0 left-0 w-full bg-[#390494]/95 text-xs text-gray-200 py-2 z-30 backdrop-blur-md block md:hidden border-t border-white/20">
+          <footer className="fixed bottom-0 left-0 w-full bg-[#390494]/95 text-xs py-2 z-30 backdrop-blur-md block md:hidden border-t border-white/20">
             <nav className="flex justify-around items-center">
-              <Link href="/home" className="flex flex-col items-center gap-1 hover:text-white transition-colors">
-                <span className="text-lg">🏠</span>
-                <span>Dashboard</span>
-              </Link>
-              <Link href="/activities" className="flex flex-col items-center gap-1 hover:text-white transition-colors">
-                <span className="text-lg">📊</span>
-                <span>Activités</span>
-              </Link>
-              <Link href="/statistics" className="flex flex-col items-center gap-1 hover:text-white transition-colors">
-                <span className="text-lg">👤</span>
-                <span>Statistiques</span>
-              </Link>
-              <Link href="/shop" className="flex flex-col items-center gap-1 hover:text-white transition-colors">
-                <span className="text-lg">👤</span>
-                <span>Boutique</span>
-              </Link>
-              {showLink && (
-                <Link href="/sfy1024" className="flex flex-col items-center gap-1 hover:text-white transition-colors">
-                  <span className="text-lg">👤</span>
-                  <span>Saisie</span>
+              {[
+                { href: "/home", label: "Dashboard", icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H5a1 1 0 01-1-1V9.75z"/><path strokeLinecap="round" strokeLinejoin="round" d="M9 22V12h6v10"/></svg>
+                )},
+                { href: "/activities", label: "Activités", icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12h3l3-8 4 16 3-8h5"/></svg>
+                )},
+                { href: "/statistics", label: "Stats", icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 20V14m4 6V10m4 10V4m4 16v-6m4 6v-9"/></svg>
+                )},
+                { href: "/shop", label: "Boutique", icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>
+                )},
+                ...(showLink ? [{ href: "/sfy1024", label: "Saisie", icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                )}] : []),
+              ].map(({ href, label, icon }) => (
+                <Link key={href} href={href} className={`flex flex-col items-center gap-1 transition-colors ${pathname === href ? "text-white" : "text-gray-500 hover:text-gray-300"}`}>
+                  {icon}
+                  <span>{label}</span>
                 </Link>
-              )}
+              ))}
             </nav>
           </footer>
 
