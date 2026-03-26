@@ -5,6 +5,7 @@ import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 
 export default function Home() {
   const [rows, setRows] = useState([]);
+  const [total, setTotal] = useState(0);
   const [isClient, setIsClient] = useState(false);
   const { price: defitPrice } = useDefitPrice();
   const [selected, setSelected] = useState("0");
@@ -18,14 +19,15 @@ export default function Home() {
 
   useEffect(() => {
     setIsClient(true);
-    loadActivities(0);
+    loadActivities("0", 1);
   }, []);
 
-  const loadActivities = async (userId) => {
+  const loadActivities = async (userId, page) => {
     try {
-      const res = await fetch(`/api/get-users-activities?userId=${userId}`);
+      const res = await fetch(`/api/get-users-activities?userId=${userId}&page=${page}&limit=${rowsPerPage}`);
       const data = await res.json();
       setRows(data.result);
+      setTotal(data.total);
     } catch (err) {
       console.error("❌ Failed to load activities:", err);
     }
@@ -35,14 +37,16 @@ export default function Home() {
     const id = e.target.value;
     setSelected(id);
     setCurrentPage(1);
-    loadActivities(id);
+    loadActivities(id, 1);
   };
 
-  // ✅ Pagination logic
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = rows.slice(indexOfFirstRow, indexOfLastRow);
-  const totalPages = Math.ceil(rows.length / rowsPerPage);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    loadActivities(selected, page);
+  };
+
+  const currentRows = rows;
+  const totalPages = Math.ceil(total / rowsPerPage);
 
   return (
     <main className="flex flex-col justify-start w-full max-w-[100vw] md:max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-x-hidden overflow-y-auto">
@@ -105,11 +109,11 @@ export default function Home() {
 
         {/* PAGINATION mobile */}
         <div className="flex justify-center items-center gap-2 flex-wrap">
-          <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">←</button>
+          <button onClick={() => handlePageChange(Math.max(currentPage - 1, 1))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">←</button>
           {[...Array(totalPages)].map((_, i) => (
-            <button key={i} onClick={() => setCurrentPage(i + 1)} className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-[#D6C48A] text-[#2A2550]" : "bg-white/10 text-white hover:bg-white/20"}`}>{i + 1}</button>
+            <button key={i} onClick={() => handlePageChange(i + 1)} className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-[#D6C48A] text-[#2A2550]" : "bg-white/10 text-white hover:bg-white/20"}`}>{i + 1}</button>
           ))}
-          <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">→</button>
+          <button onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">→</button>
         </div>
       </div>
 
@@ -165,11 +169,11 @@ export default function Home() {
 
         {/* PAGINATION desktop */}
         <div className="flex justify-center items-center gap-2 mt-4 flex-wrap">
-          <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">←</button>
+          <button onClick={() => handlePageChange(Math.max(currentPage - 1, 1))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">←</button>
           {[...Array(totalPages)].map((_, i) => (
-            <button key={i} onClick={() => setCurrentPage(i + 1)} className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-[#D6C48A] text-[#2A2550]" : "bg-white/10 text-white hover:bg-white/20"}`}>{i + 1}</button>
+            <button key={i} onClick={() => handlePageChange(i + 1)} className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-[#D6C48A] text-[#2A2550]" : "bg-white/10 text-white hover:bg-white/20"}`}>{i + 1}</button>
           ))}
-          <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">→</button>
+          <button onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">→</button>
         </div>
       </div>
     </main>

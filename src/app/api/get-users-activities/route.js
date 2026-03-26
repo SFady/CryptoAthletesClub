@@ -4,45 +4,56 @@ export async function GET(req) {
   try {
     const url = new URL(req.url);
     const userId = Number(url.searchParams.get("userId")) || 0;
+    const page   = Math.max(Number(url.searchParams.get("page"))  || 1, 1);
+    const limit  = Math.max(Number(url.searchParams.get("limit")) || 50, 1);
+    const offset = (page - 1) * limit;
 
-    let result;
-    
+    let result, countRow;
+
     if (userId === 0) {
+      [countRow] = await sql`
+        SELECT COUNT(*) AS total FROM user_activities
+      `;
       result = await sql`
-        select 
-          uac.id, 
-          uac.date_claimed, 
-          usr.name as user_name, 
-          act.name as activity_name, 
-          uac.defit_amount, 
+        SELECT
+          uac.id,
+          uac.date_claimed,
+          usr.name AS user_name,
+          act.name AS activity_name,
+          uac.defit_amount,
           uac.participation_percentage,
           uac.boost,
           usr.max_defits
-        from user_activities uac
-        inner join users usr on uac.user_id = usr.id
-        inner join activity_type act on uac.activity_type = act.id
-        order by uac.date_claimed desc;
+        FROM user_activities uac
+        INNER JOIN users usr ON uac.user_id = usr.id
+        INNER JOIN activity_type act ON uac.activity_type = act.id
+        ORDER BY uac.date_claimed DESC
+        LIMIT ${limit} OFFSET ${offset}
       `;
     } else {
+      [countRow] = await sql`
+        SELECT COUNT(*) AS total FROM user_activities WHERE user_id = ${userId}
+      `;
       result = await sql`
-        select 
-          uac.id, 
-          uac.date_claimed, 
-          usr.name as user_name, 
-          act.name as activity_name, 
-          uac.defit_amount, 
+        SELECT
+          uac.id,
+          uac.date_claimed,
+          usr.name AS user_name,
+          act.name AS activity_name,
+          uac.defit_amount,
           uac.participation_percentage,
           uac.boost,
           usr.max_defits
-        from user_activities uac
-        inner join users usr on uac.user_id = usr.id
-        inner join activity_type act on uac.activity_type = act.id
-        where uac.user_id = ${userId}
-        order by uac.date_claimed desc;
+        FROM user_activities uac
+        INNER JOIN users usr ON uac.user_id = usr.id
+        INNER JOIN activity_type act ON uac.activity_type = act.id
+        WHERE uac.user_id = ${userId}
+        ORDER BY uac.date_claimed DESC
+        LIMIT ${limit} OFFSET ${offset}
       `;
     }
 
-    return new Response(JSON.stringify({ result: result }), {
+    return new Response(JSON.stringify({ result, total: Number(countRow.total) }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
