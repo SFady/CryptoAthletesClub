@@ -85,24 +85,26 @@ export default function Home() {
             <div className="flex justify-between items-center mb-2">
               <span className="font-semibold text-[#D6C48A]">
                 {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
+                <span className="ml-2 font-semibold text-gray-300">-&nbsp;&nbsp;{row.activity_name}</span>
               </span>
-              <span className="text-gray-300">{row.user_name}</span>
+              <span className="font-semibold text-gray-300">{row.user_name}</span>
             </div>
             <div className="flex justify-between text-gray-300 mb-1">
-              <span>{row.activity_name}</span>
               <span>Effort : {Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100)} %</span>
             </div>
             {showGains && (
               <div className="flex justify-between text-gray-400 mb-1">
-                <span>Defit : {row.defit_amount}</span>
-                <span>
-                  {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $
-                </span>
+                <span>Defits : {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})</span>
               </div>
             )}
-            <div className="flex justify-between font-semibold border-t border-white/20 pt-2 mt-1">
+            <div className="text-gray-300 mb-1">
               <span>Boost : {Number(row.boost).toFixed(2)} $</span>
-              <span>Total : {Number(row.boost).toFixed(2)} $</span>
+            </div>
+            <div className="flex justify-end font-semibold border-t border-white/20 pt-2 mt-1">
+              <span>Total : {(
+                Number(row.boost) +
+                (showGains ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0)
+              ).toFixed(2)} $</span>
             </div>
           </div>
         ))}
