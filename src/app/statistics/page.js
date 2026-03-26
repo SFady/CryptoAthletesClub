@@ -73,7 +73,7 @@ export default function Home() {
     <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-4 pb-4">
       <div className="max-w-[800px] w-full mx-auto">        
 
-        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <div className="rounded-lg overflow-hidden shadow-lg">
         <table className="w-full table-auto text-center border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
@@ -113,7 +113,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <div className="rounded-lg overflow-hidden shadow-lg">
         <table className="w-full table-auto text-left border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
@@ -205,7 +205,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <div className="rounded-lg overflow-hidden shadow-lg">
         <table className="w-full table-auto text-left border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
@@ -249,7 +249,7 @@ export default function Home() {
         <br /><br />
 
         {/* TABLEAU PRIX DEFIT */}
-        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <div className="rounded-lg overflow-hidden shadow-lg">
         <table className="w-full table-auto text-center border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
@@ -289,7 +289,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="rounded-2xl overflow-hidden shadow-lg">
+        <div className="rounded-lg overflow-hidden shadow-lg">
         <table className="w-full table-auto text-left border-collapse bg-[#5C42A6]">
           <thead>
             <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
