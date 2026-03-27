@@ -116,15 +116,15 @@ export default function Home() {
           <option value="4" className="bg-[#3b2d8a]">Jinbe</option>
         </select>
 
-        <label className="flex items-center gap-2 text-white text-sm cursor-pointer select-none">
-          <input
-            type="checkbox"
-            checked={showGains}
-            onChange={(e) => setShowGains(e.target.checked)}
-            className="accent-[#D6C48A] w-4 h-4 cursor-pointer"
-          />
+        <div
+          className="flex items-center gap-2 text-white text-sm cursor-pointer select-none"
+          onClick={() => setShowGains(!showGains)}
+        >
+          <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${showGains ? "bg-[#D6C48A]" : "bg-white/20"}`}>
+            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showGains ? "translate-x-5" : "translate-x-0"}`} />
+          </div>
           Afficher les Defits
-        </label>
+        </div>
       </div>
 
       {/* CARDS — mobile uniquement */}
@@ -143,7 +143,7 @@ export default function Home() {
                 </div>
                 <span className="text-sm font-semibold bg-white/10 px-2 py-0.5 rounded-lg">{row.user_name}</span>
               </div>
-              <div className="flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-col gap-1.5 mb-2">
                 <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
                   Effort {effort} %
                 </span>
