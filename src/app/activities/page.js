@@ -143,7 +143,7 @@ export default function Home() {
                 <span className="text-xs font-semibold bg-white/15 text-white px-2 py-0.5 rounded-lg ml-auto">{row.user_name}</span>
               </div>
               {/* Bulles + Image */}
-              <div className="flex gap-2 mb-2">
+              <div className="flex gap-2 mb-2 items-start">
                 <div className="flex flex-col gap-1.5 flex-1">
                   <span className={`w-[62%] text-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
                     Effort {effort} %
