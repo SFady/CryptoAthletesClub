@@ -157,7 +157,7 @@ export default function Home() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center justify-center w-16">
+                <div className="flex items-center justify-end w-16 -translate-x-0.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={row.user_name === "Usopp" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
