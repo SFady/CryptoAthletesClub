@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
+import { FaRunning, FaSwimmer, FaBiking, FaWalking, FaStar } from "react-icons/fa";
 
 export default function Home() {
   const [rows, setRows] = useState([]);
@@ -10,11 +11,9 @@ export default function Home() {
   const { price: defitPrice } = useDefitPrice();
   const [selected, setSelected] = useState("0");
 
-  // ✅ Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 50;
 
-  // ✅ Toggle colonnes gains
   const [showGains, setShowGains] = useState(false);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ export default function Home() {
       setRows(data.result);
       setTotal(data.total);
     } catch (err) {
-      console.error("❌ Failed to load activities:", err);
+      console.error("Failed to load activities:", err);
     }
   };
 
@@ -48,134 +47,181 @@ export default function Home() {
   const currentRows = rows;
   const totalPages = Math.ceil(total / rowsPerPage);
 
+  const ActivityIcon = ({ name }) => {
+    const key = (name || "").toLowerCase();
+    const cls = "text-white/80 text-lg";
+    if (key === "run" || key === "running")   return (
+      <span title="Running" className="inline-flex items-center gap-0.5">
+        <span className="flex flex-col gap-0.5">
+          <span className="block h-px w-1.5 bg-white/60 rounded-full" />
+          <span className="block h-px w-1 bg-white/40 rounded-full" />
+          <span className="block h-px w-1.5 bg-white/60 rounded-full" />
+        </span>
+        <FaRunning className={cls} />
+      </span>
+    );
+    if (key === "swim" || key === "natation") return <span title="Natation" className="inline-flex scale-x-[-1]"><FaSwimmer className={cls} /></span>;
+    if (key === "bike" || key === "cyclisme") return <span title="Cyclisme"><FaBiking className={cls} /></span>;
+    if (key === "marche" || key === "walk")   return <span title="Marche"><FaWalking className={cls} /></span>;
+    if (key === "bonus")                      return <span title="Bonus"><FaStar className={cls} /></span>;
+    return <span className="text-gray-200 text-sm">{name}</span>;
+  };
+
+  const effortBadge = (pct) => {
+    if (pct >= 90) return "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+    if (pct >= 60) return "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30";
+    return "bg-red-500/20 text-red-300 border border-red-500/30";
+  };
+
+  const Pagination = () => (
+    <div className="flex justify-center items-center gap-1 flex-wrap mt-5">
+      <button
+        onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+        disabled={currentPage === 1}
+        className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-sm hover:bg-white/20 disabled:opacity-30 transition-colors"
+      >←</button>
+      {[...Array(totalPages)].map((_, i) => (
+        <button
+          key={i}
+          onClick={() => handlePageChange(i + 1)}
+          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+            currentPage === i + 1
+              ? "bg-[#D6C48A] text-[#2A2550] shadow-lg"
+              : "bg-white/10 text-white hover:bg-white/20"
+          }`}
+        >{i + 1}</button>
+      ))}
+      <button
+        onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+        disabled={currentPage === totalPages}
+        className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-sm hover:bg-white/20 disabled:opacity-30 transition-colors"
+      >→</button>
+    </div>
+  );
+
   return (
     <main className="flex flex-col justify-start w-full max-w-[100vw] md:max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-x-hidden overflow-y-auto">
 
-      {/* FILTER + CHECKBOX */}
-      <div className="mb-4 flex items-center gap-4 flex-wrap">
-
+      {/* FILTER + TOGGLE */}
+      <div className="mb-5 flex items-center gap-4 flex-wrap">
         <select
           value={selected}
           onChange={handleSelect}
-          className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
+          className="bg-white/10 text-white px-3 py-2 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#D6C48A]/40 text-sm"
         >
-          <option value="0" className="bg-[#8d6bf2] text-[#f3f0ff]">Tous</option>
-          <option value="1" className="bg-[#8d6bf2] text-[#f3f0ff]">Usopp</option>
-          <option value="3" className="bg-[#8d6bf2] text-[#f3f0ff]">Nico Robin</option>
-          <option value="2" className="bg-[#8d6bf2] text-[#f3f0ff]">DTeach</option>
-          <option value="4" className="bg-[#8d6bf2] text-[#f3f0ff]">Jinbe</option>
+          <option value="0" className="bg-[#3b2d8a]">Tous</option>
+          <option value="1" className="bg-[#3b2d8a]">Usopp</option>
+          <option value="3" className="bg-[#3b2d8a]">Nico Robin</option>
+          <option value="2" className="bg-[#3b2d8a]">DTeach</option>
+          <option value="4" className="bg-[#3b2d8a]">Jinbe</option>
         </select>
 
-        <label className="flex items-center gap-2 text-white text-sm cursor-pointer">
+        <label className="flex items-center gap-2 text-white text-sm cursor-pointer select-none">
           <input
             type="checkbox"
             checked={showGains}
             onChange={(e) => setShowGains(e.target.checked)}
-            className="accent-[#D6C48A]"
+            className="accent-[#D6C48A] w-4 h-4 cursor-pointer"
           />
           Afficher les Defits
         </label>
-
       </div>
 
       {/* CARDS — mobile uniquement */}
       <div className="flex flex-col gap-3 mb-6 w-full md:hidden">
-        {currentRows.map((row) => (
-          <div key={row.id} className="bg-[#5C42A6] rounded-2xl shadow-lg px-4 py-3 text-white">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-semibold text-[#D6C48A]">
-                {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
-                <span className="ml-2 font-semibold text-gray-300">-&nbsp;&nbsp;{row.activity_name}</span>
-              </span>
-              <span className="font-semibold text-gray-300">{row.user_name}</span>
-            </div>
-            <div className="flex justify-between text-gray-300 mb-1">
-              <span>Effort : {Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100)} %</span>
-            </div>
-            {showGains && (
-              <div className="flex justify-between text-gray-400 mb-1">
-                <span>Defits : {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})</span>
+        {currentRows.map((row, idx) => {
+          const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100);
+          const gainDefit = showGains ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
+          return (
+            <div key={row.id} className={`rounded-2xl shadow-lg px-4 py-3 text-white border border-white/10 ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}>
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex items-center gap-2">
+                  <ActivityIcon name={row.activity_name} />
+                  <span className="font-semibold text-[#D6C48A] text-sm">
+                    {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
+                  </span>
+                </div>
+                <span className="text-sm font-semibold bg-white/10 px-2 py-0.5 rounded-lg">{row.user_name}</span>
               </div>
-            )}
-            <div className="text-gray-300 mb-1">
-              <span>Boost : {Number(row.boost).toFixed(2)} $</span>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
+                  Effort {effort} %
+                </span>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-purple-200 border border-purple-400/30">
+                  Boost {Number(row.boost).toFixed(2)} $
+                </span>
+                {showGains && (
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-purple-200 border border-purple-400/30">
+                    Defits {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})
+                  </span>
+                )}
+              </div>
+              <div className="flex justify-end font-bold border-t border-white/10 pt-2 mt-1 text-[#D6C48A]">
+                Total : {(Number(row.boost) + gainDefit).toFixed(2)} $
+              </div>
             </div>
-            <div className="flex justify-end font-semibold border-t border-white/20 pt-2 mt-1">
-              <span>Total : {(
-                Number(row.boost) +
-                (showGains ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0)
-              ).toFixed(2)} $</span>
-            </div>
-          </div>
-        ))}
-
-        {/* PAGINATION mobile */}
-        <div className="flex justify-center items-center gap-2 flex-wrap">
-          <button onClick={() => handlePageChange(Math.max(currentPage - 1, 1))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">←</button>
-          {[...Array(totalPages)].map((_, i) => (
-            <button key={i} onClick={() => handlePageChange(i + 1)} className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-[#D6C48A] text-[#2A2550]" : "bg-white/10 text-white hover:bg-white/20"}`}>{i + 1}</button>
-          ))}
-          <button onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">→</button>
-        </div>
+          );
+        })}
+        <Pagination />
       </div>
 
       {/* TABLE — desktop uniquement */}
-      <div className="hidden md:block bg-[#5C42A6] rounded-2xl shadow-lg p-6 mb-6 w-full overflow-x-auto">
-        <table className="w-full table-auto text-left border-collapse">
-          <thead>
-            <tr className="text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
-              <th className="py-3 px-4">Date</th>
-              <th className="py-3 px-4">Athlete</th>
-              <th className="py-3 px-4">Activité</th>
-              <th className="py-3 px-4">Effort</th>
-
-              {showGains && (
-                <>
-                  <th className="py-3 px-4">Gain brut (Defit)</th>
-                  <th className="py-3 px-4">Gain net Defit ($)</th>
-                </>
-              )}
-
-              <th className="py-3 px-4">Boost ($)</th>
-              <th className="py-3 px-4">Total ($)</th>
-            </tr>
-          </thead>
-
-          <tbody className="text-gray-200">
-            {currentRows.map((row) => (
-              <tr key={row.id} className="hover:bg-white/10 transition-colors border-b border-white/20">
-                <td className="text-white py-3 px-4">
-                  {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
-                </td>
-                <td className="text-white py-3 px-4">{row.user_name}</td>
-                <td className="text-white py-3 px-4">{row.activity_name}</td>
-                <td className="text-white py-3 px-4">
-                  {Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100)} %
-                </td>
-
+      <div className="hidden md:block rounded-2xl shadow-xl overflow-hidden mb-6 w-full border border-white/10">
+        <div className="overflow-x-auto">
+          <table className="w-full table-auto text-left border-collapse">
+            <thead>
+              <tr className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white text-xs uppercase tracking-wide">
+                <th className="py-3.5 px-5 font-semibold">Date</th>
+                <th className="py-3.5 px-5 font-semibold">Athlete</th>
+                <th className="py-3.5 px-5 font-semibold">Activité</th>
+                <th className="py-3.5 px-5 font-semibold">Effort</th>
                 {showGains && (
                   <>
-                    <td className="text-gray-400 py-3 px-4">{row.defit_amount}</td>
-                    <td className="text-gray-400 py-3 px-4">
-                      {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)}
-                    </td>
+                    <th className="py-3.5 px-5 font-semibold">Gain brut (Defit)</th>
+                    <th className="py-3.5 px-5 font-semibold">Gain net Defit ($)</th>
                   </>
                 )}
-
-                <td className="text-white py-3 px-4">{Number(row.boost).toFixed(2)}</td>
-                <td className="text-white py-3 px-4">{Number(row.boost).toFixed(2)}</td>
+                <th className="py-3.5 px-5 font-semibold">Boost ($)</th>
+                <th className="py-3.5 px-5 font-semibold">Total ($)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* PAGINATION desktop */}
-        <div className="flex justify-center items-center gap-2 mt-4 flex-wrap">
-          <button onClick={() => handlePageChange(Math.max(currentPage - 1, 1))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">←</button>
-          {[...Array(totalPages)].map((_, i) => (
-            <button key={i} onClick={() => handlePageChange(i + 1)} className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-[#D6C48A] text-[#2A2550]" : "bg-white/10 text-white hover:bg-white/20"}`}>{i + 1}</button>
-          ))}
-          <button onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))} className="px-3 py-1 bg-white/10 text-white rounded hover:bg-white/20">→</button>
+            </thead>
+            <tbody>
+              {currentRows.map((row, idx) => {
+                const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100);
+                const gainDefit = showGains ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
+                return (
+                  <tr
+                    key={row.id}
+                    className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}
+                  >
+                    <td className="py-3 px-5 text-[#D6C48A] font-medium whitespace-nowrap">
+                      {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
+                    </td>
+                    <td className="py-3 px-5 text-white font-medium">{row.user_name}</td>
+                    <td className="py-3 px-5"><ActivityIcon name={row.activity_name} /></td>
+                    <td className="py-3 px-5">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${effortBadge(effort)}`}>
+                        {effort} %
+                      </span>
+                    </td>
+                    {showGains && (
+                      <>
+                        <td className="py-3 px-5 text-gray-300">{row.defit_amount}</td>
+                        <td className="py-3 px-5 text-gray-300">
+                          {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)}
+                        </td>
+                      </>
+                    )}
+                    <td className="py-3 px-5 text-gray-200">{Number(row.boost).toFixed(2)}</td>
+                    <td className="py-3 px-5 text-[#D6C48A] font-bold">{(Number(row.boost) + gainDefit).toFixed(2)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="bg-[#4a3491] px-6 pb-5">
+          <Pagination />
         </div>
       </div>
     </main>
