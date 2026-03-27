@@ -144,20 +144,22 @@ export default function Home() {
                 <span className="text-sm font-semibold bg-white/15 text-white px-2 py-0.5 rounded-lg">{row.user_name}</span>
               </div>
               <div className="flex flex-col gap-1.5 mb-2">
-                <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
+                <span className={`w-1/2 text-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
                   Effort {effort} %
                 </span>
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
+                <span className="w-1/2 text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
                   Boost {Number(row.boost).toFixed(2)} $
                 </span>
                 {showGains && (
-                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
+                  <span className="w-1/2 text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
                     Defits {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})
                   </span>
                 )}
               </div>
-              <div className="flex justify-end font-bold border-t border-white/10 pt-2 mt-1 text-[#D6C48A]">
-                Total : {(Number(row.boost) + gainDefit).toFixed(2)} $
+              <div className="flex justify-end border-t border-white/10 pt-2 mt-1">
+                <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white font-bold px-3 py-0.5 rounded-full text-sm">
+                  Total : {(Number(row.boost) + gainDefit).toFixed(2)} $
+                </span>
               </div>
             </div>
           );
