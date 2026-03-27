@@ -70,7 +70,7 @@ export default function Home() {
   const effortBadge = (pct) => {
     if (pct >= 90) return "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
     if (pct >= 60) return "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30";
-    return "bg-red-500/20 text-red-300 border border-red-500/30";
+    return "bg-red-500/30 text-red-200 border border-red-400/50";
   };
 
   const Pagination = () => (
