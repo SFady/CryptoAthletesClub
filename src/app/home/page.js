@@ -177,7 +177,7 @@ export default function Home() {
                   </span>
                 </span>
               </td>
-              <td className="py-3 px-2 text-right font-semibold text-gray-200">
+              <td className="py-3 px-2 text-right font-semibold text-gray-400">
                 {Number(defitAmount * defitPrice)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
