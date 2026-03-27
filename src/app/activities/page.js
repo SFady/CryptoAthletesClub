@@ -194,26 +194,26 @@ export default function Home() {
                     key={row.id}
                     className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}
                   >
-                    <td className="py-3 px-5 text-[#D6C48A] font-medium whitespace-nowrap">
+                    <td className="py-4 px-5 text-[#D6C48A] font-semibold whitespace-nowrap tracking-wide">
                       {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
                     </td>
-                    <td className="py-3 px-5 text-white font-medium">{row.user_name}</td>
-                    <td className="py-3 px-5"><ActivityIcon name={row.activity_name} /></td>
-                    <td className="py-3 px-5">
+                    <td className="py-4 px-5 text-white font-semibold">{row.user_name}</td>
+                    <td className="py-4 px-5"><ActivityIcon name={row.activity_name} /></td>
+                    <td className="py-4 px-5">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${effortBadge(effort)}`}>
                         {effort} %
                       </span>
                     </td>
                     {showGains && (
                       <>
-                        <td className="py-3 px-5 text-gray-300">{row.defit_amount}</td>
-                        <td className="py-3 px-5 text-gray-300">
+                        <td className="py-4 px-5 text-gray-200">{row.defit_amount}</td>
+                        <td className="py-4 px-5 text-gray-200">
                           {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)}
                         </td>
                       </>
                     )}
-                    <td className="py-3 px-5 text-gray-200">{Number(row.boost).toFixed(2)}</td>
-                    <td className="py-3 px-5 text-[#D6C48A] font-bold">{(Number(row.boost) + gainDefit).toFixed(2)}</td>
+                    <td className="py-4 px-5 text-gray-100">{Number(row.boost).toFixed(2)}</td>
+                    <td className="py-4 px-5 text-[#D6C48A] font-bold">{(Number(row.boost) + gainDefit).toFixed(2)}</td>
                   </tr>
                 );
               })}
