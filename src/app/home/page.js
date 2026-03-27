@@ -96,10 +96,10 @@ export default function Home() {
                focus:outline-none focus:ring-2 focus:ring-white/30
                md:px-4 md:py-2 md:text-base"
         >
-          <option value="1" className="bg-[#8d6bf2] text-[#f3f0ff]">Usopp</option>
-          <option value="3" className="bg-[#8d6bf2] text-[#f3f0ff]">Nico Robin</option>
-          <option value="2" className="bg-[#8d6bf2] text-[#f3f0ff]">DTeach</option>
-          <option value="4" className="bg-[#8d6bf2] text-[#f3f0ff]">Jinbe</option>
+          <option value="1" className="bg-[#3b2d8a] text-white">Usopp</option>
+          <option value="3" className="bg-[#3b2d8a] text-white">Nico Robin</option>
+          <option value="2" className="bg-[#3b2d8a] text-white">DTeach</option>
+          <option value="4" className="bg-[#3b2d8a] text-white">Jinbe</option>
         </select>
       </div>
 
@@ -117,9 +117,9 @@ export default function Home() {
 
         {/* TEXTE À DROITE, encore plus proche du trait */}
         <div className="-ml-8 flex flex-col justify-start" style={{ marginTop: "50px" }}>
-          <table className="border-collapse text-center text-xs">
+          <table className="border-collapse text-center text-xs text-gray-200">
             <thead>
-              <tr>
+              <tr className="text-white font-semibold">
                 <th className="px-2 py-1">Element</th>
                 <th className="px-2 py-1">Classe</th>
                 <th className="px-2 py-1">Niveau</th>
@@ -130,7 +130,7 @@ export default function Home() {
                 const [col1 = "_", col2 = "_"] = dataBySelected[selected]?.[item] ?? ["_", "_"];
                 return (
                   <tr key={item}>
-                    <td className="px-2 py-1">{item}</td>
+                    <td className="px-2 py-1 text-white">{item}</td>
                     <td className="px-2 py-1">{col1}</td>
                     <td className="px-2 py-1">{col2}</td>
                   </tr>
@@ -177,7 +177,7 @@ export default function Home() {
                   </span>
                 </span>
               </td>
-              <td className="py-3 px-2 text-right font-semibold text-gray-400">
+              <td className="py-3 px-2 text-right font-semibold text-gray-200">
                 {Number(defitAmount * defitPrice)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
