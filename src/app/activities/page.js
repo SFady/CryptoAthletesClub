@@ -137,21 +137,21 @@ export default function Home() {
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-2">
                   <ActivityIcon name={row.activity_name} />
-                  <span className="font-semibold text-[#D6C48A] text-sm">
+                  <span className="font-bold text-[#D6C48A]">
                     {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
                   </span>
                 </div>
-                <span className="text-sm font-semibold bg-white/10 px-2 py-0.5 rounded-lg">{row.user_name}</span>
+                <span className="text-sm font-semibold bg-white/15 text-white px-2 py-0.5 rounded-lg">{row.user_name}</span>
               </div>
               <div className="flex flex-col gap-1.5 mb-2">
                 <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
                   Effort {effort} %
                 </span>
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-purple-200 border border-purple-400/30">
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
                   Boost {Number(row.boost).toFixed(2)} $
                 </span>
                 {showGains && (
-                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-purple-200 border border-purple-400/30">
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
                     Defits {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})
                   </span>
                 )}
