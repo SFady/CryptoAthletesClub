@@ -157,7 +157,7 @@ export default function Home() {
                 )}
               </div>
               <div className="flex justify-end border-t border-white/10 pt-2 mt-1">
-                <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white font-bold px-3 py-0.5 rounded-full text-sm">
+                <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white px-5 py-0.5 rounded-full text-sm">
                   Total : {(Number(row.boost) + gainDefit).toFixed(2)} $
                 </span>
               </div>
