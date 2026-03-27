@@ -45,7 +45,7 @@ export default function Home() {
   };
 
   // Liste des éléments du tableau
-  const rows = ["T-Shirt", "Short", "Chaussettes", "Chaussures", "Montre", "Personnage"];
+  const rows = ["Personnage", "T-Shirt", "Montre", "Short", "Chaussettes", "Chaussures"];
 
   // Valeurs pour chaque ID (1 à 4)
   const dataBySelected = {
@@ -104,40 +104,61 @@ export default function Home() {
       </div>
 
 
-      <div className="flex justify-center items-start gap-2 mb-4">
+      <div className="flex justify-center items-start gap-0 mb-4">
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
-          alt="Athlete"
-          width={200}
-          className="rounded-2xl -ml-10"
-          loading="eager"
-        />
+        {/* Image + SVG dans un conteneur relatif */}
+        <div className="relative" style={{ width: 200 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
+            alt="Athlete"
+            width={200}
+            className="rounded-2xl"
+            loading="eager"
+          />
+          {/* SVG par-dessus l'image, overflow visible vers la droite */}
+          <svg
+            className="absolute inset-0 pointer-events-none"
+            width="200" height="100%"
+            overflow="visible"
+          >
+            {[
+              { x: 122, y: 32,  tx: 212, ty: 86  },
+              { x: 122, y: 100, tx: 212, ty: 110 },
+              { x: 156, y: 158, tx: 212, ty: 134 },
+              { x: 122, y: 180, tx: 212, ty: 158 },
+              { x: 127, y: 252, tx: 212, ty: 182 },
+              { x: 143, y: 273, tx: 212, ty: 206 },
+            ].map(({ x, y, tx, ty }, i) => (
+              <g key={i}>
+                <line x1={x} y1={y} x2={tx} y2={ty} stroke="rgba(255,255,255,0.4)" strokeWidth="1" strokeDasharray="3,2"/>
+                <circle cx={x} cy={y} r="2.5" fill="rgba(255,255,255,0.7)"/>
+              </g>
+            ))}
+          </svg>
+        </div>
 
-        {/* TEXTE À DROITE, encore plus proche du trait */}
-        <div className="-ml-8 flex flex-col justify-start" style={{ marginTop: "50px" }}>
+        {/* TABLE */}
+        <div className="flex flex-col justify-start" style={{ marginTop: "50px" }}>
           <table className="border-collapse text-center text-xs text-gray-200">
             <thead>
               <tr className="text-white font-semibold">
-                <th className="px-2 py-1">Element</th>
+                <th className="px-2 py-1 hidden"></th>
                 <th className="px-2 py-1">Classe</th>
                 <th className="px-2 py-1">Niveau</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((item) => {
-                const [col1 = "_", col2 = "_"] = dataBySelected[selected]?.[item] ?? ["_", "_"];
+                const [col1 = "---", col2 = "---"] = dataBySelected[selected]?.[item] ?? ["---", "---"];
                 return (
                   <tr key={item}>
-                    <td className="px-2 py-1 text-white">{item}</td>
+                    <td className="px-2 py-1 text-white hidden"></td>
                     <td className="px-2 py-1">{col1}</td>
                     <td className="px-2 py-1">{col2}</td>
                   </tr>
                 );
               })}
-              <tr><td colSpan={3}>&nbsp;</td></tr>
-              <tr><td colSpan={3}><button className="bg-purple-500/80 hover:bg-purple-600 text-white px-3 py-1 rounded-lg transition">Améliorations</button></td></tr>
             </tbody>
           </table>
         </div>
