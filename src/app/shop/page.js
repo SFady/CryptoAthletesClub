@@ -16,7 +16,7 @@ export default function Home() {
         <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
           <table className="w-full table-auto text-left border-collapse">
             <thead>
-              <tr className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white text-xs uppercase tracking-wide">
+              <tr className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white text-xs uppercase tracking-wide">
                 <th className="py-3.5 px-5 font-semibold">Article</th>
                 <th className="py-3.5 px-5 font-semibold text-right">Prix</th>
                 <th className="py-3.5 px-5 font-semibold text-center">Actions</th>

@@ -202,7 +202,7 @@ export default function Home() {
                 }).replace(",", " ") + " $" ?? "..."}
               </td>
             </tr>
-            <tr className="border-t-4 border-transparent text-white bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
+            <tr className="border-t-4 border-transparent text-white bg-gradient-to-r from-purple-500 via-pink-500 to-rose-400">
               <td className="py-2 px-2 font-bold">TOTAL</td>
               <td className="py-2 px-2 text-right font-semibold">
                 {Number(dollarAmount + user_liquidity)?.toLocaleString("en-US", {

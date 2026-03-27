@@ -70,7 +70,7 @@ export default function Home() {
   const effortBadge = (pct) => {
     if (pct >= 90) return "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
     if (pct >= 60) return "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30";
-    return "bg-red-500/30 text-red-200 border border-red-400/50";
+    return "bg-rose-500/30 text-rose-200 border border-rose-400/50";
   };
 
   const Pagination = () => (
@@ -170,7 +170,7 @@ export default function Home() {
         <div className="overflow-x-auto">
           <table className="w-full table-auto text-left border-collapse">
             <thead>
-              <tr className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white text-xs uppercase tracking-wide">
+              <tr className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white text-xs uppercase tracking-wide">
                 <th className="py-3.5 px-5 font-semibold">Date</th>
                 <th className="py-3.5 px-5 font-semibold">Athlete</th>
                 <th className="py-3.5 px-5 font-semibold">Activité</th>
