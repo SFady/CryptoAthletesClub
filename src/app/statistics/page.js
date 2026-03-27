@@ -10,9 +10,9 @@ export default function Home() {
   const [totals2, setTotals2] = useState([]);
   const [totals3, setTotals3] = useState([]);
   const [bonus, setBonus] = useState([]);
-  const [selected, setSelected] = useState(1);
-  const [selected2, setSelected2] = useState(1);
-  const [selected3, setSelected3] = useState(1);
+  const [selected, setSelected] = useState(() => Number(localStorage.getItem("statsPeriodGains")) || 1);
+  const [selected2, setSelected2] = useState(() => Number(localStorage.getItem("statsPeriodDistance")) || 1);
+  const [selected3, setSelected3] = useState(() => Number(localStorage.getItem("statsPeriodDefits")) || 1);
 
   const fetchTotals = async (period) => {
     try {
@@ -54,9 +54,9 @@ export default function Home() {
     }
   };
 
-  useEffect(() => { fetchTotals(selected); }, [selected]);
-  useEffect(() => { fetchTotals2(selected2); }, [selected2]);
-  useEffect(() => { fetchTotals3(selected3); }, [selected3]);
+  useEffect(() => { fetchTotals(selected); localStorage.setItem("statsPeriodGains", selected); }, [selected]);
+  useEffect(() => { fetchTotals2(selected2); localStorage.setItem("statsPeriodDistance", selected2); }, [selected2]);
+  useEffect(() => { fetchTotals3(selected3); localStorage.setItem("statsPeriodDefits", selected3); }, [selected3]);
   useEffect(() => { fetchBonus(); }, []);
 
   const sortedTotals = [...totals].sort((a, b) => {
