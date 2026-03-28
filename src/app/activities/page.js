@@ -140,30 +140,27 @@ export default function Home() {
                 <span className="font-bold text-[#D6C48A]">
                   {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
                 </span>
-                <span className="text-xs font-semibold bg-white/15 text-white px-2 py-0.5 rounded-lg ml-auto">{row.user_name}</span>
+                <span className="text-white font-semibold">— {row.user_name}</span>
               </div>
-              {/* Bulles + Image */}
-              <div className="flex gap-2 mb-2 items-start">
-                <div className="flex flex-col gap-1.5 flex-1">
-                  <span className={`w-[62%] text-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
+              {/* Bulles */}
+              <div className="flex justify-between items-start gap-2 mb-2">
+                <div className="flex flex-col gap-1.5 items-start">
+                  <span className={`text-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
                     Effort {effort} %
                   </span>
-                  <span className="w-[62%] text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
+                  <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/10 text-white/50 border border-white/20">
+                    Vitesse 
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1.5 items-end">
+                  <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
                     Boost {Number(row.boost).toFixed(2)} $
                   </span>
                   {showGains && (
-                    <span className="w-[62%] text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
+                    <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
                       Defits {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})
                     </span>
                   )}
-                </div>
-                <div className="flex items-center justify-end w-16 -translate-x-0.5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={row.user_name === "Usopp" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
-                    alt={row.user_name}
-                    className="h-10 w-auto object-contain"
-                  />
                 </div>
               </div>
               {/* Total */}
