@@ -16,7 +16,7 @@ export async function GET(req) {
     }
 
     const result = await sql`
-      SELECT 
+      SELECT
         COALESCE(dollars, 0) AS dollars,
         COALESCE(defits, 0) AS defits,
         COALESCE(liquidity, 0) AS user_liquidity

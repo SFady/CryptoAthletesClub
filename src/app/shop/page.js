@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 export default function Home() {
   const items = [
     { name: "Chaussettes", price: "10 $" },
@@ -10,9 +12,29 @@ export default function Home() {
     { name: "Personnage",  price: "400 $" },
   ];
 
+  const [showWallet, setShowWallet] = useState(false);
+  const [wallet, setWallet] = useState(null);
+  const [walletLoading, setWalletLoading] = useState(true);
+
+  const fetchWallet = () => {
+    setWalletLoading(true);
+    fetch("/api/wallet")
+      .then(r => r.json())
+      .then(d => { setWallet(d); setWalletLoading(false); })
+      .catch(() => setWalletLoading(false));
+  };
+
+  useEffect(() => {
+    const hasAccess = !!localStorage.getItem("dataEntry");
+    setShowWallet(hasAccess);
+    if (hasAccess) fetchWallet();
+  }, []);
+
   return (
     <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-6 pb-6">
       <div className="max-w-[600px] w-full mx-auto">
+
+        {/* Tableau boutique */}
         <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
           <table className="w-full table-auto text-left border-collapse">
             <thead>
@@ -45,6 +67,44 @@ export default function Home() {
             </tbody>
           </table>
         </div>
+
+        {/* Wallet — visible saisie uniquement */}
+        {showWallet && <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6">
+          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between">
+            <span className="text-white text-xs font-semibold uppercase tracking-wide">Wallet</span>
+            <button onClick={fetchWallet} className="text-white/70 hover:text-white text-xs transition-colors">↻</button>
+          </div>
+
+          {walletLoading ? (
+            <div className="bg-[#5C42A6] py-5 text-center text-gray-400 text-sm">Chargement…</div>
+          ) : wallet?.error ? (
+            <div className="bg-[#5C42A6] py-5 text-center text-rose-300 text-sm">Erreur : {wallet.error}</div>
+          ) : wallet ? (
+            <table className="w-full table-auto text-left border-collapse">
+              <tbody>
+                <tr className="border-b border-white/10 bg-[#5C42A6] text-sm">
+                  <td className="py-3 px-5 text-gray-300">WETH</td>
+                  <td className="py-3 px-5 text-right">
+                    <span className="text-white">{wallet.weth}</span>
+                    <span className="text-gray-400 text-xs ml-2">~{wallet.wethUSD} $</span>
+                  </td>
+                </tr>
+                <tr className="border-b border-white/10 bg-[#4e3899] text-sm">
+                  <td className="py-3 px-5 text-gray-300">USDC</td>
+                  <td className="py-3 px-5 text-right">
+                    <span className="text-white">{wallet.usdc}</span>
+                    <span className="text-gray-400 text-xs ml-2">~{wallet.usdc} $</span>
+                  </td>
+                </tr>
+                <tr className="border-b border-white/10 bg-[#5C42A6] text-sm">
+                  <td className="py-3 px-5 text-gray-300">Total Fees</td>
+                  <td className="py-3 px-5 text-[#D6C48A] font-bold text-right">{wallet.totalUSD} $</td>
+                </tr>
+              </tbody>
+            </table>
+          ) : null}
+        </div>}
+
       </div>
     </main>
   );
