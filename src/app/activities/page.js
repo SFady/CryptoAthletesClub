@@ -1,51 +1,81 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 import { FaRunning, FaSwimmer, FaBiking, FaWalking, FaStar } from "react-icons/fa";
 
 export default function Home() {
   const [rows, setRows] = useState([]);
-  const [total, setTotal] = useState(0);
   const [isClient, setIsClient] = useState(false);
   const { price: defitPrice } = useDefitPrice();
   const [selected, setSelected] = useState("0");
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const pageRef = useRef(1);
+  const loadingRef = useRef(false);
+  const hasMoreRef = useRef(true);
+  const selectedRef = useRef("0");
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const rowsPerPage = 50;
+  const sentinelRef = useRef(null);
 
   const [showGains, setShowGains] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-    loadActivities("0", 1);
-  }, []);
-
-  const loadActivities = async (userId, page) => {
+  const loadActivities = async (userId, pageNum, reset = false) => {
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+    setLoading(true);
     try {
-      const res = await fetch(`/api/get-users-activities?userId=${userId}&page=${page}&limit=${rowsPerPage}`);
+      const res = await fetch(`/api/get-users-activities?userId=${userId}&page=${pageNum}&limit=${rowsPerPage}`);
       const data = await res.json();
-      setRows(data.result);
-      setTotal(data.total);
+      setRows(prev => {
+        if (reset) return data.result;
+        const ids = new Set(prev.map(r => r.id));
+        return [...prev, ...data.result.filter(r => !ids.has(r.id))];
+      });
+      const more = data.result.length === rowsPerPage;
+      hasMoreRef.current = more;
+      setHasMore(more);
     } catch (err) {
       console.error("Failed to load activities:", err);
+    } finally {
+      loadingRef.current = false;
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    setIsClient(true);
+    loadActivities("0", 1, true);
+  }, []);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreRef.current && !loadingRef.current) {
+          pageRef.current += 1;
+          loadActivities(selectedRef.current, pageRef.current);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
 
   const handleSelect = (e) => {
     const id = e.target.value;
     setSelected(id);
-    setCurrentPage(1);
-    loadActivities(id, 1);
-  };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    loadActivities(selected, page);
+    selectedRef.current = id;
+    pageRef.current = 1;
+    hasMoreRef.current = true;
+    setHasMore(true);
+    loadActivities(id, 1, true);
   };
 
   const currentRows = rows;
-  const totalPages = Math.ceil(total / rowsPerPage);
 
   const ActivityIcon = ({ name }) => {
     const key = (name || "").toLowerCase();
@@ -73,31 +103,6 @@ export default function Home() {
     return "bg-rose-500/30 text-rose-200 border border-rose-400/50";
   };
 
-  const Pagination = () => (
-    <div className="flex justify-center items-center gap-1 flex-wrap mt-5">
-      <button
-        onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
-        disabled={currentPage === 1}
-        className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-sm hover:bg-white/20 disabled:opacity-30 transition-colors"
-      >←</button>
-      {[...Array(totalPages)].map((_, i) => (
-        <button
-          key={i}
-          onClick={() => handlePageChange(i + 1)}
-          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-            currentPage === i + 1
-              ? "bg-[#D6C48A] text-[#2A2550] shadow-lg"
-              : "bg-white/10 text-white hover:bg-white/20"
-          }`}
-        >{i + 1}</button>
-      ))}
-      <button
-        onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-        disabled={currentPage === totalPages}
-        className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-sm hover:bg-white/20 disabled:opacity-30 transition-colors"
-      >→</button>
-    </div>
-  );
 
   return (
     <main className="flex flex-col justify-start w-full max-w-[100vw] md:max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-x-hidden overflow-y-auto">
@@ -175,7 +180,6 @@ export default function Home() {
             </div>
           );
         })}
-        <Pagination />
       </div>
 
       {/* TABLE — desktop uniquement */}
@@ -237,9 +241,10 @@ export default function Home() {
             </tbody>
           </table>
         </div>
-        <div className="bg-[#4a3491] px-6 pb-5">
-          <Pagination />
-        </div>
+      </div>
+
+      <div ref={sentinelRef} className="py-4 text-center text-white/40 text-sm">
+        {loading ? "Chargement..." : !hasMore ? "Fin des activités" : ""}
       </div>
     </main>
   );
