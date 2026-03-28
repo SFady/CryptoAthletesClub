@@ -42,8 +42,8 @@ export async function POST(req) {
 
     // Percentage allocated
 
-    const percent_global = (110 + 135 + 885) / (2180.85 + (10));
-    const percent = (starting_offered_liquidity + initial_user_liquidity) / (110 + 135 + 885);
+    const percent_global = (110 + 185 + 885) / (2180.85 + 10 + 50);
+    const percent = (starting_offered_liquidity + initial_user_liquidity) / (110 + 185 + 885);
 
 
 

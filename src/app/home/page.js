@@ -67,7 +67,7 @@ export default function Home() {
     },
     "3": {
       "T-Shirt": ["A", "0"],
-      "Short": [,],
+      "Short": ["A", "0"],
       "Chaussettes": ["A", "0"],
       "Chaussures": [,],
       "Montre": [,],
