@@ -23,6 +23,7 @@ export async function GET(req) {
           uac.defit_amount,
           uac.participation_percentage,
           uac.boost,
+          uac.kilometers,
           usr.max_defits
         FROM user_activities uac
         INNER JOIN users usr ON uac.user_id = usr.id
@@ -43,6 +44,7 @@ export async function GET(req) {
           uac.defit_amount,
           uac.participation_percentage,
           uac.boost,
+          uac.kilometers,
           usr.max_defits
         FROM user_activities uac
         INNER JOIN users usr ON uac.user_id = usr.id

@@ -148,9 +148,12 @@ export default function Home() {
                   <span className={`text-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
                     Effort {effort} %
                   </span>
-                  <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/10 text-white/50 border border-white/20">
-                    Vitesse 
+                  <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
+                    {Number(row.kilometers ?? 0).toFixed(2)} km
                   </span>
+                  <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/10 text-white/50 border border-white/20">
+                    Vitesse
+                  </span>                  
                 </div>
                 <div className="flex flex-col gap-1.5 items-end">
                   <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
@@ -185,6 +188,8 @@ export default function Home() {
                 <th className="py-3.5 px-5 font-semibold">Athlete</th>
                 <th className="py-3.5 px-5 font-semibold">Activité</th>
                 <th className="py-3.5 px-5 font-semibold">Effort</th>
+                <th className="py-3.5 px-5 font-semibold">Distance (km)</th>
+                <th className="py-3.5 px-5 font-semibold">Vitesse</th>
                 {showGains && (
                   <>
                     <th className="py-3.5 px-5 font-semibold">Gain brut (Defit)</th>
@@ -214,6 +219,8 @@ export default function Home() {
                         {effort} %
                       </span>
                     </td>
+                    <td className="py-4 px-5 text-gray-200">{Number(row.kilometers ?? 0).toFixed(2)}</td>
+                    <td className="py-4 px-5 text-white/50">—</td>
                     {showGains && (
                       <>
                         <td className="py-4 px-5 text-gray-200">{row.defit_amount}</td>
