@@ -42,8 +42,8 @@ export async function POST(req) {
 
     // Percentage allocated
 
-    const percent_global = (110 + 185 + 885) / (2180.85 + 10 + 50);
-    const percent = (starting_offered_liquidity + initial_user_liquidity) / (110 + 185 + 885);
+    const percent_global = (100 + 135 + 885 + (10+50)) / (2180.85 + (10 + 50));
+    const percent = (starting_offered_liquidity + initial_user_liquidity) / (100 + 135 + 885 + (10+50));
 
 
 
@@ -120,12 +120,17 @@ export async function POST(req) {
     const defitsToAdd = defit_amount * Number(participation_percentage) / 100;
 
 
+    // LP a 2089$ sans les 10$ et 50$ le 28/03
+    // LP a 2180.85 le 17/03
+    // pour revenir au 17/03 * coef =2180.85/2089
+    // (10 + 50) * (2180.82/2089) = 62.64
+    // Ajouter 62.64 au 2180.85
 
     // New liquidity
 
     // let new_liquidity = initial_user_liquidity * ( weth_value / 2332 );
     // if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
-    let new_liquidity = (current_liquidity / 3151) * initial_user_liquidity;
+    let new_liquidity = (current_liquidity / (2180.85 + 10 + 50)) * initial_user_liquidity;
     if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
 
 
@@ -153,7 +158,7 @@ export async function POST(req) {
       WHERE id = ${user_id}
     `;
 
-    return Response.json({ message: '✅ Insert OK', starting_offered_liquidity, initial_user_liquidity, percent_global, available_fees, benef, upgrade, bonus, fees: boost });
+    return Response.json({ message: '✅ Insert OK', starting_offered_liquidity, initial_user_liquidity, percent_global, available_fees, benef, upgrade, bonus, fees: boost, new_liquidity });
 
   } catch (err) {
     console.error('❌ DB error:', err);
