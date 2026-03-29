@@ -39,7 +39,7 @@ const MESSAGES = [
             <div className="flex items-start gap-4">
                 <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
                     <li>Le challenge reprend maintenant chaque semaine.</li>
-                    <li>Limité à la course et la marche.</li>
+                    <li>Nouveau : Limité à la course.</li>
                     <li>Cagnotte remise à 0.</li>
                 </ul>
             </div>
