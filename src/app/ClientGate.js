@@ -2,54 +2,57 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { GiTrophy } from "react-icons/gi";
 
 // ─── MESSAGES ────────────────────────────────────────────────────────────────
-// Ajouter un message : { key unique, deadline, content JSX }
-// Passé la deadline → clé supprimée du localStorage, message ignoré
+// Ajouter un message : { key unique, title, startDate, deadline, confetti?, content JSX }
+// Avant startDate  → message ignoré (pas encore actif)
+// Passé deadline   → clé supprimée du localStorage, message ignoré
+// confetti: true   → lance une animation confetti à l'apparition
 // ─────────────────────────────────────────────────────────────────────────────
 const MESSAGES = [
     {
         key: "infoMessage_v1",
-        deadline: new Date("2026-03-27T00:00:00"),
+        title: "Félicitations",
+        startDate: new Date("2026-03-30T00:00:00"),
+        deadline: new Date("2026-04-06T00:00:00"),
+        confetti: true,
         content: (
-            <ul className="text-left list-disc pl-5 sm:pl-6 space-y-2 text-white/80 text-sm sm:text-base">
-                <li>
-                    Defit est à l&apos;arrêt, impossible de récupérer les Defits, longs délais avant recupération des activités.{" "}
-                    <br />Aucune date d&apos;annoncée pour une éventuelle reprise.
-                    <br />Le CEO se cache, silence radio depuis un mois.
-                    <br />Contrôle fiscal.
-                    <br />La migration sur Solana, n&apos;a jamais été faite comme annoncé.
-                    <br />Ca sent la fin.
-                </li>
-                <li>
-                    On continue de collecter sur Defit.
-                    <br />J&apos;ai sorti le Defit des comptes, le boost a un bien meilleur rendement de toute façon.
-                </li>
-                <li>
-                    Chaque semaine, celui qui aura parcouru le plus de km recevra un bonus (en Dollars pas en Defits, bien sûr 😊).
-                </li>
-            </ul>
+            <div className="flex items-start gap-4">
+                <GiTrophy className="w-16 h-16 shrink-0 mt-1 text-[#D6C48A]" />
+                <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
+                    <li>Grand vainqueur de la plus longue distance hebdomadaire : Nico Robin</li>
+                    <li>Distance de 61,80 km.</li>
+                    <li>Prix exceptionnel de 4.28 $ !!!</li>
+                </ul>
+            </div>
         ),
     },
 
-    // Exemple de 2ème message — décommenter et adapter
-    // {
-    //     key: "infoMessage_v2",
-    //     deadline: new Date("2026-04-30T00:00:00"),
-    //     content: (
-    //         <ul className="text-left list-disc pl-5 sm:pl-6 space-y-2 text-white/80 text-sm sm:text-base">
-    //             <li>Nouveau message ici...</li>
-    //         </ul>
-    //     ),
-    // },
+     {
+        key: "infoMessage_v1",
+        title: "Challenge plus longue distance",
+        startDate: new Date("2026-03-30T00:00:00"),
+        deadline: new Date("2026-04-06T00:00:00"),
+        confetti: false,
+        content: (
+            <div className="flex items-start gap-4">
+                <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
+                    <li>Le challenge reprend maintenant chaque semaine.</li>
+                    <li>Limité à la course et la marche.</li>
+                    <li>Cagnotte remise à 0.</li>
+                </ul>
+            </div>
+        ),
+    },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function ClientGate({ children }) {
     const [ready, setReady] = useState(false);
-    const [queue, setQueue] = useState([]);   // messages à afficher
-    const [current, setCurrent] = useState(0); // index dans la queue
+    const [queue, setQueue] = useState([]);
+    const [current, setCurrent] = useState(0);
     const [showModal, setShowModal] = useState(false);
 
     const pathname = usePathname();
@@ -61,7 +64,7 @@ export default function ClientGate({ children }) {
         for (const msg of MESSAGES) {
             if (now > msg.deadline) {
                 localStorage.removeItem(msg.key);
-            } else {
+            } else if (now >= msg.startDate) {
                 const alreadySeen = !!localStorage.getItem(msg.key);
                 if (!alreadySeen) pending.push(msg);
             }
@@ -73,9 +76,46 @@ export default function ClientGate({ children }) {
         setTimeout(() => setShowModal(true), 50);
     }, [pathname]);
 
+    // Lance les confettis quand un message avec confetti:true devient visible
+    useEffect(() => {
+        if (!showModal || current >= queue.length) return;
+        if (!queue[current]?.confetti) return;
+
+        let stopped = false;
+
+        const fire = async () => {
+            const confetti = (await import("canvas-confetti")).default;
+
+            const burst = () => {
+                if (stopped) return;
+                confetti({
+                    particleCount: 6,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.6 },
+                    colors: ["#D6C48A", "#ffffff", "#a78bfa", "#f472b6"],
+                });
+                confetti({
+                    particleCount: 6,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.6 },
+                    colors: ["#D6C48A", "#ffffff", "#a78bfa", "#f472b6"],
+                });
+                if (!stopped) requestAnimationFrame(burst);
+            };
+
+            burst();
+            setTimeout(() => { stopped = true; }, 3000);
+        };
+
+        fire();
+
+        return () => { stopped = true; };
+    }, [showModal, current, queue]);
+
     if (!ready) return null;
 
-    // Tous les messages ont été vus → afficher le contenu
     if (current >= queue.length) return children;
 
     const msg = queue[current];
@@ -115,7 +155,7 @@ export default function ClientGate({ children }) {
                     `}
                 >
                     <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 drop-shadow-md">
-                        News {hasMultiple && <span className="text-sm font-normal opacity-60">({current + 1}/{queue.length})</span>}
+                        {msg.title} {hasMultiple && <span className="text-sm font-normal opacity-60">({current + 1}/{queue.length})</span>}
                     </h2>
 
                     {msg.content}
