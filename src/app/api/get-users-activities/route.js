@@ -28,7 +28,7 @@ export async function GET(req) {
         FROM user_activities uac
         INNER JOIN users usr ON uac.user_id = usr.id
         INNER JOIN activity_type act ON uac.activity_type = act.id
-        ORDER BY uac.date_claimed DESC
+        ORDER BY uac.date_claimed DESC, uac.id DESC
         LIMIT ${limit} OFFSET ${offset}
       `;
     } else {
@@ -50,7 +50,7 @@ export async function GET(req) {
         INNER JOIN users usr ON uac.user_id = usr.id
         INNER JOIN activity_type act ON uac.activity_type = act.id
         WHERE uac.user_id = ${userId}
-        ORDER BY uac.date_claimed DESC
+        ORDER BY uac.date_claimed DESC, uac.id DESC
         LIMIT ${limit} OFFSET ${offset}
       `;
     }

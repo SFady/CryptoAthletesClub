@@ -148,24 +148,24 @@ export default function Home() {
                 <span className="text-white font-semibold">— {row.user_name}</span>
               </div>
               {/* Bulles */}
-              <div className="flex justify-between items-start gap-2 mb-2">
-                <div className="flex flex-col gap-1.5 items-start">
-                  <span className={`text-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
+              <div className="flex items-start gap-2 mb-2">
+                <div className="flex flex-col gap-1.5 w-1/2">
+                  <span className={`w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
                     Effort {effort} %
                   </span>
-                  <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
+                  <span className="w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
                     {Number(row.kilometers ?? 0).toFixed(2)} km
                   </span>
-                  <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/10 text-white/50 border border-white/20">
+                  <span className="w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/10 text-white/50 border border-white/20">
                     Vitesse
-                  </span>                  
+                  </span>
                 </div>
-                <div className="flex flex-col gap-1.5 items-end">
-                  <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
+                <div className="flex flex-col gap-1.5 w-1/2">
+                  <span className="w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
                     Boost {Number(row.boost).toFixed(2)} $
                   </span>
                   {showGains && (
-                    <span className="text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
+                    <span className="w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
                       Defits {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})
                     </span>
                   )}
