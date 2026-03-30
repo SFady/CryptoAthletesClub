@@ -15,6 +15,8 @@ export default function Home() {
   const [showWallet, setShowWallet] = useState(false);
   const [wallet, setWallet] = useState(null);
   const [walletLoading, setWalletLoading] = useState(true);
+  const [clm, setClm] = useState(null);
+  const [clmLoading, setClmLoading] = useState(true);
 
   const fetchWallet = () => {
     setWalletLoading(true);
@@ -24,10 +26,18 @@ export default function Home() {
       .catch(() => setWalletLoading(false));
   };
 
+  const fetchClm = () => {
+    setClmLoading(true);
+    fetch("/api/clm")
+      .then(r => r.json())
+      .then(d => { setClm(d); setClmLoading(false); })
+      .catch(() => setClmLoading(false));
+  };
+
   useEffect(() => {
     const hasAccess = !!localStorage.getItem("dataEntry");
     setShowWallet(hasAccess);
-    if (hasAccess) fetchWallet();
+    if (hasAccess) { fetchWallet(); fetchClm(); }
   }, []);
 
   return (
@@ -103,6 +113,67 @@ export default function Home() {
               </tbody>
             </table>
           ) : null}
+        </div>}
+
+        {/* Position CLM Aerodrome — visible saisie uniquement */}
+        {showWallet && <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6">
+          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between">
+            <span className="text-white text-xs font-semibold uppercase tracking-wide">Position CLM Aerodrome</span>
+            {clm?.wethPrice && <span className="text-white/70 text-xs">ETH {Number(clm.wethPrice).toLocaleString("fr-FR")} $</span>}
+            <button onClick={fetchClm} className="text-white/70 hover:text-white text-xs transition-colors">↻</button>
+          </div>
+
+          {clmLoading ? (
+            <div className="bg-[#5C42A6] py-5 text-center text-gray-400 text-sm">Chargement…</div>
+          ) : clm?.error ? (
+            <div className="bg-[#5C42A6] py-5 text-center text-rose-300 text-sm">Erreur : {clm.error}</div>
+          ) : clm?.pair ? (
+            <table className="w-full table-auto text-left border-collapse">
+              <tbody>
+                <tr className="bg-[#4e3899] border-b border-white/10 text-xs">
+                  <td className="py-2 px-5 text-gray-400">#{clm.tokenId} — {clm.pair}</td>
+                  <td className="py-2 px-5 text-right">
+                    {clm.inRange !== null && (
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${clm.inRange ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"}`}>
+                        {clm.inRange ? "In range" : "Out of range"}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+                {clm.pool.map((t, i) => (
+                  <tr key={i} className={`border-b border-white/10 text-sm ${i % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}>
+                    <td className="py-2.5 px-5 text-gray-300">{t.symbol}</td>
+                    <td className="py-2.5 px-5 text-right">
+                      <span className="text-white">{t.balance}</span>
+                      <span className="text-gray-400 text-xs ml-2">~{t.usd} $</span>
+                    </td>
+                  </tr>
+                ))}
+                <tr className="bg-[#5C42A6] border-b border-white/10 text-sm">
+                  <td className="py-2.5 px-5 text-gray-300">Total pool</td>
+                  <td className="py-2.5 px-5 text-right text-white font-semibold">{clm.totalPoolUSD} $</td>
+                </tr>
+                <tr className="bg-[#3d2d7a] border-b border-white/10 text-xs">
+                  <td colSpan={2} className="py-1.5 px-5 text-gray-400 uppercase tracking-wide">Frais non collectés</td>
+                </tr>
+                {clm.fees.map((t, i) => (
+                  <tr key={i} className={`border-b border-white/10 text-sm ${i % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}>
+                    <td className="py-2.5 px-5 text-gray-300">{t.symbol}</td>
+                    <td className="py-2.5 px-5 text-right">
+                      <span className="text-white">{t.balance}</span>
+                      <span className="text-gray-400 text-xs ml-2">~{t.usd} $</span>
+                    </td>
+                  </tr>
+                ))}
+                <tr className="bg-[#5C42A6] text-sm">
+                  <td className="py-3 px-5 text-gray-300">Total</td>
+                  <td className="py-3 px-5 text-right text-[#D6C48A] font-bold">{clm.totalUSD} $</td>
+                </tr>
+              </tbody>
+            </table>
+          ) : (
+            <div className="bg-[#5C42A6] py-5 text-center text-gray-400 text-sm">Position introuvable</div>
+          )}
         </div>}
 
       </div>
