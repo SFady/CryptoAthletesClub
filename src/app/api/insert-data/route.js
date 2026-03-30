@@ -42,8 +42,8 @@ export async function POST(req) {
 
     // Percentage allocated
 
-    const percent_global = (100 + 135 + 885 + (10+50)) / (2180.85 + (10 + 50));
-    const percent = (starting_offered_liquidity + initial_user_liquidity) / (100 + 135 + 885 + (10+50));
+    const percent_global = (100 + 135 + 885 + (10 + 50)) / (2180.85 + (10 + 50));
+    const percent = (starting_offered_liquidity + initial_user_liquidity) / (100 + 135 + 885 + (10 + 50));
 
 
 
@@ -125,6 +125,9 @@ export async function POST(req) {
     // pour revenir au 17/03 * coef =2180.85/2089
     // (10 + 50) * (2180.82/2089) = 62.64
     // Ajouter 62.64 au 2180.85
+
+    // Fees - Boost nt - liquidity_repair nt - benef nt - upgrade nt - bonus not send
+
 
     // New liquidity
 

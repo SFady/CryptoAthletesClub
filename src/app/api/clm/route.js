@@ -134,14 +134,9 @@ export async function GET() {
     const fee0 = Number(totalOwed0) / 10 ** t0.decimals;
     const fee1 = Number(totalOwed1) / 10 ** t1.decimals;
 
-    // 4. Prix ETH → USD
-    let ethPrice = 0;
-    try {
-      const pr = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd", {
-        headers: { Accept: "application/json" }, signal: AbortSignal.timeout(5000),
-      });
-      ethPrice = (await pr.json()).ethereum?.usd ?? 0;
-    } catch {}
+    // 4. Prix ETH dérivé du sqrtPriceX96 du pool WETH(18)/USDC(6)
+    // price = (sqrtP / 2^96)² × 10^(18−6)
+    const ethPrice = Number((sqrtP * sqrtP * 10n ** 12n) / (1n << 192n));
 
     const usd          = (sym, amt) => sym === "WETH" ? amt * ethPrice : amt;
     const inRange      = currTick >= tickLower && currTick < tickUpper;
