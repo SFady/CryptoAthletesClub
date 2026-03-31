@@ -76,71 +76,13 @@ export default function Sfy1024() {
           />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label>&nbsp;Weth_value : </label>
-          <input
-            type="text"
-            name="weth_value"
-            placeholder="weth_value"
-            required
-            className="px-3 py-2 rounded text-black"
-          />
-        </div>
+        <input type="hidden" name="weth_value"       defaultValue="0" />
+        <input type="hidden" name="current_liquidity" defaultValue="0" />
+        <input type="hidden" name="pool_weth"         defaultValue="0" />
+        <input type="hidden" name="pool_usdc"         defaultValue="0" />
+        <input type="hidden" name="rewards_weth"      defaultValue="0" />
 
-        <div className="flex items-center gap-2">
-          <label>&nbsp;Current_liquidity : </label>
-          <input
-            type="text"
-            name="current_liquidity"
-            placeholder="current_liquidity"
-            required
-            className="px-3 py-2 rounded text-black"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label>&nbsp;Pool_weth : </label>
-          <input
-            type="text"
-            name="pool_weth"
-            placeholder="pool_weth"
-            required
-            className="px-3 py-2 rounded text-black"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label>&nbsp;Pool_usdc : </label>
-          <input
-            type="text"
-            name="pool_usdc"
-            placeholder="pool_usdc"
-            required
-            className="px-3 py-2 rounded text-black"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label>&nbsp;Rewards_weth : </label>
-          <input
-            type="text"
-            name="rewards_weth"
-            placeholder="rewards_weth"
-            required
-            className="px-3 py-2 rounded text-black"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label>&nbsp;Rewards_usdc : </label>
-          <input
-            type="text"
-            name="rewards_usdc"
-            placeholder="rewards_usdc"
-            required
-            className="px-3 py-2 rounded text-black"
-          />
-        </div>
+        <input type="hidden" name="rewards_usdc" defaultValue="0" />
 
         <button
           type="submit"
