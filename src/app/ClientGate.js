@@ -4,6 +4,28 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { GiTrophy } from "react-icons/gi";
 
+// ─── MESSAGE HEBDOMADAIRE AUTOMATIQUE ────────────────────────────────────────
+const _getMonday = (d) => { const m = new Date(d); const day = m.getDay(); m.setDate(m.getDate() - (day === 0 ? 6 : day - 1)); m.setHours(0, 0, 0, 0); return m; };
+const _getISOWeek = (d) => { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7)); const y = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return Math.ceil((((t - y) / 86400000) + 1) / 7); };
+const _monday = _getMonday(new Date());
+const _nextMonday = new Date(_monday); _nextMonday.setDate(_monday.getDate() + 7);
+const _weekKey = `weekly_${_monday.getFullYear()}_W${String(_getISOWeek(_monday)).padStart(2, "0")}`;
+
+const WEEKLY_MESSAGE = {
+    key: _weekKey,
+    title: "Semaine du " + _monday.toLocaleDateString("fr-FR"),
+    startDate: _monday,
+    deadline: _nextMonday,
+    confetti: false,
+    content: (
+        <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
+            <li>Nouvelle semaine, nouveau défi !</li>
+            <li>Challenge en cours : meilleure distance de course.</li>
+        </ul>
+    ),
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
 // ─── MESSAGES ────────────────────────────────────────────────────────────────
 // Ajouter un message : { key unique, title, startDate, deadline, confetti?, content JSX }
 // Avant startDate  → message ignoré (pas encore actif)
@@ -11,6 +33,7 @@ import { GiTrophy } from "react-icons/gi";
 // confetti: true   → lance une animation confetti à l'apparition
 // ─────────────────────────────────────────────────────────────────────────────
 const MESSAGES = [
+    //WEEKLY_MESSAGE,
     {
         key: "infoMessage_v1",
         title: "Félicitations",
@@ -29,7 +52,7 @@ const MESSAGES = [
         ),
     },
 
-     {
+    {
         key: "infoMessage_v1",
         title: "Challenge plus longue distance",
         startDate: new Date("2026-03-30T00:00:00"),
