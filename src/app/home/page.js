@@ -146,7 +146,7 @@ export default function Home() {
             overflow="visible"
           >
             {[
-              { x: 122, y: 32,  tx: 212, ty: 86  },
+              { x: 122, y: 32, tx: 212, ty: 86 },
               { x: 122, y: 100, tx: 212, ty: 110 },
               { x: 156, y: 158, tx: 212, ty: 134 },
               { x: 122, y: 180, tx: 212, ty: 158 },
@@ -154,8 +154,8 @@ export default function Home() {
               { x: 143, y: 273, tx: 212, ty: 206 },
             ].map(({ x, y, tx, ty }, i) => (
               <g key={i}>
-                <line x1={x} y1={y} x2={tx} y2={ty} stroke="rgba(255,255,255,0.4)" strokeWidth="1" strokeDasharray="3,2"/>
-                <circle cx={x} cy={y} r="2.5" fill="rgba(255,255,255,0.7)"/>
+                <line x1={x} y1={y} x2={tx} y2={ty} stroke="rgba(255,255,255,0.4)" strokeWidth="1" strokeDasharray="3,2" />
+                <circle cx={x} cy={y} r="2.5" fill="rgba(255,255,255,0.7)" />
               </g>
             ))}
           </svg>
@@ -189,15 +189,9 @@ export default function Home() {
       </div>
 
       {/* Boost maximum disponible */}
-      <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm mx-auto">
-        <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-2.5 px-5">
-          <span className="text-white text-xs font-semibold uppercase tracking-wide">Boost maximum disponible</span>
-        </div>
-        <div className="bg-[#5C42A6] py-4 px-5 text-center">
-          <span className="text-[#D6C48A] font-bold text-base">
-            {boostMax !== null ? boostMax.toFixed(2) : "—"} $
-          </span>
-        </div>
+      <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm mx-auto bg-[#5C42A6] flex items-center justify-between px-5 py-2.5">
+        <span className="text-white text-xs font-semibold uppercase tracking-wide">Boost max disponible</span>
+        <span className="text-[#D6C48A] font-bold text-base">{boostMax !== null ? boostMax.toFixed(2) : "—"} $</span>
       </div>
 
       {/* Tableau des stats */}
