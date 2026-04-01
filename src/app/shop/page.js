@@ -17,6 +17,7 @@ export default function Home() {
   const [walletLoading, setWalletLoading] = useState(true);
   const [clm, setClm] = useState(null);
   const [clmLoading, setClmLoading] = useState(true);
+  const [distrib, setDistrib] = useState(null);
 
   const fetchWallet = () => {
     setWalletLoading(true);
@@ -37,7 +38,11 @@ export default function Home() {
   useEffect(() => {
     const hasAccess = !!localStorage.getItem("dataEntry");
     setShowWallet(hasAccess);
-    if (hasAccess) { fetchWallet(); fetchClm(); }
+    if (hasAccess) {
+      fetchWallet();
+      fetchClm();
+      fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => {});
+    }
   }, []);
 
   return (
@@ -175,6 +180,74 @@ export default function Home() {
             <div className="bg-[#5C42A6] py-5 text-center text-gray-400 text-sm">Position introuvable</div>
           )}
         </div>}
+
+        {/* Tableau récap saisie */}
+        {showWallet && (wallet || clm) && (
+          <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6">
+            <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5">
+              <span className="text-white text-xs font-semibold uppercase tracking-wide">Récap saisie</span>
+            </div>
+            <table className="w-full table-auto text-left border-collapse">
+              <tbody>
+                <tr className="bg-[#4e3899] border-b border-white/10 text-xs">
+                  <td colSpan={2} className="py-1.5 px-5 text-gray-400 uppercase tracking-wide">Wallet</td>
+                </tr>
+                <tr className="bg-[#5C42A6] border-b border-white/10 text-sm">
+                  <td className="py-2.5 px-5 text-gray-300">USDC</td>
+                  <td className="py-2.5 px-5 text-right text-white">{wallet?.usdc ?? "—"} $</td>
+                </tr>
+                <tr className="bg-[#5C42A6] border-b border-white/10 text-sm">
+                  <td className="py-2.5 px-5 text-gray-300">Frais non collectés</td>
+                  <td className="py-2.5 px-5 text-right text-white">{clm?.totalFeesUSD ?? "—"} $</td>
+                </tr>
+                <tr className="bg-[#4e3899] border-b border-white/10 text-sm">
+                  <td className="py-2.5 px-5 text-gray-300">Bénéf + Boost + Bonus</td>
+                  <td className="py-2.5 px-5 text-right text-white">
+                    {distrib ? Number(distrib.total).toFixed(2) : "—"} $
+                  </td>
+                </tr>
+                <tr className="bg-[#3d2d7a] border-b border-white/10 text-sm">
+                  <td className="py-3 px-5 text-gray-300 font-semibold">Disponible</td>
+                  <td className="py-3 px-5 text-right text-[#D6C48A] font-bold">
+                    {wallet && distrib
+                      ? (Number(wallet.usdc) - Number(distrib.total)).toFixed(2)
+                      : "—"} $
+                  </td>
+                </tr>
+                <tr className="bg-[#2a1f5e]">
+                  <td colSpan={2} className="py-2" />
+                </tr>
+                <tr className="bg-[#3d2d7a] border-b border-white/10 text-xs">
+                  <td colSpan={2} className="py-1.5 px-5 text-gray-400 uppercase tracking-wide">Répartition</td>
+                </tr>
+                <tr className="bg-[#5C42A6] border-b border-white/10 text-sm">
+                  <td className="py-2.5 px-5 text-gray-300">Appli</td>
+                  <td className="py-2.5 px-5 text-right text-white">
+                    {wallet && distrib
+                      ? (((100 + 135 + 885 + 60) / (2180.85 + 60)) * (Number(wallet.usdc) - Number(distrib.total))).toFixed(2)
+                      : "—"} $
+                  </td>
+                </tr>
+                {distrib?.byUser?.map((u, i) => {
+                  const appli = wallet && distrib
+                    ? ((100 + 135 + 885 + 60) / (2180.85 + 60)) * (Number(wallet.usdc) - Number(distrib.total))
+                    : null;
+                  const sol = Number(u.starting_offered_liquidity ?? 0);
+                  const il  = Number(u.initial_liquidity ?? 0);
+                  const percent = (sol + il) / (100 + 135 + 885 + 60);
+                  const userShare = appli !== null && !isNaN(percent) ? percent * appli : null;
+                  return (
+                    <tr key={u.name} className={`border-b border-white/10 text-sm ${i % 2 === 0 ? "bg-[#4e3899]" : "bg-[#5C42A6]"}`}>
+                      <td className="py-2.5 px-5 text-gray-300">{u.name}</td>
+                      <td className="py-2.5 px-5 text-right text-white">{userShare !== null ? userShare.toFixed(2) : "—"} $</td>
+                    </tr>
+                  );
+                })}
+
+              </tbody>
+            </table>
+          </div>
+        )}
 
       </div>
     </main>
