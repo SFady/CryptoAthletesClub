@@ -83,43 +83,6 @@ export default function Home() {
           </table>
         </div>
 
-        {/* Wallet — visible saisie uniquement */}
-        {showWallet && <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6">
-          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between">
-            <span className="text-white text-xs font-semibold uppercase tracking-wide">Wallet</span>
-            <button onClick={fetchWallet} className="text-white/70 hover:text-white text-xs transition-colors">↻</button>
-          </div>
-
-          {walletLoading ? (
-            <div className="bg-[#5C42A6] py-5 text-center text-gray-400 text-sm">Chargement…</div>
-          ) : wallet?.error ? (
-            <div className="bg-[#5C42A6] py-5 text-center text-rose-300 text-sm">Erreur : {wallet.error}</div>
-          ) : wallet ? (
-            <table className="w-full table-auto text-left border-collapse">
-              <tbody>
-                <tr className="border-b border-white/10 bg-[#5C42A6] text-sm">
-                  <td className="py-3 px-5 text-gray-300">WETH</td>
-                  <td className="py-3 px-5 text-right">
-                    <span className="text-white">{wallet.weth}</span>
-                    <span className="text-gray-400 text-xs ml-2">~{wallet.wethUSD} $</span>
-                  </td>
-                </tr>
-                <tr className="border-b border-white/10 bg-[#4e3899] text-sm">
-                  <td className="py-3 px-5 text-gray-300">USDC</td>
-                  <td className="py-3 px-5 text-right">
-                    <span className="text-white">{wallet.usdc}</span>
-                    <span className="text-gray-400 text-xs ml-2">~{wallet.usdc} $</span>
-                  </td>
-                </tr>
-                <tr className="border-b border-white/10 bg-[#5C42A6] text-sm">
-                  <td className="py-3 px-5 text-gray-300">Total Fees</td>
-                  <td className="py-3 px-5 text-[#D6C48A] font-bold text-right">{wallet.totalUSD} $</td>
-                </tr>
-              </tbody>
-            </table>
-          ) : null}
-        </div>}
-
         {/* Position CLM Aerodrome — visible saisie uniquement */}
         {showWallet && <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6">
           <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between">
