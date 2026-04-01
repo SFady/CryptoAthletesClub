@@ -224,13 +224,13 @@ export default function Home() {
                   <td className="py-2.5 px-5 text-gray-300">Appli</td>
                   <td className="py-2.5 px-5 text-right text-white">
                     {wallet && distrib
-                      ? (((100 + 135 + 885 + 60) / (2180.85 + 60)) * (Number(wallet.usdc) - Number(distrib.total))).toFixed(2)
+                      ? (0.5 * ((100 + 135 + 885 + 60) / (2180.85 + 60)) * (Number(wallet.usdc) - Number(distrib.total))).toFixed(2)
                       : "—"} $
                   </td>
                 </tr>
                 {distrib?.byUser?.map((u, i) => {
                   const appli = wallet && distrib
-                    ? ((100 + 135 + 885 + 60) / (2180.85 + 60)) * (Number(wallet.usdc) - Number(distrib.total))
+                    ? 0.5 * ((100 + 135 + 885 + 60) / (2180.85 + 60)) * (Number(wallet.usdc) - Number(distrib.total))
                     : null;
                   const sol = Number(u.starting_offered_liquidity ?? 0);
                   const il  = Number(u.initial_liquidity ?? 0);
