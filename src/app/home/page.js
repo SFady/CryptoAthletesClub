@@ -12,9 +12,30 @@ export default function Home() {
 
   const [selected, setSelected] = useState("1");
 
-  const { price: defitPrice, error } = useDefitPrice();
+  const { price: defitPrice } = useDefitPrice();
 
   const [open, setOpen] = useState(false);
+  const [boostMax, setBoostMax] = useState(null);
+
+  const fetchBoostMax = async (athleteId) => {
+    try {
+      const [wRes, dRes] = await Promise.all([
+        fetch("/api/wallet"),
+        fetch("/api/get-distributions"),
+      ]);
+      const wallet = await wRes.json();
+      const distrib = await dRes.json();
+      const disponible = Number(wallet.usdc) - Number(distrib.total);
+      const nameMap = { "1": "Usopp", "2": "DTeach", "3": "Nico Robin", "4": "Jinbe" };
+      const u = distrib.byUser?.find(r => r.name === nameMap[athleteId]);
+      if (!u) { setBoostMax(null); return; }
+      const percent = (u.starting_offered_liquidity + u.initial_liquidity) / (100 + 135 + 885 + 60);
+      const val = 0.5 * ((100 + 135 + 885 + 60) / (2180.85 + 60)) * disponible * percent;
+      setBoostMax(val);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const fetchDefitAmount = async (athleteId) => {
     try {
@@ -35,6 +56,7 @@ export default function Home() {
     if (!stored) localStorage.setItem("selectedAthlete", finalId);
 
     fetchDefitAmount(finalId);
+    fetchBoostMax(finalId);
   }, []);
 
   const handleSelect = (e) => {
@@ -42,6 +64,7 @@ export default function Home() {
     setSelected(id);
     localStorage.setItem("selectedAthlete", id);
     fetchDefitAmount(id);
+    fetchBoostMax(id);
   };
 
   // Liste des éléments du tableau
@@ -163,6 +186,18 @@ export default function Home() {
           </table>
         </div>
 
+      </div>
+
+      {/* Boost maximum disponible */}
+      <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm mx-auto">
+        <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-2.5 px-5">
+          <span className="text-white text-xs font-semibold uppercase tracking-wide">Boost maximum disponible</span>
+        </div>
+        <div className="bg-[#5C42A6] py-4 px-5 text-center">
+          <span className="text-[#D6C48A] font-bold text-base">
+            {boostMax !== null ? boostMax.toFixed(2) : "—"} $
+          </span>
+        </div>
       </div>
 
       {/* Tableau des stats */}
