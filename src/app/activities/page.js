@@ -108,7 +108,7 @@ export default function Home() {
     <main className="flex flex-col justify-start w-full max-w-[100vw] md:max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-x-hidden overflow-y-auto">
 
       {/* FILTER + TOGGLE */}
-      <div className="mb-5 flex items-center gap-4 flex-wrap">
+      <div className="mb-5 flex items-center justify-between gap-4 flex-wrap">
         <select
           value={selected}
           onChange={handleSelect}
@@ -128,7 +128,7 @@ export default function Home() {
           <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${showGains ? "bg-[#D6C48A]" : "bg-white/20"}`}>
             <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showGains ? "translate-x-5" : "translate-x-0"}`} />
           </div>
-          Afficher les Defits
+          Afficher les Defits&nbsp;
         </div>
       </div>
 

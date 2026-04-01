@@ -50,9 +50,8 @@ export async function GET(req) {
         FROM users uss
         LEFT JOIN user_activities uas
           ON uas.user_id = uss.id
-          AND EXTRACT(WEEK FROM uas.date_claimed)  = EXTRACT(WEEK FROM CURRENT_DATE)
-          AND EXTRACT(MONTH FROM uas.date_claimed) = EXTRACT(MONTH FROM CURRENT_DATE)
-          AND EXTRACT(YEAR FROM uas.date_claimed)  = EXTRACT(YEAR FROM CURRENT_DATE)
+          AND uas.date_claimed >= DATE_TRUNC('week', CURRENT_DATE)
+          AND uas.date_claimed <  DATE_TRUNC('week', CURRENT_DATE) + INTERVAL '7 days'
           AND (${activity} = 0 OR uas.activity_type = ${activity})
         GROUP BY uss.id, uss.name
         ORDER BY uss.id;

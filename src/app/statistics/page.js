@@ -159,7 +159,7 @@ export default function Home() {
 
         {/* GAINS ($) */}
         <div>
-          <SectionTitle>Gains ($)</SectionTitle>
+          <SectionTitle>&nbsp;Gains ($)</SectionTitle>
           <PeriodFilter value={selected} onChange={setSelected} />
           <br />
           <ActivityFilter value={activity} onChange={setActivity} />
@@ -185,7 +185,7 @@ export default function Home() {
 
         {/* DISTANCE */}
         <div>
-          <SectionTitle>Distance</SectionTitle>
+          <SectionTitle>&nbsp;Distance</SectionTitle>
           <PeriodFilter value={selected2} onChange={setSelected2} />
           <br />
           <ActivityFilter value={activity2} onChange={setActivity2} />
@@ -221,7 +221,7 @@ export default function Home() {
 
         {/* GAINS (DEFITS) */}
         <div>
-          <SectionTitle>Gains (Defits)</SectionTitle>
+          <SectionTitle>&nbsp;Gains (Defits)</SectionTitle>
           <PeriodFilter value={selected3} onChange={setSelected3} />
           <br />
           <ActivityFilter value={activity3} onChange={setActivity3} />
