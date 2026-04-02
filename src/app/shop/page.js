@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const items = [
     { name: "Chaussettes", price: "10 $" },
-    { name: "T-Shirt",     price: "25 $" },
-    { name: "Short",       price: "50 $" },
-    { name: "Chaussures",  price: "100 $" },
-    { name: "Montre",      price: "200 $" },
-    { name: "Personnage",  price: "400 $" },
+    { name: "T-Shirt", price: "25 $" },
+    { name: "Short", price: "50 $" },
+    { name: "Chaussures", price: "100 $" },
+    { name: "Montre", price: "200 $" },
+    { name: "Personnage", price: "400 $" },
   ];
 
   const [showWallet, setShowWallet] = useState(false);
@@ -42,8 +42,8 @@ export default function Home() {
     if (hasAccess) {
       fetchWallet();
       fetchClm();
-      fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => {});
-      fetch("/api/get-pending-transactions").then(r => r.json()).then(d => setPendingTotal(d.total)).catch(() => {});
+      fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => { });
+      fetch("/api/get-pending-transactions").then(r => r.json()).then(d => setPendingTotal(d.total)).catch(() => { });
     }
   }, []);
 
@@ -150,7 +150,7 @@ export default function Home() {
         {showWallet && (wallet || clm) && (
           <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6">
             <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5">
-              <span className="text-white text-xs font-semibold uppercase tracking-wide">Récap saisie</span>
+              <span className="text-white text-xs font-semibold uppercase tracking-wide">USDC</span>
             </div>
             <table className="w-full table-auto text-left border-collapse">
               <tbody>
@@ -186,7 +186,7 @@ export default function Home() {
           const ref = 2144.99;
           const cur = Number(clm.totalPoolUSD);
           const pct = ((cur - ref) / ref) * 100;
-          const up  = pct >= 0;
+          const up = pct >= 0;
           return (
             <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6 bg-[#3d2d7a] flex items-center justify-between px-5 py-2.5 text-sm">
               <span className="text-gray-300">Évolution pool <span className="text-white">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></span>
@@ -200,7 +200,7 @@ export default function Home() {
           const ref = 1997.76;
           const cur = Number(clm.wethPrice);
           const pct = ((cur - ref) / ref) * 100;
-          const up  = pct >= 0;
+          const up = pct >= 0;
           return (
             <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6 bg-[#3d2d7a] flex items-center justify-between px-5 py-2.5 text-sm">
               <span className="text-gray-300">Évolution ETH <span className="text-white">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></span>
