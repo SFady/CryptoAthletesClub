@@ -49,7 +49,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-6 pb-6">
-      <div className="max-w-[600px] w-full mx-auto">
+      <div className="w-full md:max-w-[1100px] mx-auto">
 
         {/* Tableau boutique */}
         <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
