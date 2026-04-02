@@ -189,13 +189,13 @@ export default function Home() {
       </div>
 
       {/* Boost maximum disponible */}
-      <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm mx-auto bg-[#5C42A6] flex items-center justify-between px-8 py-2.5">
+      <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm md:max-w-[550px] mx-auto bg-[#5C42A6] flex items-center justify-between px-8 py-2.5">
         <span className="text-white text-xs font-semibold uppercase tracking-wide">Boost max disponible</span>
         <span className="text-[#D6C48A] font-bold text-base">{boostMax !== null ? boostMax.toFixed(2) : "—"} $</span>
       </div>
 
       {/* Tableau des stats */}
-      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 mb-6 w-full max-w-sm mx-auto">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 mb-6 w-full max-w-sm md:max-w-[550px] mx-auto">
         <table className="w-full text-base">
           <tbody>
             <tr className="border-b border-white/20">
