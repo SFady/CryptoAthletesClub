@@ -93,7 +93,7 @@ export default function Home() {
     if (key === "swim" || key === "natation") return <span title="Natation" className="inline-flex scale-x-[-1]"><FaSwimmer className={cls} /></span>;
     if (key === "bike" || key === "cyclisme") return <span title="Cyclisme"><FaBiking className={cls} /></span>;
     if (key === "marche" || key === "walk")   return <span title="Marche"><FaWalking className={cls} /></span>;
-    if (key === "bonus")                      return <span title="Bonus"><FaStar className={cls} /></span>;
+    if (key.includes("bonus"))                return <span title={name}><FaStar className={cls} /></span>;
     return <span className="text-gray-200 text-sm">{name}</span>;
   };
 
