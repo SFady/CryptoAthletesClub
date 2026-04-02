@@ -22,10 +22,10 @@ export async function POST(req) {
       fetch(`${origin}/api/clm`),
       fetch(`${origin}/api/wallet`),
     ]);
-    const clmData    = await clmRes.json();
+    const clmData = await clmRes.json();
     const walletData = await walletRes.json();
-    const walletPool = Number(clmData.totalPoolUSD  ?? 0); // Total pool CLM (WETH + USDC en position)
-    const walletUSDC = Number(walletData.usdc       ?? 0); // USDC dans le wallet
+    const walletPool = Number(clmData.totalPoolUSD ?? 0); // Total pool CLM (WETH + USDC en position)
+    const walletUSDC = Number(walletData.usdc ?? 0); // USDC dans le wallet
 
 
     // Initilal liquidity
@@ -48,9 +48,9 @@ export async function POST(req) {
 
 
 
-    // Percentage allocated
+    // Percentage allocated 2 134,99
 
-    const percent_global = (100 + 135 + 885 + (10 + 50)) / (2180.85 + (10 + 50));
+    const percent_global = (100 + 135 + 885 + (10 + 50)) / (2084, 99 + (10 + 50));
     const percent = (starting_offered_liquidity + initial_user_liquidity) / (100 + 135 + 885 + (10 + 50));
 
 
@@ -97,7 +97,7 @@ export async function POST(req) {
     `;
     const distributed_bonus_to_credit = Number(row10?.bonus ?? 0);
 
-     const [row11] = await sql`
+    const [row11] = await sql`
       SELECT sum(liquidity_repair) as liquidity_repair
       FROM user_activities
       WHERE liquidity_repair_treated IS NULL
@@ -157,7 +157,7 @@ export async function POST(req) {
 
     // let new_liquidity = initial_user_liquidity * ( weth_value / 2332 );
     // if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
-    let new_liquidity = (walletPool / (2180.85 + 10 + 50)) * initial_user_liquidity;
+    let new_liquidity = (walletPool / (2084.99 + 10 + 50)) * initial_user_liquidity;
     if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
 
 

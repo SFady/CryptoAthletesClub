@@ -14,10 +14,11 @@ export default function Home() {
 
   const [showWallet, setShowWallet] = useState(false);
   const [wallet, setWallet] = useState(null);
-  const [walletLoading, setWalletLoading] = useState(true);
+  const [, setWalletLoading] = useState(true);
   const [clm, setClm] = useState(null);
   const [clmLoading, setClmLoading] = useState(true);
   const [distrib, setDistrib] = useState(null);
+  const [pendingTotal, setPendingTotal] = useState(null);
 
   const fetchWallet = () => {
     setWalletLoading(true);
@@ -42,6 +43,7 @@ export default function Home() {
       fetchWallet();
       fetchClm();
       fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => {});
+      fetch("/api/get-pending-transactions").then(r => r.json()).then(d => setPendingTotal(d.total)).catch(() => {});
     }
   }, []);
 
@@ -163,54 +165,49 @@ export default function Home() {
                   <td className="py-2.5 px-5 text-gray-300">Frais non collectés</td>
                   <td className="py-2.5 px-5 text-right text-white">{clm?.totalFeesUSD ?? "—"} $</td>
                 </tr>
-                <tr className="bg-[#4e3899] border-b border-white/10 text-sm">
-                  <td className="py-2.5 px-5 text-gray-300">Bénéf + Boost + Bonus</td>
-                  <td className="py-2.5 px-5 text-right text-white">
-                    {distrib ? Number(distrib.total).toFixed(2) : "—"} $
-                  </td>
-                </tr>
-                <tr className="bg-[#3d2d7a] border-b border-white/10 text-sm">
-                  <td className="py-3 px-5 text-gray-300 font-semibold">Disponible</td>
-                  <td className="py-3 px-5 text-right text-[#D6C48A] font-bold">
-                    {wallet && distrib
-                      ? (Number(wallet.usdc) - Number(distrib.total)).toFixed(2)
-                      : "—"} $
-                  </td>
-                </tr>
-                <tr className="bg-[#2a1f5e]">
-                  <td colSpan={2} className="py-2" />
-                </tr>
-                <tr className="bg-[#3d2d7a] border-b border-white/10 text-xs">
-                  <td colSpan={2} className="py-1.5 px-5 text-gray-400 uppercase tracking-wide">Répartition</td>
-                </tr>
-                <tr className="bg-[#5C42A6] border-b border-white/10 text-sm">
-                  <td className="py-2.5 px-5 text-gray-300">Appli</td>
-                  <td className="py-2.5 px-5 text-right text-white">
-                    {wallet && distrib
-                      ? (0.5 * ((100 + 135 + 885 + 60) / (2180.85 + 60)) * (Number(wallet.usdc) - Number(distrib.total))).toFixed(2)
-                      : "—"} $
-                  </td>
-                </tr>
-                {distrib?.byUser?.map((u, i) => {
-                  const appli = wallet && distrib
-                    ? 0.5 * ((100 + 135 + 885 + 60) / (2180.85 + 60)) * (Number(wallet.usdc) - Number(distrib.total))
-                    : null;
-                  const sol = Number(u.starting_offered_liquidity ?? 0);
-                  const il  = Number(u.initial_liquidity ?? 0);
-                  const percent = (sol + il) / (100 + 135 + 885 + 60);
-                  const userShare = appli !== null && !isNaN(percent) ? percent * appli : null;
-                  return (
-                    <tr key={u.name} className={`border-b border-white/10 text-sm ${i % 2 === 0 ? "bg-[#4e3899]" : "bg-[#5C42A6]"}`}>
-                      <td className="py-2.5 px-5 text-gray-300">{u.name}</td>
-                      <td className="py-2.5 px-5 text-right text-white">{userShare !== null ? userShare.toFixed(2) : "—"} $</td>
-                    </tr>
-                  );
-                })}
 
               </tbody>
             </table>
           </div>
         )}
+
+        {/* Disponible perso */}
+        {showWallet && wallet && distrib && (
+          <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6 bg-[#3d2d7a] flex items-center justify-between px-5 py-2.5 text-sm">
+            <span className="text-gray-300 font-semibold">Disponible perso</span>
+            <span className="text-[#D6C48A] font-bold">
+              {(Number(wallet?.usdc ?? 0) - Number(distrib?.bonus ?? 0) - Number(distrib?.boost ?? 0) - Number(pendingTotal ?? 0)).toFixed(2)} $
+            </span>
+          </div>
+        )}
+
+        {/* Évolution pool */}
+        {showWallet && clm?.totalPoolUSD && (() => {
+          const ref = 2144.99;
+          const cur = Number(clm.totalPoolUSD);
+          const pct = ((cur - ref) / ref) * 100;
+          const up  = pct >= 0;
+          return (
+            <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6 bg-[#3d2d7a] flex items-center justify-between px-5 py-2.5 text-sm">
+              <span className="text-gray-300">Évolution pool <span className="text-white">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></span>
+              <span className={`font-bold ${up ? "text-emerald-400" : "text-rose-400"}`}>{up ? "+" : ""}{pct.toFixed(2)} %</span>
+            </div>
+          );
+        })()}
+
+        {/* Tableau évolution ETH */}
+        {showWallet && clm?.wethPrice && (() => {
+          const ref = 1997.76;
+          const cur = Number(clm.wethPrice);
+          const pct = ((cur - ref) / ref) * 100;
+          const up  = pct >= 0;
+          return (
+            <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mt-6 bg-[#3d2d7a] flex items-center justify-between px-5 py-2.5 text-sm">
+              <span className="text-gray-300">Évolution ETH <span className="text-white">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></span>
+              <span className={`font-bold ${up ? "text-emerald-400" : "text-rose-400"}`}>{up ? "+" : ""}{pct.toFixed(2)} %</span>
+            </div>
+          );
+        })()}
 
       </div>
     </main>
