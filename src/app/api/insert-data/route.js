@@ -50,7 +50,7 @@ export async function POST(req) {
 
     // Percentage allocated 2 134,99
 
-    const percent_global = (100 + 135 + 885 + (10 + 50)) / (2084, 99 + (10 + 50));
+    const percent_global = (100 + 135 + 885 + (10 + 50)) / (2084.99 + (10 + 50));
     const percent = (starting_offered_liquidity + initial_user_liquidity) / (100 + 135 + 885 + (10 + 50));
 
 
@@ -186,7 +186,7 @@ export async function POST(req) {
     `;
 
     //const test = Number(distributed_benef + distributed_upgrade + distributed_bonus + distributed_boost + distributed_bonus_to_credit);
-    return Response.json({ message: '✅ Insert OK', starting_offered_liquidity, initial_user_liquidity, percent_global, available_fees, benef, upgrade, bonus, fees: boost, new_liquidity, walletUSDC, distributed_bonus_to_credit, walletPool });
+    return Response.json({ message: '✅ Insert OK', starting_offered_liquidity, initial_user_liquidity, percent_global, percent, defit_percentage, available_fees, benef, upgrade, bonus, fees: boost, new_liquidity, walletUSDC, distributed_bonus_to_credit, walletPool });
 
   } catch (err) {
     console.error('❌ DB error:', err);
