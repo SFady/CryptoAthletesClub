@@ -55,21 +55,21 @@ export default function Home() {
     } catch (e) { console.error("Erreur fetchBonus:", e); }
   };
 
-  useEffect(() => { fetchTotals(selected, activity);   localStorage.setItem("statsPeriodGains",    selected);  localStorage.setItem("statsActivityGains",    activity);  }, [selected, activity]);
+  useEffect(() => { fetchTotals(selected, activity);    localStorage.setItem("statsPeriodGains",    selected);  localStorage.setItem("statsActivityGains",    activity);  }, [selected, activity]);
   useEffect(() => { fetchTotals2(selected2, activity2); localStorage.setItem("statsPeriodDistance", selected2); localStorage.setItem("statsActivityDistance", activity2); }, [selected2, activity2]);
   useEffect(() => { fetchTotals3(selected3, activity3); localStorage.setItem("statsPeriodDefits",   selected3); localStorage.setItem("statsActivityDefits",   activity3); }, [selected3, activity3]);
   useEffect(() => { fetchBonus(); }, []);
 
-  const sortedTotals = [...totals].sort((a, b) => (b.boost ?? 0) - (a.boost ?? 0));
+  const sortedTotals  = [...totals].sort((a, b)  => (b.boost ?? 0) - (a.boost ?? 0));
   const sortedTotals2 = [...totals2].sort((a, b) => (b.kilometers ?? 0) - (a.kilometers ?? 0));
-  const sortedDefits = [...totals3].sort((a, b) =>
+  const sortedDefits  = [...totals3].sort((a, b) =>
     (defitPrice ?? 0) * (b.defit_amount ?? 0) - (defitPrice ?? 0) * (a.defit_amount ?? 0)
   );
 
   const medal = (idx) => idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : null;
 
   const PeriodFilter = ({ value, onChange }) => (
-    <div className="inline-flex bg-white/10 rounded-xl p-1 gap-1 mb-2">
+    <div className="flex flex-wrap bg-white/10 rounded-xl p-1 gap-1">
       {[1, 2, 3].map((id) => (
         <button
           key={id}
@@ -85,7 +85,7 @@ export default function Home() {
   );
 
   const ActivityFilter = ({ value, onChange }) => (
-    <div className="inline-flex flex-wrap bg-white/10 rounded-xl p-1 gap-1 mb-4">
+    <div className="flex flex-wrap bg-white/10 rounded-xl p-1 gap-1">
       {ACTIVITIES.map(({ id, label }) => (
         <button
           key={id}
@@ -100,8 +100,25 @@ export default function Home() {
     </div>
   );
 
-  const SectionTitle = ({ children }) => (
-    <h2 className="text-white text-base font-bold uppercase tracking-widest mb-3">{children}</h2>
+  const Filters = ({ period, onPeriod, act, onAct }) => (
+    <div className="flex flex-col gap-2 mb-5 pl-1">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-white/40 text-xs uppercase tracking-widest w-14 shrink-0">Période</span>
+        <PeriodFilter value={period} onChange={onPeriod} />
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-white/40 text-xs uppercase tracking-widest w-14 shrink-0">Sport</span>
+        <ActivityFilter value={act} onChange={onAct} />
+      </div>
+    </div>
+  );
+
+  const SectionTitle = ({ icon, children }) => (
+    <div className="flex items-center gap-2 mb-4 mt-1">
+      <span className="text-lg">{icon}</span>
+      <h2 className="text-white text-base font-bold uppercase tracking-widest">{children}</h2>
+      <div className="flex-1 h-px bg-white/10 ml-2" />
+    </div>
   );
 
   const LeaderboardTable = ({ rows, cols }) => (
@@ -125,14 +142,16 @@ export default function Home() {
               }`}
             >
               {cols.map((col) => (
-                <td key={col.key} className={`py-2.5 px-4 ${col.right ? "text-right" : ""} ${col.gold ? "text-[#D6C48A] font-bold" : "text-gray-200"}`}>
+                <td key={col.key} className={`py-3 px-4 ${col.right ? "text-right" : ""} ${col.gold ? "text-[#D6C48A] font-bold" : "text-gray-200"}`}>
                   {col.render ? col.render(row, idx) : row[col.key]}
                 </td>
               ))}
             </tr>
           )) : (
             <tr className="bg-[#5C42A6]">
-              <td colSpan={cols.length} className="py-3 px-4 text-gray-400 text-sm text-center">Chargement...</td>
+              <td colSpan={cols.length} className="py-4 px-4 text-gray-400 text-sm text-center italic">
+                Aucune donnée pour cette période
+              </td>
             </tr>
           )}
         </tbody>
@@ -140,110 +159,85 @@ export default function Home() {
     </div>
   );
 
+  const fmt = (n) => Number(n ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(",", " ");
+
+  const athleteCol = {
+    key: "name", label: "Athlète",
+    render: (row, idx) => (
+      <span className="flex items-center gap-2">
+        {medal(idx)
+          ? <span className="text-base w-5 text-center">{medal(idx)}</span>
+          : <span className="text-gray-500 text-xs w-5 text-center">{idx + 1}</span>}
+        <span className="text-white font-medium">{row.name}</span>
+      </span>
+    ),
+  };
+
   return (
-    <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-6 pb-6">
-      <div className="w-full md:max-w-[1100px] mx-auto flex flex-col gap-8">
+    <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-6 pb-10 overflow-x-hidden">
+      <div className="w-full md:max-w-[900px] mx-auto flex flex-col gap-10">
 
         {/* BONUS EN COURS */}
         <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
-          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-4 text-white text-xs font-semibold uppercase tracking-wide text-center">
-            Bonus en cours (du 30/03 au 05/04)
+          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 text-white text-xs font-semibold uppercase tracking-wide text-center">
+            🎯 Bonus en cours — du 30/03 au 05/04
           </div>
-          <div className="bg-[#5C42A6] py-3 px-4 text-center text-gray-200 text-sm">
-            Meilleure Distance hebdomadaire :{" "}
-            <span className="text-[#D6C48A] font-bold">
-              {bonus[0]?.bonus ? Number(bonus[0].bonus).toFixed(2) : "..."} $
+          <div className="bg-[#5C42A6] py-4 px-5 text-center text-gray-200 text-sm">
+            Meilleure distance hebdomadaire :{" "}
+            <span className="text-[#D6C48A] font-bold ml-1">
+              {bonus[0]?.bonus ? Number(bonus[0].bonus).toFixed(2) : "…"} $
             </span>
           </div>
         </div>
 
         {/* GAINS ($) */}
         <div>
-          <SectionTitle>&nbsp;Gains ($)</SectionTitle>
-          <PeriodFilter value={selected} onChange={setSelected} />
-          <br />
-          <ActivityFilter value={activity} onChange={setActivity} />
+          <SectionTitle icon="💰">Gains ($)</SectionTitle>
+          <Filters period={selected} onPeriod={setSelected} act={activity} onAct={setActivity} />
           <LeaderboardTable
             rows={sortedTotals}
             cols={[
-              {
-                key: "name", label: "Athlete",
-                render: (row, idx) => (
-                  <span className="flex items-center gap-2">
-                    {medal(idx) ? <span className="text-base">{medal(idx)}</span> : <span className="text-gray-500 text-xs w-5 text-center">{idx + 1}</span>}
-                    <span className="text-white font-medium">{row.name}</span>
-                  </span>
-                ),
-              },
-              {
-                key: "total", label: "Total ($)", right: true, gold: true,
-                render: (row) => Number(row.boost ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(",", " "),
-              },
+              athleteCol,
+              { key: "total", label: "Total ($)", right: true, gold: true, render: (row) => fmt(row.boost) },
             ]}
           />
         </div>
 
         {/* DISTANCE */}
         <div>
-          <SectionTitle>&nbsp;Distance</SectionTitle>
-          <PeriodFilter value={selected2} onChange={setSelected2} />
-          <br />
-          <ActivityFilter value={activity2} onChange={setActivity2} />
+          <SectionTitle icon="📏">Distance</SectionTitle>
+          <Filters period={selected2} onPeriod={setSelected2} act={activity2} onAct={setActivity2} />
           <LeaderboardTable
             rows={sortedTotals2}
             cols={[
-              {
-                key: "name", label: "Athlete",
-                render: (row, idx) => (
-                  <span className="flex items-center gap-2">
-                    {medal(idx) ? <span className="text-base">{medal(idx)}</span> : <span className="text-gray-500 text-xs w-5 text-center">{idx + 1}</span>}
-                    <span className="text-white font-medium">{row.name}</span>
-                  </span>
-                ),
-              },
-              {
-                key: "kilometers", label: "Kilomètres", right: true, gold: true,
-                render: (row) => Number(row.kilometers ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(",", " "),
-              },
+              athleteCol,
+              { key: "kilometers", label: "Kilomètres", right: true, gold: true, render: (row) => fmt(row.kilometers) },
             ]}
           />
         </div>
 
         {/* COURS DU DEFIT */}
         <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
-          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-4 text-white text-xs font-semibold uppercase tracking-wide text-center">
-            Cours du Defit
+          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 text-white text-xs font-semibold uppercase tracking-wide text-center">
+            🪙 Cours du Defit
           </div>
-          <div className="bg-[#5C42A6] py-3 px-4 text-center text-sm">
-            <span className="text-[#D6C48A] font-bold text-lg">{defitPrice?.toFixed(4) ?? "..."} $</span>
+          <div className="bg-[#5C42A6] py-4 px-5 text-center text-sm">
+            <span className="text-[#D6C48A] font-bold text-lg">{defitPrice?.toFixed(4) ?? "…"} $</span>
           </div>
         </div>
 
         {/* GAINS (DEFITS) */}
         <div>
-          <SectionTitle>&nbsp;Gains (Defits)</SectionTitle>
-          <PeriodFilter value={selected3} onChange={setSelected3} />
-          <br />
-          <ActivityFilter value={activity3} onChange={setActivity3} />
+          <SectionTitle icon="💰">Gains (Defits)</SectionTitle>
+          <Filters period={selected3} onPeriod={setSelected3} act={activity3} onAct={setActivity3} />
           <LeaderboardTable
             rows={sortedDefits}
             cols={[
-              {
-                key: "name", label: "Athlete",
-                render: (row, idx) => (
-                  <span className="flex items-center gap-2">
-                    {medal(idx) ? <span className="text-base">{medal(idx)}</span> : <span className="text-gray-500 text-xs w-5 text-center">{idx + 1}</span>}
-                    <span className="text-white font-medium">{row.name}</span>
-                  </span>
-                ),
-              },
-              {
-                key: "defit_amount", label: "Defits", right: true,
-                render: (row) => (row.defit_amount ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(",", " "),
-              },
+              athleteCol,
+              { key: "defit_amount", label: "Defits", right: true, render: (row) => fmt(row.defit_amount) },
               {
                 key: "defit_usd", label: "Defits ($)", right: true, gold: true,
-                render: (row) => Number(defitPrice * (row.defit_amount ?? 0)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(",", " "),
+                render: (row) => fmt(defitPrice * (row.defit_amount ?? 0)),
               },
             ]}
           />
