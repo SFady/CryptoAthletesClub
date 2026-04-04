@@ -47,12 +47,17 @@ export default function Home() {
     }
   }, []);
 
-  const SectionTitle = ({ icon, children, action }) => (
+  const SectionTitle = ({ icon, children }) => (
+    <div className="flex items-center gap-2 mb-4 mt-1">
+      <span className="text-lg">{icon}</span>
+      <h2 className="text-white text-base font-bold uppercase tracking-widest">{children}</h2>
+      <div className="flex-1 h-px bg-white/10 ml-2" />
+    </div>
+  );
+
+  const CardHeader = ({ children, action }) => (
     <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        {icon && <span>{icon}</span>}
-        <span className="text-white text-xs font-semibold uppercase tracking-wide">{children}</span>
-      </div>
+      <span className="text-white text-xs font-semibold uppercase tracking-wide">{children}</span>
       {action}
     </div>
   );
@@ -72,7 +77,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-6 pb-10">
-      <div className="w-full md:max-w-[700px] mx-auto flex flex-col gap-6">
+      <div className="w-full md:max-w-[700px] mx-auto flex flex-col gap-10">
 
         {/* ── BOUTIQUE ── */}
         <div>
