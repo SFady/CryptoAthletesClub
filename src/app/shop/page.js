@@ -81,11 +81,7 @@ export default function Home() {
 
         {/* ── BOUTIQUE ── */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-lg">🛍️</span>
-            <h2 className="text-white text-base font-bold uppercase tracking-widest">Boutique</h2>
-            <div className="flex-1 h-px bg-white/10 ml-2" />
-          </div>
+          <SectionTitle icon="🛍️">Boutique</SectionTitle>
           <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
             <table className="w-full table-auto text-left border-collapse">
               <thead>
