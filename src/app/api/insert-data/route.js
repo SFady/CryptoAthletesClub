@@ -114,8 +114,7 @@ export async function POST(req) {
       LIMIT 1;
     `;
     const max_defits = Number(row4?.max_defits ?? 0);
-    const defit_percentage = defit_amount / max_defits;
-    if (defit_amount>max_defits) defit_percentage=1;
+    const defit_percentage = defit_amount > max_defits ? 1 : defit_amount / max_defits;
 
     let available_fees = walletUSDC;
     available_fees = available_fees - (distributed_benef + distributed_upgrade + distributed_bonus + distributed_boost + distributed_bonus_to_credit + liquidity_repair);
