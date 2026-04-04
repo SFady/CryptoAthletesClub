@@ -216,19 +216,14 @@ export default function Home() {
           />
         </div>
 
-        {/* COURS DU DEFIT */}
-        <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
-          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 text-white text-xs font-semibold uppercase tracking-wide text-center">
-            🪙 Cours du Defit
-          </div>
-          <div className="bg-[#5C42A6] py-4 px-5 text-center text-sm">
-            <span className="text-[#D6C48A] font-bold text-lg">{defitPrice?.toFixed(4) ?? "…"} $</span>
-          </div>
-        </div>
-
         {/* GAINS (DEFITS) */}
         <div>
-          <SectionTitle icon="💰">Gains (Defits)</SectionTitle>
+          <SectionTitle icon="💰">
+            Gains Defit{" "}
+            <span className="text-[#D6C48A] font-bold normal-case tracking-normal ml-1">
+              ({defitPrice?.toFixed(4) ?? "…"} $)
+            </span>
+          </SectionTitle>
           <Filters period={selected3} onPeriod={setSelected3} act={activity3} onAct={setActivity3} />
           <LeaderboardTable
             rows={sortedDefits}

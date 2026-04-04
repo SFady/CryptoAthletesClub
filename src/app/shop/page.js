@@ -112,13 +112,9 @@ export default function Home() {
         {/* ── POSITION CLM ── */}
         {showWallet && (
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-lg">📊</span>
-              <h2 className="text-white text-base font-bold uppercase tracking-widest">Position Bots</h2>
-              <div className="flex-1 h-px bg-white/10 ml-2" />
-            </div>
+            <SectionTitle icon="📊">Position CLM Aerodrome</SectionTitle>
             <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
-              <SectionTitle
+              <CardHeader
                 action={
                   <div className="flex items-center gap-3">
                     {clm?.wethPrice && <span className="text-white/70 text-xs">ETH {Number(clm.wethPrice).toLocaleString("fr-FR")} $</span>}
@@ -127,7 +123,7 @@ export default function Home() {
                 }
               >
                 {clm?.tokenId ? `#${clm.tokenId} — ${clm.pair}` : "Chargement…"}
-              </SectionTitle>
+              </CardHeader>
 
               {clmLoading ? (
                 <div className="bg-[#5C42A6] py-5 text-center text-gray-400 text-sm">Chargement…</div>
@@ -167,34 +163,24 @@ export default function Home() {
         {/* ── USDC ── */}
         {showWallet && (wallet || clm) && (
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-lg">💵</span>
-              <h2 className="text-white text-base font-bold uppercase tracking-widest">USDC</h2>
-              <div className="flex-1 h-px bg-white/10 ml-2" />
-            </div>
+            <SectionTitle icon="💵">USDC</SectionTitle>
             <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
               <table className="w-full table-auto text-left border-collapse">
                 <tbody>
                   <SubHeader>Wallet</SubHeader>
-                  <Row label="USDC"               value={`${wallet?.usdc ?? "—"} $`}        zebra />
-                  <Row label="Frais non collectés" value={`${clm?.totalFeesUSD ?? "—"} $`}   />
+                  <Row label="USDC"                value={`${wallet?.usdc ?? "—"} $`}       zebra />
+                  <Row label="Frais non collectés" value={`${clm?.totalFeesUSD ?? "—"} $`}  />
                 </tbody>
               </table>
             </div>
           </div>
         )}
 
-        {/* ── DISPONIBLE / ÉVOLUTIONS ── */}
+        {/* ── RÉCAP ── */}
         {showWallet && wallet && distrib && (
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-lg">💰</span>
-            <h2 className="text-white text-base font-bold uppercase tracking-widest">Récap</h2>
-            <div className="flex-1 h-px bg-white/10 ml-2" />
-          </div>
-        )}
-
-        {showWallet && wallet && distrib && (
-          <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 -mt-2">
+          <div>
+            <SectionTitle icon="💰">Récap</SectionTitle>
+            <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
             <table className="w-full table-auto text-left border-collapse">
               <tbody>
                 <Row label="Disponible perso"
@@ -226,6 +212,7 @@ export default function Home() {
                 })()}
               </tbody>
             </table>
+            </div>
           </div>
         )}
 
