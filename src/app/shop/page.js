@@ -112,7 +112,7 @@ export default function Home() {
         {/* ── POSITION CLM ── */}
         {showWallet && (
           <div>
-            <SectionTitle icon="📊">Position CLM Aerodrome</SectionTitle>
+            <SectionTitle icon="📊">Position</SectionTitle>
             <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
               <CardHeader
                 action={
