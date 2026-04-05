@@ -216,7 +216,7 @@ export default function Home() {
                     <td className="py-4 px-5 text-[#D6C48A] font-semibold whitespace-nowrap tracking-wide">
                       {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
                     </td>
-                    <td className="py-4 px-5 text-white font-semibold">{row.user_name}</td>
+                    <td className="py-4 px-5 text-white font-semibold whitespace-nowrap">{row.user_name}</td>
                     <td className="py-4 px-5"><ActivityIcon name={row.activity_name} /></td>
                     <td className="py-4 px-5">
                       <span className={`inline-flex items-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-xs font-semibold ${effortBadge(effort)}`}>
