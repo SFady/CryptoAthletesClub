@@ -19,6 +19,7 @@ export default function Home() {
   const [clmLoading, setClmLoading] = useState(true);
   const [distrib, setDistrib]       = useState(null);
   const [pendingTotal, setPendingTotal] = useState(null);
+  const [boostPending, setBoostPending] = useState(0);
 
   const fetchWallet = () => {
     setWalletLoading(true);
@@ -44,6 +45,7 @@ export default function Home() {
       fetchClm();
       fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => {});
       fetch("/api/get-pending-transactions").then(r => r.json()).then(d => setPendingTotal(d.total)).catch(() => {});
+      fetch("/api/get-user-boost?userId=1").then(r => r.json()).then(d => setBoostPending(d.boost_pending ?? 0)).catch(() => {});
     }
   }, []);
 
@@ -184,7 +186,7 @@ export default function Home() {
             <table className="w-full table-auto text-left border-collapse">
               <tbody>
                 <Row label="Disponible perso"
-                  value={`${(Number(wallet?.usdc ?? 0) - Number(distrib?.bonus ?? 0) - Number(distrib?.boost ?? 0) - Number(pendingTotal ?? 0)).toFixed(2)} $`}
+                  value={`${(Number(wallet?.usdc ?? 0) * (1 - ((100 + 135 + 885 + (10 + 50)) / (2084.99 + (10 + 50)))) + Number(boostPending)).toFixed(2)} $`}
                   gold zebra />
                 {clm?.totalPoolUSD && (() => {
                   const ref = 2144.99;
