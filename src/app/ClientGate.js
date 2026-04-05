@@ -46,7 +46,7 @@ const MESSAGES = [
                 <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
                     <li>Grand vainqueur de la plus longue distance de running hebdomadaire : Nico Robin</li>
                     <li>Distance de 42,40 km.</li>
-                    <li>Prix exceptionnel de 1.41 $ !!!</li>
+                    <li>Prix exceptionnel de 1.42 $ !!!</li>
                 </ul>
             </div>
         ),
