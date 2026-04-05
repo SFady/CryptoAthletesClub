@@ -183,7 +183,7 @@ export default function Home() {
             🎯 Bonus en cours — du 30/03 au 05/04
           </div>
           <div className="bg-[#5C42A6] py-4 px-5 text-center text-gray-200 text-sm">
-            Meilleure distance hebdomadaire :{" "}
+            Meilleure distance running hebdomadaire :{" "}
             <span className="text-[#D6C48A] font-bold ml-1">
               {bonus[0]?.bonus ? Number(bonus[0].bonus).toFixed(2) : "…"} $
             </span>
