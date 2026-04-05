@@ -219,7 +219,7 @@ export default function Home() {
                     <td className="py-4 px-5 text-white font-semibold">{row.user_name}</td>
                     <td className="py-4 px-5"><ActivityIcon name={row.activity_name} /></td>
                     <td className="py-4 px-5">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${effortBadge(effort)}`}>
+                      <span className={`inline-flex items-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-xs font-semibold ${effortBadge(effort)}`}>
                         {effort} %
                       </span>
                     </td>
