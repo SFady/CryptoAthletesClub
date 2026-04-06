@@ -53,6 +53,11 @@ export async function POST(req) {
     const percent_global = (100 + 135 + 885 + (10 + 50)) / (2084.99 + (10 + 50));
     const percent = (starting_offered_liquidity + initial_user_liquidity) / (100 + 135 + 885 + (10 + 50));
 
+    // Coefficients :
+    // Course : 1
+    // Natation : 0.85
+    // Velo : 0.7
+    // Marche : 0.4
 
 
     // Distributed

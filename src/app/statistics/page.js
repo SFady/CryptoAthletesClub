@@ -180,7 +180,7 @@ export default function Home() {
         {/* BONUS EN COURS */}
         <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
           <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 text-white text-xs font-semibold uppercase tracking-wide text-center">
-            🎯 Bonus en cours — du 30/03 au 05/04
+            🎯 Bonus en cours — du 06/04 au 12/04
           </div>
           <div className="bg-[#5C42A6] py-4 px-5 text-center text-gray-200 text-sm">
             Meilleure distance running hebdomadaire :{" "}
