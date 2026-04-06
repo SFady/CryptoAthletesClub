@@ -76,6 +76,16 @@ export default function Sfy1024() {
           />
         </div>
 
+        <div className="flex items-center gap-2">
+          <label>&nbsp;Durée : </label>
+          <input type="number" name="duration_h"  min="0" max="23" placeholder="hh" className="px-2 py-2 rounded text-black w-16 text-center" />
+          <span className="text-white font-bold">h</span>
+          <input type="number" name="duration_m"  min="0" max="59" placeholder="mm" className="px-2 py-2 rounded text-black w-16 text-center" />
+          <span className="text-white font-bold">m</span>
+          <input type="number" name="duration_s"  min="0" max="59" placeholder="ss" className="px-2 py-2 rounded text-black w-16 text-center" />
+          <span className="text-white font-bold">s</span>
+        </div>
+
         <input type="hidden" name="weth_value"       defaultValue="0" />
         <input type="hidden" name="current_liquidity" defaultValue="0" />
         <input type="hidden" name="pool_weth"         defaultValue="0" />

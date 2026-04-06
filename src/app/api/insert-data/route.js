@@ -13,6 +13,9 @@ export async function POST(req) {
     const participation_percentage = formData.get("participation_percentage");
     const kilometers = formData.get("kilometers");
     let current_liquidity = Number(formData.get("current_liquidity"));
+    const duration = (Number(formData.get("duration_h") || 0) * 3600)
+                   + (Number(formData.get("duration_m") || 0) * 60)
+                   + (Number(formData.get("duration_s") || 0));
 
 
     // Valeur du pool CLM + USDC wallet (en parallèle)
@@ -172,8 +175,8 @@ export async function POST(req) {
     // Insert
 
     const result = await sql`
-      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus, liquidity_repair, pool_usdc, pool_weth, rewards_usdc, rewards_weth)
-        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${0}, ${benef}, ${upgrade}, ${bonus}, ${repair}, ${walletUSDC}, ${0}, ${0}, ${0});
+      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus, liquidity_repair, pool_usdc, pool_weth, rewards_usdc, rewards_weth, duration)
+        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${0}, ${benef}, ${upgrade}, ${bonus}, ${repair}, ${walletUSDC}, ${0}, ${0}, ${0}, ${duration});
     `;
 
     const result2 = await sql`
