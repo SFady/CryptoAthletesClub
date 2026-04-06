@@ -35,7 +35,7 @@ const WEEKLY_MESSAGE = {
 const MESSAGES = [
     //WEEKLY_MESSAGE,
     {
-        key: "infoMessage_v1",
+        key: "infoMessage_v3",
         title: "Félicitations",
         startDate: new Date("2026-04-06T00:00:00"),
         deadline: new Date("2026-04-12T00:00:00"),
@@ -47,23 +47,6 @@ const MESSAGES = [
                     <li>Grand vainqueur de la plus longue distance de running hebdomadaire : Nico Robin</li>
                     <li>Distance de 42,40 km.</li>
                     <li>Prix exceptionnel de 1.42 $ !!!</li>
-                </ul>
-            </div>
-        ),
-    },
-
-    {
-        key: "infoMessage_v1",
-        title: "Challenge plus longue distance",
-        startDate: new Date("2026-03-30T00:00:00"),
-        deadline: new Date("2026-04-06T00:00:00"),
-        confetti: false,
-        content: (
-            <div className="flex items-start gap-4">
-                <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
-                    <li>Le challenge reprend maintenant chaque semaine.</li>
-                    <li>Nouveau : Limité à la course.</li>
-                    <li>Cagnotte remise à 0.</li>
                 </ul>
             </div>
         ),
