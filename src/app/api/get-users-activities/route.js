@@ -24,6 +24,7 @@ export async function GET(req) {
           uac.participation_percentage,
           uac.boost,
           uac.kilometers,
+          uac.duration,
           usr.max_defits
         FROM user_activities uac
         INNER JOIN users usr ON uac.user_id = usr.id

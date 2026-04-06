@@ -77,6 +77,27 @@ export default function Home() {
 
   const currentRows = rows;
 
+  const pace = (duration, km, activityName) => {
+    if (!duration || Number(duration) === 0 || !km || Number(km) === 0) return null;
+    const key = (activityName || "").toLowerCase();
+    const isSwim = key === "swim" || key === "natation";
+    const isBike = key === "bike" || key === "cyclisme";
+    if (isSwim) {
+      const secPer100m = Number(duration) / (Number(km) * 10);
+      const min = Math.floor(secPer100m / 60);
+      const sec = Math.round(secPer100m % 60);
+      return `${min}'${String(sec).padStart(2, "0")}"/100m`;
+    }
+    if (isBike) {
+      const kmh = (Number(km) / Number(duration)) * 3600;
+      return `${kmh.toFixed(1)} km/h`;
+    }
+    const secPerKm = Number(duration) / Number(km);
+    const min = Math.floor(secPerKm / 60);
+    const sec = Math.round(secPerKm % 60);
+    return `${min}'${String(sec).padStart(2, "0")}"/km`;
+  };
+
   const ActivityIcon = ({ name }) => {
     const key = (name || "").toLowerCase();
     const cls = "text-white/80 text-lg";
@@ -150,31 +171,37 @@ export default function Home() {
               {/* Bulles */}
               <div className="flex items-start gap-2 mb-2">
                 <div className="flex flex-col gap-1.5 w-1/2">
-                  <span className={`w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${effortBadge(effort)}`}>
-                    Effort {effort} %
+                  <span className={`w-full text-xs px-2.5 py-0.5 rounded-full flex justify-between ${effortBadge(effort)}`}>
+                    <span className="opacity-70 font-normal">Effort</span>
+                    <span className="font-semibold">{effort} %</span>
                   </span>
-                  <span className="w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
-                    {Number(row.kilometers ?? 0).toFixed(2)} km
+                  <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                    <span className="opacity-70 font-normal">Distance</span>
+                    <span className="font-semibold">{Number(row.kilometers ?? 0).toFixed(2)} km</span>
                   </span>
-                  <span className="w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/10 text-white/50 border border-white/20">
-                    Vitesse
+                  <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                    <span className="opacity-70 font-normal">Vitesse</span>
+                    <span className="font-semibold">{pace(row.duration, row.kilometers, row.activity_name) ?? "—"}</span>
                   </span>
                 </div>
                 <div className="flex flex-col gap-1.5 w-1/2">
-                  <span className="w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
-                    Boost {Number(row.boost).toFixed(2)} $
+                  <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                    <span className="opacity-70 font-normal">Boost</span>
+                    <span className="font-semibold">{Number(row.boost).toFixed(2)} $</span>
                   </span>
                   {showGains && (
-                    <span className="w-full text-center text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30">
-                      Defits {((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})
+                    <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                      <span className="opacity-70 font-normal">Defits</span>
+                      <span className="font-semibold">{((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})</span>
                     </span>
                   )}
                 </div>
               </div>
               {/* Total */}
-              <div className="flex justify-end border-t border-white/10 pt-2 mt-1">
-                <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white px-5 py-0.5 rounded-full text-sm">
-                  Total : {(Number(row.boost) + gainDefit).toFixed(2)} $
+              <div className="border-t border-white/10 pt-2 mt-1">
+                <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white flex justify-between">
+                  <span className="font-normal">Total</span>
+                  <span className="font-semibold">{(Number(row.boost) + gainDefit).toFixed(2)} $</span>
                 </span>
               </div>
             </div>
@@ -224,7 +251,9 @@ export default function Home() {
                       </span>
                     </td>
                     <td className="py-4 px-5 text-gray-200">{Number(row.kilometers ?? 0).toFixed(2)}</td>
-                    <td className="py-4 px-5 text-white/50">—</td>
+                    <td className="py-4 px-5 text-gray-200 whitespace-nowrap">
+                      {pace(row.duration, row.kilometers, row.activity_name) ?? <span className="text-white/30">—</span>}
+                    </td>
                     {showGains && (
                       <>
                         <td className="py-4 px-5 text-gray-200">{row.defit_amount}</td>
