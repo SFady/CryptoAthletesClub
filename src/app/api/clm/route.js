@@ -1,5 +1,5 @@
-// Aerodrome CL — position #61463819 (WETH/USDC, tickSpacing=100)
-const POSITION_ID = 61463819n;
+// Aerodrome CL — position #65017094 (WETH/USDC, tickSpacing=100)
+const POSITION_ID = 65017094n;
 const NFPM        = "0x827922686190790b37229fd06084350E74485b72";
 const POOL        = "0xb2cc224c1c9fee385f8ad6a55b4d94e92359dc59";
 
@@ -16,7 +16,7 @@ const TOKENS = {
 };
 
 const CACHE_TTL_MS = 30_000;
-if (!global._clmCache) global._clmCache = { data: null, time: 0 };
+global._clmCache = { data: null, time: 0 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
