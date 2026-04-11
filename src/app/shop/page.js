@@ -49,140 +49,127 @@ export default function Home() {
     }
   }, []);
 
-  const SectionTitle = ({ icon, children }) => (
-    <div className="flex items-center gap-2 mb-4 mt-1">
-      <span className="text-lg">{icon}</span>
-      <h2 className="text-white text-base font-bold uppercase tracking-widest">{children}</h2>
-      <div className="flex-1 h-px bg-white/10 ml-2" />
-    </div>
-  );
-
-  const CardHeader = ({ children, action }) => (
-    <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between">
-      <span className="text-white text-xs font-semibold uppercase tracking-wide">{children}</span>
-      {action}
+  const Card = ({ icon, title, action, children }) => (
+    <div className="rounded-2xl overflow-hidden shadow-lg border border-white/10">
+      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span className="text-lg flex-shrink-0">{icon}</span>
+          <h2 className="text-white text-sm font-bold uppercase tracking-widest">{title}</h2>
+        </div>
+        {action}
+      </div>
+      <div className="bg-white/10 backdrop-blur-md">
+        {children}
+      </div>
     </div>
   );
 
   const Row = ({ label, value, gold, zebra }) => (
-    <tr className={`border-b border-white/10 text-sm ${zebra ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}>
-      <td className="py-3 px-5 text-gray-300">{label}</td>
-      <td className={`py-3 px-5 text-right font-semibold whitespace-nowrap ${gold ? "text-[#D6C48A] font-bold" : "text-white"}`}>{value}</td>
+    <tr className={`border-b border-white/10 text-sm ${zebra ? "bg-white/10" : "bg-white/5"}`}>
+      <td className="py-2.5 px-5 text-gray-300">{label}</td>
+      <td className={`py-2.5 px-5 text-right font-semibold whitespace-nowrap ${gold ? "text-[#D6C48A] font-bold" : "text-white"}`}>{value}</td>
     </tr>
   );
 
   const SubHeader = ({ children }) => (
-    <tr className="bg-[#3d2d7a] border-b border-white/10">
-      <td colSpan={2} className="py-1.5 px-5 text-gray-400 text-xs uppercase tracking-wide">{children}</td>
+    <tr className="border-b border-white/10">
+      <td colSpan={2} className="py-1.5 px-5 text-white/40 text-xs uppercase tracking-wide bg-white/5">{children}</td>
     </tr>
   );
 
   return (
     <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-6 pb-10">
-      <div className="w-full md:max-w-[700px] mx-auto flex flex-col gap-10">
+      <div className="w-full md:max-w-[700px] mx-auto flex flex-col gap-6">
 
         {/* ── BOUTIQUE ── */}
-        <div>
-          <SectionTitle icon="🛍️">Boutique (A venir)</SectionTitle>
-          <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
-            <table className="w-full table-auto text-left border-collapse">
-              <thead>
-                <tr className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white text-xs uppercase tracking-wide">
-                  <th className="py-3.5 px-5 font-semibold">Article</th>
-                  <th className="py-3.5 px-5 font-semibold text-right">Prix</th>
-                  <th className="py-3.5 px-5 font-semibold text-center">Actions</th>
+        <Card icon="🛍️" title="Boutique (A venir)">
+          <table className="w-full table-auto text-left border-collapse">
+            <thead>
+              <tr className="bg-white/20 text-white text-xs uppercase tracking-wide">
+                <th className="py-2 px-5 font-semibold">Article</th>
+                <th className="py-2 px-5 font-semibold text-right">Prix</th>
+                <th className="py-2 px-5 font-semibold text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, idx) => (
+                <tr key={item.name} className={`border-b border-white/10 text-sm ${idx % 2 === 0 ? "bg-white/10" : "bg-white/5"}`}>
+                  <td className="py-2.5 px-3 sm:px-5 text-white font-semibold">{item.name}</td>
+                  <td className="py-2.5 px-3 sm:px-5 text-[#D6C48A] font-bold text-right whitespace-nowrap">{item.price}</td>
+                  <td className="py-2.5 px-2 sm:px-5">
+                    <div className="flex justify-center gap-1 sm:gap-2">
+                      <button className="bg-purple-500/80 hover:bg-purple-600 text-white text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">Acheter</button>
+                      <button className="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition-colors border border-white/20 whitespace-nowrap">Vendre</button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {items.map((item, idx) => (
-                  <tr key={item.name} className={`border-b border-white/10 text-sm ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}>
-                    <td className="py-3.5 px-3 sm:px-5 text-white font-semibold">{item.name}</td>
-                    <td className="py-3.5 px-3 sm:px-5 text-[#D6C48A] font-bold text-right whitespace-nowrap">{item.price}</td>
-                    <td className="py-3.5 px-2 sm:px-5">
-                      <div className="flex justify-center gap-1 sm:gap-2">
-                        <button className="bg-purple-500/80 hover:bg-purple-600 text-white text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">Acheter</button>
-                        <button className="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition-colors border border-white/20 whitespace-nowrap">Vendre</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              ))}
+            </tbody>
+          </table>
+        </Card>
 
         {/* ── POSITION CLM ── */}
         {showWallet && (
-          <div>
-            <SectionTitle icon="📊">Position</SectionTitle>
-            <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
-              <CardHeader
-                action={
-                  <div className="flex items-center gap-3">
-                    {clm?.wethPrice && <span className="text-white/70 text-xs">ETH {Number(clm.wethPrice).toLocaleString("fr-FR")} $</span>}
-                    <button onClick={fetchClm} className="text-white/70 hover:text-white text-sm transition-colors">↻</button>
-                  </div>
-                }
-              >
-                {clm?.tokenId ? `#${clm.tokenId} — ${clm.pair}` : "Chargement…"}
-              </CardHeader>
-
-              {clmLoading ? (
-                <div className="bg-[#5C42A6] py-5 text-center text-gray-400 text-sm">Chargement…</div>
-              ) : clm?.error ? (
-                <div className="bg-[#5C42A6] py-5 text-center text-rose-300 text-sm">Erreur : {clm.error}</div>
-              ) : clm?.pair ? (
-                <table className="w-full table-auto text-left border-collapse">
-                  <tbody>
-                    <tr className="bg-[#4e3899] border-b border-white/10">
-                      <td colSpan={2} className="py-2 px-5 text-right">
-                        {clm.inRange !== null && (
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${clm.inRange ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"}`}>
-                            {clm.inRange ? "In range" : "Out of range"}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                    <SubHeader>En position</SubHeader>
-                    {clm.pool.map((t, i) => (
-                      <Row key={i} label={t.symbol} value={<><span className="text-white">{t.balance}</span><span className="text-gray-400 text-xs ml-2">~{t.usd} $</span></>} zebra={i % 2 === 0} />
-                    ))}
-                    <Row label="Total pool" value={`${clm.totalPoolUSD} $`} gold zebra />
-                    <SubHeader>Frais non collectés</SubHeader>
-                    {clm.fees.map((t, i) => (
-                      <Row key={i} label={t.symbol} value={<><span className="text-white">{t.balance}</span><span className="text-gray-400 text-xs ml-2">~{t.usd} $</span></>} zebra={i % 2 === 0} />
-                    ))}
-                    <Row label="Total fees" value={`${clm.totalUSD} $`} gold zebra />
-                  </tbody>
-                </table>
-              ) : (
-                <div className="bg-[#5C42A6] py-5 text-center text-gray-400 text-sm">Position introuvable</div>
-              )}
-            </div>
-          </div>
+          <Card
+            icon="📊"
+            title={clm?.tokenId ? `#${clm.tokenId} — ${clm.pair}` : "Position"}
+            action={
+              <div className="flex items-center gap-3">
+                {clm?.wethPrice && <span className="text-white/70 text-xs">ETH {Number(clm.wethPrice).toLocaleString("fr-FR")} $</span>}
+                <button onClick={fetchClm} className="text-white/70 hover:text-white text-sm transition-colors">↻</button>
+              </div>
+            }
+          >
+            {clmLoading ? (
+              <div className="py-5 text-center text-gray-400 text-sm">Chargement…</div>
+            ) : clm?.error ? (
+              <div className="py-5 text-center text-rose-300 text-sm">Erreur : {clm.error}</div>
+            ) : clm?.pair ? (
+              <table className="w-full table-auto text-left border-collapse">
+                <tbody>
+                  <tr className="border-b border-white/10 bg-white/5">
+                    <td colSpan={2} className="py-2 px-5 text-right">
+                      {clm.inRange !== null && (
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${clm.inRange ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"}`}>
+                          {clm.inRange ? "In range" : "Out of range"}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                  <SubHeader>En position</SubHeader>
+                  {clm.pool.map((t, i) => (
+                    <Row key={i} label={t.symbol} value={<><span className="text-white">{t.balance}</span><span className="text-gray-400 text-xs ml-2">~{t.usd} $</span></>} zebra={i % 2 === 0} />
+                  ))}
+                  <Row label="Total pool" value={`${clm.totalPoolUSD} $`} gold zebra />
+                  <SubHeader>Frais non collectés</SubHeader>
+                  {clm.fees.map((t, i) => (
+                    <Row key={i} label={t.symbol} value={<><span className="text-white">{t.balance}</span><span className="text-gray-400 text-xs ml-2">~{t.usd} $</span></>} zebra={i % 2 === 0} />
+                  ))}
+                  <Row label="Total fees" value={`${clm.totalUSD} $`} gold zebra />
+                </tbody>
+              </table>
+            ) : (
+              <div className="py-5 text-center text-gray-400 text-sm">Position introuvable</div>
+            )}
+          </Card>
         )}
 
         {/* ── USDC ── */}
         {showWallet && (wallet || clm) && (
-          <div>
-            <SectionTitle icon="💵">USDC</SectionTitle>
-            <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
-              <table className="w-full table-auto text-left border-collapse">
-                <tbody>
-                  <SubHeader>Wallet</SubHeader>
-                  <Row label="USDC"                value={`${wallet?.usdc ?? "—"} $`}       zebra />
-                  <Row label="Frais non collectés" value={`${clm?.totalFeesUSD ?? "—"} $`}  />
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <Card icon="💵" title="USDC">
+            <table className="w-full table-auto text-left border-collapse">
+              <tbody>
+                <SubHeader>Wallet</SubHeader>
+                <Row label="USDC"                value={`${wallet?.usdc ?? "—"} $`}       zebra />
+                <Row label="Frais non collectés" value={`${clm?.totalFeesUSD ?? "—"} $`}  />
+              </tbody>
+            </table>
+          </Card>
         )}
 
         {/* ── RÉCAP ── */}
         {showWallet && wallet && distrib && (
-          <div>
-            <SectionTitle icon="💰">Récap</SectionTitle>
-            <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
+          <Card icon="💰" title="Récap">
             <table className="w-full table-auto text-left border-collapse">
               <tbody>
                 <Row label="Disponible perso"
@@ -194,9 +181,9 @@ export default function Home() {
                   const pct = ((cur - ref) / ref) * 100;
                   const up = pct >= 0;
                   return (
-                    <tr className="border-b border-white/10 text-sm bg-[#4e3899]">
-                      <td className="py-3 px-5 text-gray-300">Évolution pool <span className="text-white text-xs">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></td>
-                      <td className={`py-3 px-5 text-right font-bold ${up ? "text-emerald-400" : "text-rose-400"}`}>{up ? "+" : ""}{pct.toFixed(2)} %</td>
+                    <tr className="border-b border-white/10 text-sm bg-white/5">
+                      <td className="py-2.5 px-5 text-gray-300">Évolution pool <span className="text-white text-xs">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></td>
+                      <td className={`py-2.5 px-5 text-right font-bold ${up ? "text-emerald-400" : "text-rose-400"}`}>{up ? "+" : ""}{pct.toFixed(2)} %</td>
                     </tr>
                   );
                 })()}
@@ -206,16 +193,15 @@ export default function Home() {
                   const pct = ((cur - ref) / ref) * 100;
                   const up = pct >= 0;
                   return (
-                    <tr className="text-sm bg-[#5C42A6]">
-                      <td className="py-3 px-5 text-gray-300">Évolution ETH <span className="text-white text-xs">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></td>
-                      <td className={`py-3 px-5 text-right font-bold ${up ? "text-emerald-400" : "text-rose-400"}`}>{up ? "+" : ""}{pct.toFixed(2)} %</td>
+                    <tr className="text-sm bg-white/10">
+                      <td className="py-2.5 px-5 text-gray-300">Évolution ETH <span className="text-white text-xs">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></td>
+                      <td className={`py-2.5 px-5 text-right font-bold ${up ? "text-emerald-400" : "text-rose-400"}`}>{up ? "+" : ""}{pct.toFixed(2)} %</td>
                     </tr>
                   );
                 })()}
               </tbody>
             </table>
-            </div>
-          </div>
+          </Card>
         )}
 
       </div>

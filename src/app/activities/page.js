@@ -154,7 +154,7 @@ export default function Home() {
       </div>
 
       {/* CARDS — mobile uniquement */}
-      <div className="flex flex-col gap-3 mb-6 w-full md:hidden">
+      <div className="flex flex-col gap-5 mb-6 w-full md:hidden">
         {currentRows.map((row, idx) => {
           const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100);
           const gainDefit = showGains ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;

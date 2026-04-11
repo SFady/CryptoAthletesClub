@@ -85,12 +85,12 @@ export default function Home() {
   );
 
   const ActivityFilter = ({ value, onChange }) => (
-    <div className="flex flex-wrap bg-white/10 rounded-xl p-1 gap-1">
+    <div className="flex bg-white/10 rounded-xl p-1 gap-1 overflow-x-auto [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: "none" }}>
       {ACTIVITIES.map(({ id, label }) => (
         <button
           key={id}
           onClick={() => onChange(id)}
-          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all duration-150 ${
+          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex-shrink-0 ${
             value === id ? "bg-white/30 text-white shadow-md" : "text-white/60 hover:bg-white/10"
           }`}
         >
@@ -103,31 +103,23 @@ export default function Home() {
   const Filters = ({ period, onPeriod, act, onAct }) => (
     <div className="flex flex-col gap-2 mb-5 pl-1">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-white/40 text-xs uppercase tracking-widest w-14 shrink-0">Période</span>
+        <span className="text-white/40 text-xs uppercase tracking-widest w-20 shrink-0">Période</span>
         <PeriodFilter value={period} onChange={onPeriod} />
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-white/40 text-xs uppercase tracking-widest w-14 shrink-0">Sport</span>
+        <span className="text-white/40 text-xs uppercase tracking-widest w-20 shrink-0">Sport</span>
         <ActivityFilter value={act} onChange={onAct} />
       </div>
     </div>
   );
 
-  const SectionTitle = ({ icon, children }) => (
-    <div className="flex items-center gap-2 mb-4 mt-1">
-      <span className="text-lg">{icon}</span>
-      <h2 className="text-white text-base font-bold uppercase tracking-widest">{children}</h2>
-      <div className="flex-1 h-px bg-white/10 ml-2" />
-    </div>
-  );
-
   const LeaderboardTable = ({ rows, cols }) => (
-    <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
+    <div className="rounded-xl overflow-hidden border border-white/10">
       <table className="w-full table-auto text-left border-collapse">
         <thead>
-          <tr className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white text-xs uppercase tracking-wide">
+          <tr className="bg-white/20 text-white text-xs uppercase tracking-wide">
             {cols.map((col) => (
-              <th key={col.key} className={`py-3 px-4 font-semibold ${col.right ? "text-right" : ""}`}>
+              <th key={col.key} className={`py-2 px-4 font-semibold ${col.right ? "text-right" : ""}`}>
                 {col.label}
               </th>
             ))}
@@ -138,17 +130,17 @@ export default function Home() {
             <tr
               key={idx}
               className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${
-                idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"
+                idx % 2 === 0 ? "bg-white/10" : "bg-white/5"
               }`}
             >
               {cols.map((col) => (
-                <td key={col.key} className={`py-3 px-4 ${col.right ? "text-right" : ""} ${col.gold ? "text-[#D6C48A] font-bold" : "text-gray-200"}`}>
+                <td key={col.key} className={`py-2.5 px-4 ${col.right ? "text-right" : ""} ${col.gold ? "text-[#D6C48A] font-bold" : "text-gray-200"}`}>
                   {col.render ? col.render(row, idx) : row[col.key]}
                 </td>
               ))}
             </tr>
           )) : (
-            <tr className="bg-[#5C42A6]">
+            <tr>
               <td colSpan={cols.length} className="py-4 px-4 text-gray-400 text-sm text-center italic">
                 Aucune donnée pour cette période
               </td>
@@ -173,26 +165,37 @@ export default function Home() {
     ),
   };
 
+  const Card = ({ icon, title, subtitle, children }) => (
+    <div className="rounded-2xl overflow-hidden shadow-lg border border-white/10">
+      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center gap-2">
+        <span className="text-lg flex-shrink-0">{icon}</span>
+        <div className="flex flex-col">
+          <h2 className="text-white text-sm font-bold uppercase tracking-widest">{title}</h2>
+          {subtitle && <span className="text-white/70 text-xs">{subtitle}</span>}
+        </div>
+      </div>
+      <div className="bg-white/10 backdrop-blur-md px-4 py-4">
+        {children}
+      </div>
+    </div>
+  );
+
   return (
     <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-6 pb-10 overflow-x-hidden">
-      <div className="w-full md:max-w-[900px] mx-auto flex flex-col gap-10">
+      <div className="w-full md:max-w-[900px] mx-auto flex flex-col gap-6">
 
         {/* BONUS EN COURS */}
-        <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
-          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 text-white text-xs font-semibold uppercase tracking-wide text-center">
-            🎯 Bonus en cours — du 06/04 au 12/04
-          </div>
-          <div className="bg-[#5C42A6] py-4 px-5 text-center text-gray-200 text-sm">
+        <Card icon="🎯" title="Bonus en cours" subtitle="du 06/04 au 12/04">
+          <p className="text-center text-gray-200 text-sm">
             Meilleure distance running hebdomadaire :{" "}
             <span className="text-[#D6C48A] font-bold ml-1">
               {bonus[0]?.bonus ? Number(bonus[0].bonus).toFixed(2) : "…"} $
             </span>
-          </div>
-        </div>
+          </p>
+        </Card>
 
         {/* GAINS ($) */}
-        <div>
-          <SectionTitle icon="💰">Gains ($)</SectionTitle>
+        <Card icon="💰" title="Gains ($)">
           <Filters period={selected} onPeriod={setSelected} act={activity} onAct={setActivity} />
           <LeaderboardTable
             rows={sortedTotals}
@@ -201,11 +204,10 @@ export default function Home() {
               { key: "total", label: "Total ($)", right: true, gold: true, render: (row) => fmt(row.boost) },
             ]}
           />
-        </div>
+        </Card>
 
         {/* DISTANCE */}
-        <div>
-          <SectionTitle icon="📏">Distance</SectionTitle>
+        <Card icon="📏" title="Distance">
           <Filters period={selected2} onPeriod={setSelected2} act={activity2} onAct={setActivity2} />
           <LeaderboardTable
             rows={sortedTotals2}
@@ -214,16 +216,13 @@ export default function Home() {
               { key: "kilometers", label: "Kilomètres", right: true, gold: true, render: (row) => fmt(row.kilometers) },
             ]}
           />
-        </div>
+        </Card>
 
         {/* GAINS (DEFITS) */}
-        <div>
-          <SectionTitle icon="💰">
-            Gains Defit{" "}
-            <span className="text-[#D6C48A] font-bold normal-case tracking-normal ml-1">
-              ({defitPrice?.toFixed(4) ?? "…"} $)
-            </span>
-          </SectionTitle>
+        <Card
+          icon="💰"
+          title={<>Gains Defit <span className="text-[#D6C48A] font-bold normal-case tracking-normal ml-1">({defitPrice?.toFixed(4) ?? "…"} $)</span></>}
+        >
           <Filters period={selected3} onPeriod={setSelected3} act={activity3} onAct={setActivity3} />
           <LeaderboardTable
             rows={sortedDefits}
@@ -236,7 +235,7 @@ export default function Home() {
               },
             ]}
           />
-        </div>
+        </Card>
 
       </div>
     </main>
