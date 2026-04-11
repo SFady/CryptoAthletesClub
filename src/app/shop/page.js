@@ -38,7 +38,14 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const hasAccess = !!localStorage.getItem("dataEntry");
+    let hasAccess = false;
+    try {
+      const raw = localStorage.getItem("auth_session");
+      if (raw) {
+        const { user } = JSON.parse(raw);
+        hasAccess = user === "usopp";
+      }
+    } catch { /* ignore */ }
     setShowWallet(hasAccess);
     if (hasAccess) {
       fetchWallet();
@@ -49,12 +56,15 @@ export default function Home() {
     }
   }, []);
 
-  const Card = ({ icon, title, action, children }) => (
+  const Card = ({ icon, title, subtitle, action, children }) => (
     <div className="rounded-2xl overflow-hidden shadow-lg border border-white/10">
       <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className="text-lg flex-shrink-0">{icon}</span>
-          <h2 className="text-white text-sm font-bold uppercase tracking-widest">{title}</h2>
+          <div className="flex flex-col">
+            <h2 className="text-white text-sm font-bold uppercase tracking-widest">{title}</h2>
+            {subtitle && <span className="text-white/70 text-xs">{subtitle}</span>}
+          </div>
         </div>
         {action}
       </div>
@@ -112,7 +122,8 @@ export default function Home() {
         {showWallet && (
           <Card
             icon="📊"
-            title={clm?.tokenId ? `#${clm.tokenId} — ${clm.pair}` : "Position"}
+            title={clm?.tokenId ? `#${clm.tokenId}` : "Position"}
+            subtitle={clm?.pair ?? undefined}
             action={
               <div className="flex items-center gap-3">
                 {clm?.wethPrice && <span className="text-white/70 text-xs">ETH {Number(clm.wethPrice).toLocaleString("fr-FR")} $</span>}

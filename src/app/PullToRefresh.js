@@ -11,10 +11,13 @@ export default function PullToRefresh() {
     let triggered = false;
 
     const onTouchStart = (e) => {
-      startY = e.touches[0].clientY;
+      const scrollEl = document.querySelector("main");
+      const atTop = !scrollEl || scrollEl.scrollTop === 0;
+      startY = atTop ? e.touches[0].clientY : -1;
       triggered = false;
     };
     const onTouchMove = (e) => {
+      if (startY < 0) return;
       if (!triggered && e.touches[0].clientY - startY > 70) {
         triggered = true;
         setRefreshing(true);

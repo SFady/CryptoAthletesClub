@@ -30,11 +30,14 @@ export default function RootLayout({ children }) {
   };
 
   useEffect(() => {
-    const value = localStorage.getItem("dataEntry");
-    if (value) {
-      setShowLink(true);
-    }
-  }, []);
+    try {
+      const raw = localStorage.getItem("auth_session");
+      if (raw) {
+        const { user } = JSON.parse(raw);
+        setShowLink(user === "usopp");
+      }
+    } catch { /* ignore */ }
+  }, [pathname]);
 
   return (
     <html lang="fr">
