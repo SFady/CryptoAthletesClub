@@ -127,7 +127,7 @@ export default function Home() {
     <main className="relative w-full max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 md:pt-0 md:pb-0 md:min-h-[calc(100vh-96px)]">
 
       {/* Sélecteur d’athlète centré au-dessus de l’image */}
-      <div className="flex justify-center mb-4 mt-2 md:mt-10">
+      <div className="flex justify-center mb-2 mt-1 md:mt-10">
         <select
           value={selected}
           onChange={handleSelect}
@@ -143,31 +143,31 @@ export default function Home() {
       </div>
 
 
-      <div className="flex justify-center items-start gap-0 mb-4">
+      <div className="flex justify-center items-start gap-0 mb-2">
 
         {/* Image + SVG dans un conteneur relatif */}
-        <div className="relative" style={{ width: 200 }}>
+        <div className="relative" style={{ width: 160 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
             alt="Athlete"
-            width={200}
+            width={160}
             className="rounded-2xl"
             loading="eager"
           />
           {/* SVG par-dessus l'image, overflow visible vers la droite */}
           <svg
             className="absolute inset-0 pointer-events-none"
-            width="200" height="100%"
+            width="160" height="100%"
             overflow="visible"
           >
             {[
-              { x: 122, y: 32, tx: 212, ty: 86 },
-              { x: 122, y: 100, tx: 212, ty: 110 },
-              { x: 156, y: 158, tx: 212, ty: 134 },
-              { x: 122, y: 180, tx: 212, ty: 158 },
-              { x: 127, y: 252, tx: 212, ty: 182 },
-              { x: 143, y: 273, tx: 212, ty: 206 },
+              { x: 98, y: 26, tx: 170, ty: 69 },
+              { x: 98, y: 80, tx: 170, ty: 88 },
+              { x: 125, y: 126, tx: 170, ty: 107 },
+              { x: 98, y: 144, tx: 170, ty: 126 },
+              { x: 102, y: 202, tx: 170, ty: 146 },
+              { x: 114, y: 218, tx: 170, ty: 165 },
             ].map(({ x, y, tx, ty }, i) => (
               <g key={i}>
                 <line x1={x} y1={y} x2={tx} y2={ty} stroke="rgba(255,255,255,0.4)" strokeWidth="1" strokeDasharray="3,2" />
@@ -178,7 +178,7 @@ export default function Home() {
         </div>
 
         {/* TABLE */}
-        <div className="flex flex-col justify-start" style={{ marginTop: "50px" }}>
+        <div className="flex flex-col justify-start" style={{ marginTop: "40px" }}>
           <table className="border-collapse text-center text-xs text-gray-200">
             <thead>
               <tr className="text-white font-semibold">
@@ -205,13 +205,13 @@ export default function Home() {
       </div>
 
       {/* Boost maximum disponible */}
-      <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm md:max-w-[550px] mx-auto bg-[#5C42A6] flex items-center justify-between px-8 py-2.5">
+      <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm md:max-w-[550px] mx-auto bg-[#5C42A6] flex items-center justify-between px-8 py-2">
         <span className="text-white text-xs font-semibold uppercase tracking-wide">Boost max disponible</span>
         <span className="text-[#D6C48A] font-bold text-base">{boostMax !== null ? boostMax.toFixed(2) : "—"} $</span>
       </div>
 
       {/* Tableau des stats */}
-      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 mb-6 w-full max-w-sm md:max-w-[550px] mx-auto">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-4 mb-4 w-full max-w-sm md:max-w-[550px] mx-auto">
         <table className="w-full text-base">
           <tbody>
             <tr className="border-b border-white/20">
