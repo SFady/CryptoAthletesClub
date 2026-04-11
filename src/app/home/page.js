@@ -147,13 +147,13 @@ export default function Home() {
       <div className="flex justify-center items-start gap-0 mb-2">
 
         {/* Image + SVG dans un conteneur relatif */}
-        <div className="relative" style={{ width: 160 }}>
+        <div className="relative flex-shrink-0" style={{ width: 160 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
             alt="Athlete"
             width={160}
-            className="rounded-2xl"
+            className="rounded-2xl w-auto max-h-[38svh] md:max-h-none"
             loading="eager"
           />
           {/* SVG par-dessus l'image, overflow visible vers la droite */}
