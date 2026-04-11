@@ -68,11 +68,14 @@ export default function Home() {
 
   const medal = (idx) => idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : null;
 
+  const noFocus = (e) => e.preventDefault();
+
   const PeriodFilter = ({ value, onChange }) => (
     <div className="flex flex-wrap bg-white/10 rounded-xl p-1 gap-1">
       {[1, 2, 3].map((id) => (
         <button
           key={id}
+          onMouseDown={noFocus}
           onClick={() => onChange(id)}
           className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
             value === id ? "bg-[#D6C48A] text-[#2A2550] shadow-md" : "text-white hover:bg-white/10"
@@ -89,6 +92,7 @@ export default function Home() {
       {ACTIVITIES.map(({ id, label }) => (
         <button
           key={id}
+          onMouseDown={noFocus}
           onClick={() => onChange(id)}
           className={`px-3 py-1 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex-shrink-0 ${
             value === id ? "bg-white/30 text-white shadow-md" : "text-white/60 hover:bg-white/10"
