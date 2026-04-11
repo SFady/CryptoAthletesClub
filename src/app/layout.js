@@ -44,8 +44,8 @@ export default function RootLayout({ children }) {
         <meta charSet="UTF-8" />
       </head>
 
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className="relative flex flex-col min-h-screen text-white">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] overflow-hidden md:h-auto md:overflow-visible`}>
+        <div className="relative flex flex-col h-[100dvh] md:min-h-screen text-white">
 
           {/* IMAGE DE FOND FIXE */}
           <div
@@ -102,7 +102,7 @@ export default function RootLayout({ children }) {
           </header>
 
           {/* ZONE CENTRALE - scroll global */}
-          <main className="relative flex flex-col pt-16 md:pt-24 pb-20 h-[100dvh] md:h-auto md:min-h-screen overflow-x-hidden overflow-y-auto">
+          <main className="relative flex flex-col pt-16 md:pt-24 pb-20 flex-1 overflow-x-hidden overflow-y-auto">
             <div className="relative z-20 flex flex-col w-full md:max-w-screen-xl md:mx-auto px-0 md:px-12">
               <LoginGate>
                 <ClientGate>
