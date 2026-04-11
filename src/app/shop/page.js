@@ -83,7 +83,7 @@ export default function Home() {
 
         {/* ── BOUTIQUE ── */}
         <div>
-          <SectionTitle icon="🛍️">Boutique</SectionTitle>
+          <SectionTitle icon="🛍️">Boutique (A venir)</SectionTitle>
           <div className="rounded-xl overflow-hidden shadow-lg border border-white/10">
             <table className="w-full table-auto text-left border-collapse">
               <thead>

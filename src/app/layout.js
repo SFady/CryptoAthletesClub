@@ -18,18 +18,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-function getVersionString() {
-  const year = "2026";
-  const month = "01";
-  const day = "03";
-  const hours = "21";
-  const minutes = "00";
-  return `(V${year}${month}${day}_${hours}${minutes})`;
-}
-
 export default function RootLayout({ children }) {
   const centralWidth = 1280;
-  const version = getVersionString();
   const [showLink, setShowLink] = useState(false);
   const pathname = usePathname();
 
@@ -86,19 +76,27 @@ export default function RootLayout({ children }) {
                 <h1 className="text-xl font-bold" style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.8)" }}>
                   The Crypto Athletes Club
                 </h1>
-                <span className="text-[10px] md:text-xs text-gray-400 ml-2">{version}</span>
+                <span className="text-[10px] text-gray-500 ml-2">
+                  {process.env.NEXT_PUBLIC_BUILD_DATE
+                    ? new Date(process.env.NEXT_PUBLIC_BUILD_DATE).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) + " - " +new Date(process.env.NEXT_PUBLIC_BUILD_DATE).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+                    : ""}
+                </span>
               </div>
 
               {/* Nav desktop */}
               <nav className="hidden md:flex gap-8 text-sm font-medium justify-end ml-auto">
-                <Link href="/home" className="hover:text-white transition-colors">Dashboard</Link>
-                <Link href="/activities" className="hover:text-white transition-colors">Activités</Link>
-                <Link href="/statistics" className="hover:text-white transition-colors">Statistiques</Link>
-                <Link href="/shop" className="hover:text-white transition-colors">Boutique</Link>
-                {showLink && (
-                  <Link href="/sfy1024" className="hover:text-white transition-colors">Saisie</Link>
-                )}
-                <button onClick={logout} className="text-gray-400 hover:text-white transition-colors text-sm">⏻</button>
+                {[
+                  { href: "/home", label: "Dashboard" },
+                  { href: "/activities", label: "Activités" },
+                  { href: "/statistics", label: "Statistiques" },
+                  { href: "/shop", label: "Boutique" },
+                  ...(showLink ? [{ href: "/sfy1024", label: "Saisie" }] : []),
+                ].map(({ href, label }) => (
+                  <Link key={href} href={href} className={`transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-white"}`}>
+                    {label}
+                  </Link>
+                ))}
+                <button onClick={logout} className="text-gray-400 hover:text-white transition-colors text-sm">Quitter</button>
               </nav>
             </div>
           </header>
