@@ -76,6 +76,7 @@ export default function Home() {
     fetchBoostMax(finalId);
   }, []);
 
+
   const handleSelect = (e) => {
     const id = e.target.value;
     setSelected(id);

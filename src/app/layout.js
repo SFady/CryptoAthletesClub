@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ClientGate from "./ClientGate";
 import LoginGate from "./LoginGate";
+import PullToRefresh from "./PullToRefresh";
 import { useEffect, useState } from "react";
 
 const geistSans = Geist({
@@ -100,6 +101,8 @@ export default function RootLayout({ children }) {
               </nav>
             </div>
           </header>
+
+          <PullToRefresh />
 
           {/* ZONE CENTRALE - scroll global */}
           <main className="relative flex flex-col pt-16 md:pt-24 pb-20 flex-1 overflow-x-hidden overflow-y-auto">
