@@ -131,7 +131,7 @@ export default function Home() {
 
 
   return (
-    <main className="relative w-full max-w-screen-xl mx-auto px-6 md:px-16 pt-3 pb-3 md:pt-0 md:pb-0 md:min-h-[calc(100vh-96px)]">
+    <main className="relative w-full max-w-screen-xl mx-auto px-6 md:px-16 flex flex-col justify-center min-h-[calc(100svh-144px)] md:min-h-[calc(100vh-96px)] md:justify-start md:pt-0 md:pb-0">
 
       {/* Sélecteur d’athlète centré au-dessus de l’image */}
       <div className="flex justify-center mb-2 mt-1 md:mt-10">
