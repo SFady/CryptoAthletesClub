@@ -78,7 +78,7 @@ export default function RootLayout({ children }) {
                 </h1>
                 <span className="text-[10px] text-gray-500 ml-2">
                   {process.env.NEXT_PUBLIC_BUILD_DATE
-                    ? new Date(process.env.NEXT_PUBLIC_BUILD_DATE).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) + " - " +new Date(process.env.NEXT_PUBLIC_BUILD_DATE).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+                    ? new Date(process.env.NEXT_PUBLIC_BUILD_DATE).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) + "-" +new Date(process.env.NEXT_PUBLIC_BUILD_DATE).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
                     : ""}
                 </span>
               </div>
