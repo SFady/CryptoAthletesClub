@@ -124,7 +124,7 @@ export default function Home() {
 
 
   return (
-    <main className="relative w-full max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 md:pt-0 md:pb-0 md:min-h-[calc(100vh-96px)]">
+    <main className="relative w-full max-w-screen-xl mx-auto px-6 md:px-16 pt-3 pb-3 md:pt-0 md:pb-0 md:min-h-[calc(100vh-96px)]">
 
       {/* Sélecteur d’athlète centré au-dessus de l’image */}
       <div className="flex justify-center mb-2 mt-1 md:mt-10">
@@ -215,7 +215,7 @@ export default function Home() {
         <table className="w-full text-base">
           <tbody>
             <tr className="border-b border-white/20">
-              <td className="py-3 px-2">
+              <td className="py-2 px-2">
                 <span className="inline-flex items-center">
                   DEFIT
                   <span
@@ -243,7 +243,7 @@ export default function Home() {
                   </span>
                 </span>
               </td>
-              <td className="py-3 px-2 text-right font-semibold text-gray-400">
+              <td className="py-2 px-2 text-right font-semibold text-gray-400">
                 {Number(defitAmount * defitPrice)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
@@ -251,8 +251,8 @@ export default function Home() {
               </td>
             </tr>
             <tr className="border-b border-white/20">
-              <td className="py-3 px-2">Améliorations</td>
-              <td className="py-3 px-2 text-right font-semibold">
+              <td className="py-2 px-2">Améliorations</td>
+              <td className="py-2 px-2 text-right font-semibold">
                 {Number(user_liquidity)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
@@ -260,8 +260,8 @@ export default function Home() {
               </td>
             </tr>
             <tr className="border-b border-white/20">
-              <td className="py-3 px-2">Disponible</td>
-              <td className="py-3 px-2 text-right font-semibold">
+              <td className="py-2 px-2">Disponible</td>
+              <td className="py-2 px-2 text-right font-semibold">
                 {Number(dollarAmount)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
