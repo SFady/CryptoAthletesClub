@@ -44,7 +44,7 @@ export default function RootLayout({ children }) {
         <meta charSet="UTF-8" />
       </head>
 
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] overflow-y-hidden md:h-auto md:overflow-y-visible`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] overflow-hidden md:h-auto md:overflow-visible`}>
         <div className="relative flex flex-col h-[100dvh] md:min-h-screen text-white">
 
           {/* IMAGE DE FOND FIXE */}

@@ -147,28 +147,28 @@ export default function Home() {
       <div className="flex justify-center items-start gap-0 mb-2">
 
         {/* Image + SVG dans un conteneur relatif */}
-        <div className="relative flex-shrink-0" style={{ width: 120 }}>
+        <div className="relative flex-shrink-0" style={{ width: 200 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
             alt="Athlete"
-            width={120}
+            width={200}
             className="rounded-2xl"
             loading="eager"
           />
           {/* SVG par-dessus l'image, overflow visible vers la droite */}
           <svg
             className="absolute inset-0 pointer-events-none"
-            width="120" height="100%"
+            width="200" height="100%"
             overflow="visible"
           >
             {[
-              { x: 74, y: 20, tx: 128, ty: 52 },
-              { x: 74, y: 60, tx: 128, ty: 66 },
-              { x: 94, y: 95, tx: 128, ty: 80 },
-              { x: 74, y: 108, tx: 128, ty: 95 },
-              { x: 76, y: 152, tx: 128, ty: 110 },
-              { x: 86, y: 164, tx: 128, ty: 124 },
+              { x: 122, y: 32, tx: 212, ty: 86 },
+              { x: 122, y: 100, tx: 212, ty: 110 },
+              { x: 156, y: 158, tx: 212, ty: 134 },
+              { x: 122, y: 180, tx: 212, ty: 158 },
+              { x: 127, y: 252, tx: 212, ty: 182 },
+              { x: 143, y: 273, tx: 212, ty: 206 },
             ].map(({ x, y, tx, ty }, i) => (
               <g key={i}>
                 <line x1={x} y1={y} x2={tx} y2={ty} stroke="rgba(255,255,255,0.4)" strokeWidth="1" strokeDasharray="3,2" />
@@ -179,7 +179,7 @@ export default function Home() {
         </div>
 
         {/* TABLE */}
-        <div className="flex flex-col justify-start" style={{ marginTop: "30px" }}>
+        <div className="flex flex-col justify-start" style={{ marginTop: "50px" }}>
           <table className="border-collapse text-center text-xs text-gray-200">
             <thead>
               <tr className="text-white font-semibold">
