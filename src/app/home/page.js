@@ -59,12 +59,6 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    if (window.innerWidth < 768) {
-      document.body.style.overflow = "hidden";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, []);
 
   useEffect(() => {
     let finalId = "1";
