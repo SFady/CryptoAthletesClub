@@ -147,28 +147,28 @@ export default function Home() {
       <div className="flex justify-center items-start gap-0 mb-2">
 
         {/* Image + SVG dans un conteneur relatif */}
-        <div className="relative flex-shrink-0" style={{ width: 160 }}>
+        <div className="relative flex-shrink-0" style={{ width: 120 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
             alt="Athlete"
-            width={160}
-            className="rounded-2xl w-auto max-h-[38svh] md:max-h-none"
+            width={120}
+            className="rounded-2xl"
             loading="eager"
           />
           {/* SVG par-dessus l'image, overflow visible vers la droite */}
           <svg
             className="absolute inset-0 pointer-events-none"
-            width="160" height="100%"
+            width="120" height="100%"
             overflow="visible"
           >
             {[
-              { x: 98, y: 26, tx: 170, ty: 69 },
-              { x: 98, y: 80, tx: 170, ty: 88 },
-              { x: 125, y: 126, tx: 170, ty: 107 },
-              { x: 98, y: 144, tx: 170, ty: 126 },
-              { x: 102, y: 202, tx: 170, ty: 146 },
-              { x: 114, y: 218, tx: 170, ty: 165 },
+              { x: 74, y: 20, tx: 128, ty: 52 },
+              { x: 74, y: 60, tx: 128, ty: 66 },
+              { x: 94, y: 95, tx: 128, ty: 80 },
+              { x: 74, y: 108, tx: 128, ty: 95 },
+              { x: 76, y: 152, tx: 128, ty: 110 },
+              { x: 86, y: 164, tx: 128, ty: 124 },
             ].map(({ x, y, tx, ty }, i) => (
               <g key={i}>
                 <line x1={x} y1={y} x2={tx} y2={ty} stroke="rgba(255,255,255,0.4)" strokeWidth="1" strokeDasharray="3,2" />
@@ -179,7 +179,7 @@ export default function Home() {
         </div>
 
         {/* TABLE */}
-        <div className="flex flex-col justify-start" style={{ marginTop: "40px" }}>
+        <div className="flex flex-col justify-start" style={{ marginTop: "30px" }}>
           <table className="border-collapse text-center text-xs text-gray-200">
             <thead>
               <tr className="text-white font-semibold">
