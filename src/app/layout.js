@@ -5,6 +5,7 @@ import "./globals.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ClientGate from "./ClientGate";
+import LoginGate from "./LoginGate";
 import { useEffect, useState } from "react";
 
 const geistSans = Geist({
@@ -31,6 +32,11 @@ export default function RootLayout({ children }) {
   const version = getVersionString();
   const [showLink, setShowLink] = useState(false);
   const pathname = usePathname();
+
+  const logout = () => {
+    localStorage.removeItem("auth_session");
+    window.location.reload();
+  };
 
   useEffect(() => {
     const value = localStorage.getItem("dataEntry");
@@ -92,6 +98,7 @@ export default function RootLayout({ children }) {
                 {showLink && (
                   <Link href="/sfy1024" className="hover:text-white transition-colors">Saisie</Link>
                 )}
+                <button onClick={logout} className="text-gray-400 hover:text-white transition-colors text-sm">⏻</button>
               </nav>
             </div>
           </header>
@@ -99,9 +106,11 @@ export default function RootLayout({ children }) {
           {/* ZONE CENTRALE - scroll global */}
           <main className="relative flex flex-col pt-16 md:pt-24 pb-20 min-h-screen overflow-x-hidden overflow-y-auto">
             <div className="relative z-20 flex flex-col w-full md:max-w-screen-xl md:mx-auto px-0 md:px-12">
-              <ClientGate>
-                {children}
-              </ClientGate>
+              <LoginGate>
+                <ClientGate>
+                  {children}
+                </ClientGate>
+              </LoginGate>
             </div>
           </main>
 
@@ -130,6 +139,10 @@ export default function RootLayout({ children }) {
                   <span>{label}</span>
                 </Link>
               ))}
+              <button onClick={logout} className="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+                <span>Quitter</span>
+              </button>
             </nav>
           </footer>
 
