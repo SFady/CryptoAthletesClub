@@ -61,14 +61,17 @@ export default function Home() {
 
 
   useEffect(() => {
-    let finalId = "1";
-    try {
-      const raw = localStorage.getItem("auth_session");
-      if (raw) {
-        const { user } = JSON.parse(raw);
-        finalId = USER_ID_MAP[user] ?? "1";
-      }
-    } catch { /* ignore */ }
+    let finalId = localStorage.getItem("selectedAthlete");
+    if (!finalId) {
+      try {
+        const raw = localStorage.getItem("auth_session");
+        if (raw) {
+          const { user } = JSON.parse(raw);
+          finalId = USER_ID_MAP[user] ?? "1";
+        }
+      } catch { /* ignore */ }
+    }
+    finalId = finalId ?? "1";
 
     setSelected(finalId);
     localStorage.setItem("selectedAthlete", finalId);
