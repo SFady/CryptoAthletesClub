@@ -121,7 +121,7 @@ export default function Home() {
     <div className="rounded-xl overflow-hidden border border-white/10">
       <table className="w-full table-auto text-left border-collapse">
         <thead>
-          <tr className="bg-white/20 text-white text-xs uppercase tracking-wide">
+          <tr className="bg-white/[0.06] text-white/60 text-xs uppercase tracking-wide">
             {cols.map((col) => (
               <th key={col.key} className={`py-2 px-4 font-semibold ${col.right ? "text-right" : ""}`}>
                 {col.label}
@@ -134,7 +134,7 @@ export default function Home() {
             <tr
               key={idx}
               className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${
-                idx % 2 === 0 ? "bg-white/10" : "bg-white/5"
+                idx % 2 === 0 ? "bg-white/[0.03]" : "bg-transparent"
               }`}
             >
               {cols.map((col) => (
@@ -178,7 +178,7 @@ export default function Home() {
           {subtitle && <span className="text-white/70 text-xs">{subtitle}</span>}
         </div>
       </div>
-      <div className="bg-white/10 backdrop-blur-md px-4 py-4">
+      <div className="bg-white/[0.05] backdrop-blur-md px-4 py-4">
         {children}
       </div>
     </div>

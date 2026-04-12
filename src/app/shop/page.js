@@ -18,7 +18,6 @@ export default function Home() {
   const [clm, setClm]               = useState(null);
   const [clmLoading, setClmLoading] = useState(true);
   const [distrib, setDistrib]       = useState(null);
-  const [pendingTotal, setPendingTotal] = useState(null);
   const [boostPending, setBoostPending] = useState(0);
 
   const fetchWallet = () => {
@@ -51,7 +50,7 @@ export default function Home() {
       fetchWallet();
       fetchClm();
       fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => {});
-      fetch("/api/get-pending-transactions").then(r => r.json()).then(d => setPendingTotal(d.total)).catch(() => {});
+      fetch("/api/get-pending-transactions").catch(() => {});
       fetch("/api/get-user-boost?userId=1").then(r => r.json()).then(d => setBoostPending(d.boost_pending ?? 0)).catch(() => {});
     }
   }, []);
@@ -68,14 +67,14 @@ export default function Home() {
         </div>
         {action}
       </div>
-      <div className="bg-white/10 backdrop-blur-md">
+      <div className="bg-white/[0.05] backdrop-blur-md">
         {children}
       </div>
     </div>
   );
 
   const Row = ({ label, value, gold, zebra }) => (
-    <tr className={`border-b border-white/10 text-sm ${zebra ? "bg-white/10" : "bg-white/5"}`}>
+    <tr className={`border-b border-white/10 text-sm ${zebra ? "bg-white/[0.03]" : "bg-transparent"}`}>
       <td className="py-2.5 px-5 text-gray-300">{label}</td>
       <td className={`py-2.5 px-5 text-right font-semibold whitespace-nowrap ${gold ? "text-[#D6C48A] font-bold" : "text-white"}`}>{value}</td>
     </tr>
@@ -83,7 +82,7 @@ export default function Home() {
 
   const SubHeader = ({ children }) => (
     <tr className="border-b border-white/10">
-      <td colSpan={2} className="py-1.5 px-5 text-white/40 text-xs uppercase tracking-wide bg-white/5">{children}</td>
+      <td colSpan={2} className="py-1.5 px-5 text-white/40 text-xs uppercase tracking-wide bg-white/[0.03]">{children}</td>
     </tr>
   );
 
@@ -95,7 +94,7 @@ export default function Home() {
         <Card icon="🛍️" title="Boutique (A venir)">
           <table className="w-full table-auto text-left border-collapse">
             <thead>
-              <tr className="bg-white/20 text-white text-xs uppercase tracking-wide">
+              <tr className="bg-white/[0.06] border-b-2 border-white/20 text-white/60 text-xs uppercase tracking-wide">
                 <th className="py-2 px-5 font-semibold">Article</th>
                 <th className="py-2 px-5 font-semibold text-right">Prix</th>
                 <th className="py-2 px-5 font-semibold text-center">Actions</th>
@@ -103,7 +102,7 @@ export default function Home() {
             </thead>
             <tbody>
               {items.map((item, idx) => (
-                <tr key={item.name} className={`border-b border-white/10 text-sm ${idx % 2 === 0 ? "bg-white/10" : "bg-white/5"}`}>
+                <tr key={item.name} className={`border-b border-white/10 text-sm ${idx % 2 === 0 ? "bg-white/[0.03]" : "bg-transparent"}`}>
                   <td className="py-2.5 px-3 sm:px-5 text-white font-semibold">{item.name}</td>
                   <td className="py-2.5 px-3 sm:px-5 text-[#D6C48A] font-bold text-right whitespace-nowrap">{item.price}</td>
                   <td className="py-2.5 px-2 sm:px-5">
