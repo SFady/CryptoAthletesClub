@@ -40,7 +40,7 @@ export default function RootLayout({ children }) {
   }, [pathname]);
 
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>The Crypto Athletes Club</title>
@@ -48,7 +48,7 @@ export default function RootLayout({ children }) {
         <meta charSet="UTF-8" />
       </head>
 
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] overflow-hidden md:h-auto md:overflow-visible`}>
+      <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] overflow-hidden md:h-auto md:overflow-visible`}>
         <div className="relative flex flex-col h-[100dvh] md:min-h-screen text-white">
 
           {/* IMAGE DE FOND FIXE */}

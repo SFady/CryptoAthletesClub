@@ -12,15 +12,7 @@ export default function Home() {
 
   const USER_ID_MAP = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" };
 
-  const [selected, setSelected] = useState(() => {
-    if (typeof window === "undefined") return "1";
-    try {
-      const raw = localStorage.getItem("auth_session");
-      if (!raw) return "1";
-      const { user } = JSON.parse(raw);
-      return USER_ID_MAP[user] ?? "1";
-    } catch { return "1"; }
-  });
+  const [selected, setSelected] = useState("1");
 
   const { price: defitPrice } = useDefitPrice();
 

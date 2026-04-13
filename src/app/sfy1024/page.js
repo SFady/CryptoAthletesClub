@@ -4,8 +4,11 @@ import { useEffect, useState } from "react";
 
 export default function Sfy1024() {
 
+  const [today, setToday] = useState("");
+
   useEffect(() => {
     localStorage.setItem("dataEntry", "saisie");
+    setToday(new Date().toISOString().split("T")[0]);
   }, []);
 
   return (
@@ -33,7 +36,7 @@ export default function Sfy1024() {
             type="date"
             name="date_claimed"
             required
-            defaultValue={new Date().toISOString().split("T")[0]}
+            defaultValue={today}
             className="px-3 py-2 rounded text-black"
           />
         </div>
