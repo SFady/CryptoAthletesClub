@@ -82,7 +82,7 @@ export default function RootLayout({ children }) {
                 </h1>
                 <span className="text-[10px] text-gray-500 ml-2">
                   {process.env.NEXT_PUBLIC_BUILD_DATE
-                    ? new Date(process.env.NEXT_PUBLIC_BUILD_DATE).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) + "-" +new Date(process.env.NEXT_PUBLIC_BUILD_DATE).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+                    ? (() => { const d = new Date(process.env.NEXT_PUBLIC_BUILD_DATE); return String(d.getUTCDate()).padStart(2,"0") + "/" + String(d.getUTCMonth()+1).padStart(2,"0") + "/" + String(d.getUTCFullYear()).slice(-2) + "-" + String(d.getUTCHours()).padStart(2,"0") + ":" + String(d.getUTCMinutes()).padStart(2,"0") + ":" + String(d.getUTCSeconds()).padStart(2,"0"); })()
                     : ""}
                 </span>
               </div>
