@@ -35,7 +35,7 @@ const WEEKLY_MESSAGE = {
 const MESSAGES = [
     //WEEKLY_MESSAGE,
     {
-        key: "infoMessage_v3",
+        key: "infoMessage_v4",
         title: "Félicitations",
         startDate: new Date("2026-04-13T00:00:00"),
         deadline: new Date("2026-04-20T00:00:00"),
