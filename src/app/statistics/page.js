@@ -19,13 +19,13 @@ export default function Home() {
   const [totals3, setTotals3] = useState([]);
   const [bonus, setBonus]     = useState([]);
 
-  const [selected,  setSelected]  = useState(() => Number(localStorage.getItem("statsPeriodGains"))    || 1);
-  const [selected2, setSelected2] = useState(() => Number(localStorage.getItem("statsPeriodDistance")) || 1);
-  const [selected3, setSelected3] = useState(() => Number(localStorage.getItem("statsPeriodDefits"))   || 1);
-
-  const [activity,  setActivity]  = useState(() => Number(localStorage.getItem("statsActivityGains"))    || 0);
-  const [activity2, setActivity2] = useState(() => Number(localStorage.getItem("statsActivityDistance")) || 0);
-  const [activity3, setActivity3] = useState(() => Number(localStorage.getItem("statsActivityDefits"))   || 0);
+  const [selected,  setSelected]  = useState(1);
+  const [selected2, setSelected2] = useState(1);
+  const [selected3, setSelected3] = useState(1);
+  const [activity,  setActivity]  = useState(0);
+  const [activity2, setActivity2] = useState(0);
+  const [activity3, setActivity3] = useState(0);
+  const [mounted,   setMounted]   = useState(false);
 
   const fetchTotals = async (period, act) => {
     try {
@@ -55,10 +55,20 @@ export default function Home() {
     } catch (e) { console.error("Erreur fetchBonus:", e); }
   };
 
-  useEffect(() => { fetchTotals(selected, activity);    localStorage.setItem("statsPeriodGains",    selected);  localStorage.setItem("statsActivityGains",    activity);  }, [selected, activity]);
-  useEffect(() => { fetchTotals2(selected2, activity2); localStorage.setItem("statsPeriodDistance", selected2); localStorage.setItem("statsActivityDistance", activity2); }, [selected2, activity2]);
-  useEffect(() => { fetchTotals3(selected3, activity3); localStorage.setItem("statsPeriodDefits",   selected3); localStorage.setItem("statsActivityDefits",   activity3); }, [selected3, activity3]);
-  useEffect(() => { fetchBonus(); }, []);
+  useEffect(() => {
+    setSelected( Number(localStorage.getItem("statsPeriodGains"))       || 1);
+    setSelected2(Number(localStorage.getItem("statsPeriodDistance"))    || 1);
+    setSelected3(Number(localStorage.getItem("statsPeriodDefits"))      || 1);
+    setActivity( Number(localStorage.getItem("statsActivityGains"))     || 0);
+    setActivity2(Number(localStorage.getItem("statsActivityDistance"))  || 0);
+    setActivity3(Number(localStorage.getItem("statsActivityDefits"))    || 0);
+    setMounted(true);
+    fetchBonus();
+  }, []);
+
+  useEffect(() => { if (!mounted) return; fetchTotals(selected, activity);    localStorage.setItem("statsPeriodGains",    selected);  localStorage.setItem("statsActivityGains",    activity);  }, [mounted, selected, activity]);
+  useEffect(() => { if (!mounted) return; fetchTotals2(selected2, activity2); localStorage.setItem("statsPeriodDistance", selected2); localStorage.setItem("statsActivityDistance", activity2); }, [mounted, selected2, activity2]);
+  useEffect(() => { if (!mounted) return; fetchTotals3(selected3, activity3); localStorage.setItem("statsPeriodDefits",   selected3); localStorage.setItem("statsActivityDefits",   activity3); }, [mounted, selected3, activity3]);
 
   const sortedTotals  = [...totals].sort((a, b)  => (b.boost ?? 0) - (a.boost ?? 0));
   const sortedTotals2 = [...totals2].sort((a, b) => (b.kilometers ?? 0) - (a.kilometers ?? 0));
@@ -189,7 +199,7 @@ export default function Home() {
       <div className="w-full md:max-w-[900px] mx-auto flex flex-col gap-6">
 
         {/* BONUS EN COURS */}
-        <Card icon="🎯" title="Bonus en cours" subtitle="du 06/04 au 12/04">
+        <Card icon="🎯" title="Bonus en cours" subtitle="du 13/04 au 19/04">
           <p className="text-center text-gray-200 text-sm">
             Meilleure distance running hebdomadaire :{" "}
             <span className="text-[#D6C48A] font-bold ml-1">
