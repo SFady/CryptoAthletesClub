@@ -2,7 +2,7 @@ export const runtime     = "nodejs";
 export const maxDuration = 30;
 
 // Aerodrome CL — position #66576887 (WETH/USDC, tickSpacing=100)
-const POSITION_ID = 66576887n;
+const POSITION_ID = 67219843n;
 const NFPM = "0x827922686190790b37229fd06084350E74485b72";
 const POOL = "0xb2cc224c1c9fee385f8ad6a55b4d94e92359dc59";
 
