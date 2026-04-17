@@ -1,13 +1,18 @@
-// Aerodrome CL — position #65017094 (WETH/USDC, tickSpacing=100)
+export const runtime     = "nodejs";
+export const maxDuration = 30;
+
+// Aerodrome CL — position #66576887 (WETH/USDC, tickSpacing=100)
 const POSITION_ID = 66576887n;
 const NFPM = "0x827922686190790b37229fd06084350E74485b72";
 const POOL = "0xb2cc224c1c9fee385f8ad6a55b4d94e92359dc59";
 
+// RPCs fiables depuis les IPs cloud (AWS/Vercel)
 const RPC_URLS = [
-  "https://base-rpc.publicnode.com",
   "https://base.drpc.org",
-  "https://1rpc.io/base",
+  "https://base-rpc.publicnode.com",
   "https://mainnet.base.org",
+  "https://base.gateway.tenderly.co",
+  "https://1rpc.io/base",
 ];
 
 const TOKENS = {
@@ -15,13 +20,12 @@ const TOKENS = {
   "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": { symbol: "USDC", decimals: 6 },
 };
 
-const CACHE_TTL_MS = 30_000;
+const CACHE_TTL_MS = 120_000; // 2 minutes
 global._clmCache = { data: null, time: 0 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 const M256 = 1n << 256n;
-// ABI encode — gère les négatifs (int24, int128…)
 function pad64(n) { return (((BigInt(n) % M256) + M256) % M256).toString(16).padStart(64, "0"); }
 function word(h, i) { const s = h.startsWith("0x") ? h.slice(2) : h; return s.slice(i * 64, (i + 1) * 64); }
 function toUint(w) { return BigInt("0x" + w); }
@@ -29,22 +33,36 @@ function toInt(w) { const n = toUint(w); return n >= M256 / 2n ? n - M256 : n; }
 function toAddr(w) { return "0x" + w.slice(24).toLowerCase(); }
 function mod256(n) { return ((n % M256) + M256) % M256; }
 
-async function call(to, data) {
-  let last;
+// Sélectionne un seul RPC fonctionnel — toutes les calls de la requête l'utilisent
+// → données cohérentes car issues du même nœud/bloc
+async function pickRpc() {
   for (const url of RPC_URLS) {
     try {
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to, data }, "latest"] }),
-        signal: AbortSignal.timeout(5000),
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }),
+        signal: AbortSignal.timeout(4000),
       });
       const json = await res.json();
-      if (json.error) throw new Error(json.error.message);
-      return json.result;
-    } catch (e) { last = e; }
+      if (json.result) return url;
+    } catch { /* essayer le suivant */ }
   }
-  throw last;
+  throw new Error("Aucun RPC disponible");
+}
+
+function makeCall(rpcUrl) {
+  return async function call(to, data) {
+    const res = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to, data }, "latest"] }),
+      signal: AbortSignal.timeout(5000),
+    });
+    const json = await res.json();
+    if (json.error) throw new Error(json.error.message);
+    return json.result;
+  };
 }
 
 // ── CL math ──────────────────────────────────────────────────────────────────
@@ -63,10 +81,12 @@ function getAmounts(sqrtP, sqrtA, sqrtB, liq) {
   };
 }
 
-// Calcul des frais non collectés selon la formule Uniswap V3
+// Si delta > 2^200, la soustraction a débordé (fgInside < fgInsideLast) → pas de nouveaux frais
 function calcFees(liquidity, fgInside, fgInsideLast, owed) {
   const Q128 = 1n << 128n;
-  return owed + (liquidity * mod256(fgInside - fgInsideLast)) / Q128;
+  const delta = mod256(fgInside - fgInsideLast);
+  if (delta > (1n << 200n)) return owed;
+  return owed + (liquidity * delta) / Q128;
 }
 
 // ── Handler ──────────────────────────────────────────────────────────────────
@@ -76,13 +96,15 @@ export async function GET() {
   if (c.data && Date.now() - c.time < CACHE_TTL_MS) return Response.json(c.data);
 
   try {
-    // 1. Données de la position (positions(tokenId))
+    const call = makeCall(await pickRpc()); // un seul RPC pour toute la requête
+
+    // 1. Données de la position
     const posHex = await call(NFPM, "0x99fbab88" + pad64(POSITION_ID));
-    const token0 = toAddr(word(posHex, 2));
-    const token1 = toAddr(word(posHex, 3));
-    const tickLower = Number(toInt(word(posHex, 5)));
-    const tickUpper = Number(toInt(word(posHex, 6)));
-    const liquidity = toUint(word(posHex, 7));
+    const token0      = toAddr(word(posHex, 2));
+    const token1      = toAddr(word(posHex, 3));
+    const tickLower   = Number(toInt(word(posHex, 5)));
+    const tickUpper   = Number(toInt(word(posHex, 6)));
+    const liquidity   = toUint(word(posHex, 7));
     const fgInsideLast0 = toUint(word(posHex, 8));
     const fgInsideLast1 = toUint(word(posHex, 9));
     const owed0 = toUint(word(posHex, 10));
@@ -91,38 +113,34 @@ export async function GET() {
     const t0 = TOKENS[token0] ?? { symbol: "TK0", decimals: 18 };
     const t1 = TOKENS[token1] ?? { symbol: "TK1", decimals: 6 };
 
-    // 2. slot0, feeGrowthGlobal, ticks lower/upper — en parallèle
+    // 2. slot0, feeGrowthGlobal, ticks — en parallèle sur le même nœud
     const [s0Hex, fg0Hex, fg1Hex, tLowHex, tUpHex] = await Promise.all([
-      call(POOL, "0x3850c7bd"),              // slot0()
-      call(POOL, "0xf3058399"),              // feeGrowthGlobal0X128()
-      call(POOL, "0x46141319"),              // feeGrowthGlobal1X128()
-      call(POOL, "0xf30dba93" + pad64(tickLower)),  // ticks(tickLower)
-      call(POOL, "0xf30dba93" + pad64(tickUpper)),  // ticks(tickUpper)
+      call(POOL, "0x3850c7bd"),
+      call(POOL, "0xf3058399"),
+      call(POOL, "0x46141319"),
+      call(POOL, "0xf30dba93" + pad64(tickLower)),
+      call(POOL, "0xf30dba93" + pad64(tickUpper)),
     ]);
 
-    const sqrtP = toUint(word(s0Hex, 0));
+    const sqrtP    = toUint(word(s0Hex, 0));
     const currTick = Number(toInt(word(s0Hex, 1)));
     const fg0 = toUint(word(fg0Hex, 0));
     const fg1 = toUint(word(fg1Hex, 0));
 
-    // Aerodrome CL : ticks() a un champ supplémentaire stakedLiquidityNet → feeGrowth à slot 3/4
-    // On essaie slot 3 d'abord (Aerodrome), sinon slot 2 (Uniswap V3 standard)
+    // Aerodrome CL : feeGrowth à slot 3/4 (champ stakedLiquidityNet supplémentaire)
     const fgLow0 = toUint(word(tLowHex, 3));
     const fgLow1 = toUint(word(tLowHex, 4));
-    const fgUp0 = toUint(word(tUpHex, 3));
-    const fgUp1 = toUint(word(tUpHex, 4));
+    const fgUp0  = toUint(word(tUpHex, 3));
+    const fgUp1  = toUint(word(tUpHex, 4));
 
-    // feeGrowthBelow / Above selon tick courant
     const fgBelow0 = currTick >= tickLower ? fgLow0 : mod256(fg0 - fgLow0);
     const fgBelow1 = currTick >= tickLower ? fgLow1 : mod256(fg1 - fgLow1);
-    const fgAbove0 = currTick < tickUpper ? fgUp0 : mod256(fg0 - fgUp0);
-    const fgAbove1 = currTick < tickUpper ? fgUp1 : mod256(fg1 - fgUp1);
+    const fgAbove0 = currTick < tickUpper  ? fgUp0  : mod256(fg0 - fgUp0);
+    const fgAbove1 = currTick < tickUpper  ? fgUp1  : mod256(fg1 - fgUp1);
 
-    // feeGrowthInside
     const fgInside0 = mod256(fg0 - fgBelow0 - fgAbove0);
     const fgInside1 = mod256(fg1 - fgBelow1 - fgAbove1);
 
-    // Frais totaux (déjà dûs + en attente)
     const totalOwed0 = calcFees(liquidity, fgInside0, fgInsideLast0, owed0);
     const totalOwed1 = calcFees(liquidity, fgInside1, fgInsideLast1, owed1);
 
@@ -134,8 +152,7 @@ export async function GET() {
     const fee0 = Number(totalOwed0) / 10 ** t0.decimals;
     const fee1 = Number(totalOwed1) / 10 ** t1.decimals;
 
-    // 4. Prix ETH dérivé du sqrtPriceX96 du pool WETH(18)/USDC(6)
-    // price = (sqrtP / 2^96)² × 10^(18−6)
+    // 4. Prix ETH dérivé du sqrtPriceX96
     const ethPrice = Number((sqrtP * sqrtP * 10n ** 12n) / (1n << 192n));
 
     const usd = (sym, amt) => sym === "WETH" ? amt * ethPrice : amt;
