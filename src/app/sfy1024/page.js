@@ -103,6 +103,16 @@ export default function Sfy1024() {
         >
           Envoyer
         </button>
+
+        <button
+          type="button"
+          className="flex items-center justify-center gap-2 bg-[#FC4C02] text-white font-semibold py-2 rounded hover:bg-[#e04402]"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+            <path d="M15.387 3.612a5.386 5.386 0 0 0-3.387 1.19V3.5a.5.5 0 0 0-1 0v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-2.53a4.387 4.387 0 1 1-1.47 3.25.5.5 0 0 0-1 0 5.387 5.387 0 1 0 4.887-6.638z"/>
+          </svg>
+          Récupérer Strava
+        </button>
       </form>
     </main>
   );

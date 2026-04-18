@@ -1,6 +1,8 @@
 export const runtime     = "nodejs";
 export const maxDuration = 30;
 
+import sql from "@/lib/db";
+
 // Aerodrome CL — WETH/USDC — wallet 0xaf96ca0b19b3966105bf2f28a05c10d586692499
 const WALLET = "0xaf96ca0b19b3966105bf2f28a05c10d586692499";
 const NFPM   = "0x827922686190790b37229fd06084350E74485b72";
@@ -26,30 +28,22 @@ global._clmActiveId  = global._clmActiveId  ?? { id: null, time: 0 };
 
 // ── RPC ───────────────────────────────────────────────────────────────────────
 
-function isRetryable(msg) {
-  return /rate.?limit|too many|limit exceed|exceed.*capaci|compute unit|temporary internal|overload|usage.?limit|reached.*limit|upgrade|block range|range.*limit|limited to.*range|unauthorized/i.test(msg);
-}
 
 async function rpcFetch(urls, method, params, timeoutMs = 8000) {
-  let lastErr;
-  for (const url of urls) {
-    try {
-      const res  = await fetch(url, {
+  return Promise.any(
+    urls.map(url =>
+      fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
         signal: AbortSignal.timeout(timeoutMs),
-      });
-      const json = await res.json();
-      if (json.error) {
-        const msg = json.error.message ?? "";
-        if (isRetryable(msg)) { lastErr = new Error(msg); continue; }
-        throw new Error(msg);
-      }
-      return json.result;
-    } catch (e) { lastErr = e; }
-  }
-  throw lastErr ?? new Error("Aucun RPC disponible");
+      }).then(async r => {
+        const json = await r.json();
+        if (json.error) throw new Error(json.error.message ?? "rpc error");
+        return json.result;
+      })
+    )
+  );
 }
 
 async function pickRpc() {
@@ -176,8 +170,21 @@ export async function GET() {
     let tokenId = global._clmActiveId.id;
 
     if (!tokenId) {
+      // Lire en base d'abord (survit aux cold starts)
+      const [row] = await sql`SELECT value FROM app_config WHERE key = 'clm_position_id' LIMIT 1`.catch(() => []);
+      if (row?.value) tokenId = BigInt(row.value);
+    }
+
+    if (!tokenId) {
       tokenId = await scanActiveId(rpcUrl, call).catch(() => null);
-      if (tokenId) global._clmActiveId = { id: tokenId, time: Date.now() };
+      if (tokenId) {
+        global._clmActiveId = { id: tokenId, time: Date.now() };
+        // Persister en base pour les prochains cold starts
+        await sql`
+          INSERT INTO app_config (key, value) VALUES ('clm_position_id', ${tokenId.toString()})
+          ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
+        `.catch(() => {});
+      }
     }
 
     if (!tokenId) {
@@ -196,6 +203,10 @@ export async function GET() {
       if (newId) {
         tokenId = newId;
         global._clmActiveId = { id: newId, time: Date.now() };
+        await sql`
+          INSERT INTO app_config (key, value) VALUES ('clm_position_id', ${newId.toString()})
+          ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
+        `.catch(() => {});
         posHex = await call(NFPM, "0x99fbab88" + pad64(tokenId));
       } else {
         const data = { positions: [] };
