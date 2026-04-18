@@ -22,7 +22,7 @@ const TOKENS = {
 const CACHE_TTL_MS = 120_000;
 
 global._clmCache     = global._clmCache     ?? { data: null, time: 0 };
-global._clmActiveId  = global._clmActiveId  ?? { id: 67219843n, time: 0 };
+global._clmActiveId  = global._clmActiveId  ?? { id: null, time: 0 };
 
 // ── RPC ───────────────────────────────────────────────────────────────────────
 
@@ -53,19 +53,22 @@ async function rpcFetch(urls, method, params, timeoutMs = 8000) {
 }
 
 async function pickRpc() {
-  for (const url of RPC_URLS) {
-    try {
-      const res  = await fetch(url, {
+  return new Promise((resolve) => {
+    let done = false;
+    let pending = RPC_URLS.length;
+    for (const url of RPC_URLS) {
+      fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }),
         signal: AbortSignal.timeout(4000),
-      });
-      const json = await res.json();
-      if (json.result) return url;
-    } catch { /* essayer le suivant */ }
-  }
-  return RPC_URLS[0];
+      })
+        .then(r => r.json())
+        .then(json => { if (!done && json.result) { done = true; resolve(url); } })
+        .catch(() => {})
+        .finally(() => { if (--pending === 0 && !done) resolve(RPC_URLS[0]); });
+    }
+  });
 }
 
 function makeCall(primaryUrl) {
@@ -126,7 +129,7 @@ async function scanActiveId(rpcUrl, call) {
     signal: AbortSignal.timeout(5000),
   });
   const latest = Number(BigInt((await latestRes.json()).result));
-  const from   = "0x" + Math.max(1, latest - 5_000_000).toString(16);
+  const from   = "0x" + Math.max(1, latest - 2_000_000).toString(16);
 
   const logs = await getLogs(rpcUrl, [{
     address: NFPM,
@@ -171,7 +174,17 @@ export async function GET() {
     const call   = makeCall(rpcUrl);
 
     let tokenId = global._clmActiveId.id;
-    const origId = tokenId;
+
+    if (!tokenId) {
+      tokenId = await scanActiveId(rpcUrl, call).catch(() => null);
+      if (tokenId) global._clmActiveId = { id: tokenId, time: Date.now() };
+    }
+
+    if (!tokenId) {
+      const data = { positions: [] };
+      global._clmCache = { data, time: Date.now() };
+      return Response.json(data);
+    }
 
     let posHex = await call(NFPM, "0x99fbab88" + pad64(tokenId));
     const liquidity  = toUint(word(posHex, 7));
@@ -183,14 +196,15 @@ export async function GET() {
       if (newId) {
         tokenId = newId;
         global._clmActiveId = { id: newId, time: Date.now() };
+        posHex = await call(NFPM, "0x99fbab88" + pad64(tokenId));
       } else {
-        const data = { tokenId: tokenId.toString(), positions: [] };
+        const data = { positions: [] };
         global._clmCache = { data, time: Date.now() };
         return Response.json(data);
       }
     }
 
-    const pHex = tokenId === origId ? posHex : await call(NFPM, "0x99fbab88" + pad64(tokenId));
+    const pHex = posHex;
 
     const token0        = toAddr(word(pHex, 2));
     const token1        = toAddr(word(pHex, 3));
