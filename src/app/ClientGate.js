@@ -35,18 +35,18 @@ const WEEKLY_MESSAGE = {
 const MESSAGES = [
     //WEEKLY_MESSAGE,
     {
-        key: "infoMessage_v4",
+        key: "infoMessage_v5",
         title: "Félicitations",
-        startDate: new Date("2026-04-13T00:00:00"),
-        deadline: new Date("2026-04-20T00:00:00"),
+        startDate: new Date("2026-04-20T00:00:00"),
+        deadline: new Date("2026-04-26T00:00:00"),
         confetti: true,
         content: (
             <div className="flex items-start gap-4">
                 <GiTrophy className="w-16 h-16 shrink-0 mt-1 text-[#D6C48A]" />
                 <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
                     <li>Grand vainqueur de la plus longue distance de running hebdomadaire : Usopp</li>
-                    <li>Distance de 49,70 km.</li>
-                    <li>Prix exceptionnel de 1.52 $ !!!</li>
+                    <li>Distance de 34,80 km.</li>
+                    <li>Prix exceptionnel de 1.25 $ !!!</li>
                 </ul>
             </div>
         ),
@@ -66,6 +66,11 @@ export default function ClientGate({ children }) {
     useEffect(() => {
         const now = new Date();
         const pending = [];
+
+        const activeKeys = new Set(MESSAGES.map(m => m.key));
+        Object.keys(localStorage)
+            .filter(k => k.startsWith("infoMessage_") && !activeKeys.has(k))
+            .forEach(k => localStorage.removeItem(k));
 
         for (const msg of MESSAGES) {
             if (now > msg.deadline) {
