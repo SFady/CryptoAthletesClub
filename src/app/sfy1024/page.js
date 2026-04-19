@@ -21,7 +21,7 @@ export default function Sfy1024() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <h1 className="text-2xl">Ajouter une donnée</h1>
+        <h1 className="text-2xl font-bold">Saisie</h1>
       </div>
 
       <form

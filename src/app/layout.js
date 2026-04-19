@@ -36,7 +36,7 @@ export default function RootLayout({ children }) {
   const DIVERS_ITEMS = [
     { label: "Profil", href: "/profil" },
     ...(showLink ? [{ label: "Saisie", href: "/sfy1024" }] : []),
-    { label: "A propos", href: "/about" },
+    { label: "A propos",  href: "/about" },
   ];
 
   const logout = () => {

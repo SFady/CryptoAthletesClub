@@ -27,7 +27,7 @@ export default function About() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <h1 className="text-3xl font-bold">À propos</h1>
+        <h1 className="text-2xl font-bold">A propos</h1>
       </div>
 
       <div className="w-full flex flex-col items-center text-center">
