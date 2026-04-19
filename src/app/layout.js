@@ -22,7 +22,23 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
   const centralWidth = 1280;
   const [showLink, setShowLink] = useState(false);
+  const [showDivers, setShowDivers] = useState(false);
+  const [showBurger, setShowBurger] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (!showDivers) return;
+    const close = () => setShowDivers(false);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [showDivers]);
+
+  const DIVERS_ITEMS = [
+    ...(showLink ? [{ label: "Saisie", href: "/sfy1024" }] : []),
+    { label: "Option A" },
+    { label: "Option B" },
+    { label: "Option C" },
+  ];
 
   const logout = () => {
     localStorage.removeItem("auth_session");
@@ -76,11 +92,21 @@ export default function RootLayout({ children }) {
           {/* HEADER FIXE */}
           <header className="fixed top-0 left-0 w-full bg-[#390494]/90 p-4 shadow-md z-30 backdrop-blur-md">
             <div className="flex w-full max-w-screen-xl px-6 md:px-12 mx-auto items-center justify-between">
-              <div className="flex items-baseline w-full">
+              {/* Burger mobile — header */}
+              <button
+                onClick={() => setShowBurger(v => !v)}
+                className="md:hidden mr-3 text-gray-300 hover:text-white transition-colors flex-shrink-0"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+
+              <div className="flex flex-col w-full">
                 <h1 className="text-xl font-bold" style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.8)" }}>
                   The Crypto Athletes Club
                 </h1>
-                <span className="text-[10px] text-gray-500 ml-2">
+                <span className="hidden text-[10px] text-gray-500 text-right md:text-left md:ml-0 self-end md:self-auto">
                   {process.env.NEXT_PUBLIC_BUILD_DATE
                     ? (() => { const d = new Date(process.env.NEXT_PUBLIC_BUILD_DATE); return String(d.getUTCDate()).padStart(2,"0") + "/" + String(d.getUTCMonth()+1).padStart(2,"0") + "/" + String(d.getUTCFullYear()).slice(-2) + "-" + String(d.getUTCHours()).padStart(2,"0") + ":" + String(d.getUTCMinutes()).padStart(2,"0") + ":" + String(d.getUTCSeconds()).padStart(2,"0"); })()
                     : ""}
@@ -94,12 +120,38 @@ export default function RootLayout({ children }) {
                   { href: "/activities", label: "Activités" },
                   { href: "/statistics", label: "Statistiques" },
                   { href: "/shop", label: "Boutique" },
-                  ...(showLink ? [{ href: "/sfy1024", label: "Saisie" }] : []),
                 ].map(({ href, label }) => (
                   <Link key={href} href={href} className={`transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-white"}`}>
                     {label}
                   </Link>
                 ))}
+                {/* Divers desktop */}
+                <div className="relative">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setShowDivers(v => !v); }}
+                    className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1"
+                  >
+                    Divers
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3 h-3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {showDivers && (
+                    <div className="absolute left-0 top-full mt-2 w-40 bg-[#2a1a6e] border border-white/20 rounded-xl shadow-xl z-50 overflow-hidden">
+                      {DIVERS_ITEMS.map(({ label, href }) => href ? (
+                        <Link key={label} href={href} onClick={() => setShowDivers(false)}
+                          className={`block px-4 py-2.5 text-sm hover:bg-white/10 hover:text-white transition-colors ${pathname === href ? "text-white font-medium" : "text-gray-300"}`}>
+                          {label}
+                        </Link>
+                      ) : (
+                        <button key={label} onClick={() => setShowDivers(false)}
+                          className="w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <button onClick={logout} className="text-gray-400 hover:text-white transition-colors text-sm">Quitter</button>
               </nav>
             </div>
@@ -134,9 +186,6 @@ export default function RootLayout({ children }) {
                 { href: "/shop", label: "Boutique", icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>
                 )},
-                ...(showLink ? [{ href: "/sfy1024", label: "Saisie", icon: (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                )}] : []),
               ].map(({ href, label, icon }) => (
                 <Link key={href} href={href} className={`flex flex-col items-center gap-1 transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-gray-200"}`}>
                   {icon}
@@ -149,6 +198,25 @@ export default function RootLayout({ children }) {
               </button>
             </nav>
           </footer>
+
+          {/* Drawer burger mobile */}
+          {showBurger && (
+            <div className="fixed inset-0 z-40 md:hidden" onClick={() => setShowBurger(false)}>
+              <div className="absolute top-16 left-6 w-48 bg-[#2a1a6e]/95 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+                {DIVERS_ITEMS.map(({ label, href }) => href ? (
+                  <Link key={label} href={href} onClick={() => setShowBurger(false)}
+                    className={`block px-5 py-3 text-sm hover:bg-white/10 hover:text-white transition-colors border-b border-white/10 last:border-0 ${pathname === href ? "text-white font-medium" : "text-gray-300"}`}>
+                    {label}
+                  </Link>
+                ) : (
+                  <button key={label} onClick={() => setShowBurger(false)}
+                    className="w-full text-left px-5 py-3 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors border-b border-white/10 last:border-0">
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
       </body>
