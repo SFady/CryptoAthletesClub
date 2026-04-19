@@ -175,8 +175,8 @@ export default function RootLayout({ children }) {
           </main>
 
           {/* FOOTER MOBILE */}
-          <footer className="fixed bottom-0 left-0 w-full bg-[#390494]/95 text-xs py-2 z-30 backdrop-blur-md block md:hidden border-t border-white/20">
-            <nav className="flex justify-around items-center">
+          <footer className="fixed bottom-0 left-0 w-full bg-[#390494]/95 text-xs z-30 backdrop-blur-md block md:hidden border-t border-white/20">
+            <nav className="flex justify-around items-center h-14">
               {[
                 { href: "/home", label: "Dashboard", icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H5a1 1 0 01-1-1V9.75z"/><path strokeLinecap="round" strokeLinejoin="round" d="M9 22V12h6v10"/></svg>
@@ -191,12 +191,12 @@ export default function RootLayout({ children }) {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>
                 )},
               ].map(({ href, label, icon }) => (
-                <Link key={href} href={href} className={`flex flex-col items-center gap-1 transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-gray-200"}`}>
+                <Link key={href} href={href} className={`flex flex-col items-center justify-center gap-1 h-full px-2 transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-gray-200"}`}>
                   {icon}
                   <span>{label}</span>
                 </Link>
               ))}
-              <button onClick={logout} className="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors">
+              <button onClick={logout} className="flex flex-col items-center justify-center gap-1 h-full px-2 text-gray-400 hover:text-white transition-colors">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
                 <span>Quitter</span>
               </button>
