@@ -35,7 +35,8 @@ export default function RootLayout({ children }) {
 
   const DIVERS_ITEMS = [
     { label: "Profil", href: "/profil" },
-    ...(showLink ? [{ label: "Saisie", href: "/sfy1024" }] : []),
+    ...(showLink ? [{ label: "Saisie",    href: "/sfy1024"  }] : []),
+    ...(showLink ? [{ label: "Position", href: "/position" }] : []),
     { label: "A propos",  href: "/about" },
   ];
 
