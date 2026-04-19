@@ -34,16 +34,17 @@ export default function RootLayout({ children }) {
   }, [showDivers]);
 
   const DIVERS_ITEMS = [
+    { label: "Profil", href: "/profil" },
     ...(showLink ? [{ label: "Saisie", href: "/sfy1024" }] : []),
-    { label: "Option A" },
-    { label: "Option B" },
-    { label: "Option C" },
+    { label: "A propos", href: "/about" },
   ];
 
   const logout = () => {
     localStorage.removeItem("auth_session");
     window.location.reload();
   };
+
+  const MAIN_PAGES = ["/home", "/activities", "/statistics", "/shop"];
 
   useEffect(() => {
     try {
@@ -53,6 +54,9 @@ export default function RootLayout({ children }) {
         setShowLink(user === "usopp");
       }
     } catch { /* ignore */ }
+    if (MAIN_PAGES.includes(pathname)) {
+      localStorage.setItem("lastMainPage", pathname);
+    }
   }, [pathname]);
 
   return (

@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useBackToMain } from "../useBackToMain";
 
 export default function Sfy1024() {
 
+  const goBack = useBackToMain();
   const [today, setToday] = useState("");
 
   useEffect(() => {
@@ -13,7 +15,14 @@ export default function Sfy1024() {
 
   return (
     <main className="flex flex-col items-start min-h-screen text-white bg-[#5f3dc4] px-6 py-6">
-      <h1 className="text-2xl mb-4">Ajouter une donnée</h1>
+      <div className="flex items-center gap-3 mb-4">
+        <button onClick={goBack} className="text-gray-300 hover:text-white transition-colors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-8 h-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <h1 className="text-2xl">Ajouter une donnée</h1>
+      </div>
 
       <form
         action="/api/insert-data"
