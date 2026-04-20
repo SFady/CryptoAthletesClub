@@ -199,7 +199,7 @@ export default function Home() {
       <div className="w-full md:max-w-[900px] mx-auto flex flex-col gap-6">
 
         {/* BONUS EN COURS */}
-        <Card icon="🎯" title="Bonus en cours" subtitle="du 13/04 au 19/04">
+        <Card icon="🎯" title="Bonus en cours" subtitle="du 20/04 au 27/04">
           <p className="text-center text-gray-200 text-sm">
             Meilleure distance running hebdomadaire :{" "}
             <span className="text-[#D6C48A] font-bold ml-1">
