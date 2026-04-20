@@ -179,8 +179,8 @@ export default function Home() {
     ),
   };
 
-  const Card = ({ icon, title, subtitle, children }) => (
-    <div className="rounded-2xl overflow-hidden shadow-lg border border-white/10">
+  const Card = ({ icon, title, subtitle, children, className }) => (
+    <div className={`rounded-2xl overflow-hidden shadow-lg border border-white/10 ${className ?? ""}`}>
       <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center gap-2">
         <span className="text-lg flex-shrink-0">{icon}</span>
         <div className="flex flex-col">
@@ -195,11 +195,11 @@ export default function Home() {
   );
 
   return (
-    <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-6 pb-10 overflow-x-hidden">
-      <div className="w-full md:max-w-[900px] mx-auto flex flex-col gap-6">
+    <main className="flex flex-col w-full max-w-[1600px] mx-auto px-4 md:px-8 pt-6 pb-10 overflow-x-hidden">
+      <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 xl:items-start">
 
         {/* BONUS EN COURS */}
-        <Card icon="🎯" title="Bonus en cours" subtitle="du 20/04 au 27/04">
+        <Card icon="🎯" title="Bonus en cours" subtitle="du 20/04 au 27/04" className="xl:col-span-2">
           <p className="text-center text-gray-200 text-sm">
             Meilleure distance running hebdomadaire :{" "}
             <span className="text-[#D6C48A] font-bold ml-1">

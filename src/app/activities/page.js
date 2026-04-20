@@ -126,7 +126,7 @@ export default function Home() {
 
 
   return (
-    <main className="flex flex-col justify-start w-full max-w-[100vw] md:max-w-screen-xl mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-x-hidden overflow-y-auto">
+    <main className="flex flex-col justify-start w-full max-w-[100vw] md:max-w-[1600px] mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-x-hidden overflow-y-auto">
 
       {/* FILTER + TOGGLE */}
       <div className="mb-5 flex items-center justify-between gap-4 flex-wrap">

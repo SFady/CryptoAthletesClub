@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export default function RootLayout({ children }) {
-  const centralWidth = 1280;
+  const centralWidth = 1600;
   const [showLink, setShowLink] = useState(false);
   const [showDivers, setShowDivers] = useState(false);
   const [showBurger, setShowBurger] = useState(false);
@@ -96,7 +96,7 @@ export default function RootLayout({ children }) {
 
           {/* HEADER FIXE */}
           <header className="fixed top-0 left-0 w-full bg-[#390494]/90 p-4 shadow-md z-30 backdrop-blur-md">
-            <div className="flex w-full max-w-screen-xl px-6 md:px-12 mx-auto items-center justify-between">
+            <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-between">
               {/* Burger mobile — header */}
               <button
                 onClick={() => setShowBurger(v => !v)}
@@ -166,7 +166,7 @@ export default function RootLayout({ children }) {
 
           {/* ZONE CENTRALE - scroll global */}
           <main className="relative flex flex-col pt-16 md:pt-24 pb-20 flex-1 overflow-x-hidden overflow-y-auto">
-            <div className="relative z-20 flex flex-col w-full md:max-w-screen-xl md:mx-auto px-0 md:px-12">
+            <div className="relative z-20 flex flex-col w-full md:max-w-[1600px] md:mx-auto px-0 md:px-12">
               <LoginGate>
                 <ClientGate>
                   {children}

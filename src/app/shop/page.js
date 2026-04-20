@@ -21,8 +21,8 @@ export default function Home() {
   );
 
   return (
-    <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-6 pb-10">
-      <div className="w-full md:max-w-[700px] mx-auto flex flex-col gap-6">
+    <main className="flex flex-col w-full max-w-[1600px] mx-auto px-4 md:px-8 pt-6 pb-10">
+      <div className="w-full md:max-w-[900px] xl:max-w-[1100px] mx-auto flex flex-col gap-6">
         <Card icon="🛍️" title="Boutique (A venir)">
           <table className="w-full table-auto text-left border-collapse">
             <thead>

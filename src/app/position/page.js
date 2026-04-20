@@ -62,7 +62,7 @@ export default function Position() {
   );
 
   return (
-    <main className="flex flex-col w-full max-w-screen-xl mx-auto px-4 md:px-8 pt-4 pb-10">
+    <main className="flex flex-col w-full max-w-[1600px] mx-auto px-4 md:px-8 pt-4 pb-10">
       <div className="flex items-center gap-3 mb-6">
         <button onClick={goBack} className="text-gray-300 hover:text-white transition-colors">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-8 h-8">
@@ -72,7 +72,7 @@ export default function Position() {
         <h1 className="text-2xl font-bold text-white">Position</h1>
       </div>
 
-      <div className="w-full md:max-w-[700px] mx-auto flex flex-col gap-6">
+      <div className="w-full md:max-w-[900px] xl:max-w-[1100px] mx-auto flex flex-col gap-6">
 
         {/* ── POSITION CLM ── */}
         <Card
