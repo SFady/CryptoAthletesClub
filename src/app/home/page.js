@@ -146,7 +146,7 @@ export default function Home() {
         <div className="relative flex-shrink-0" style={{ width: 200 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={selected === "1" ? "/images/runner_init3.png" : "/images/runner_init2.png"}
+            src={selected === "1" ? "/images/runner_init3.png" : selected === "4" ? "/images/runner_init1.png" : selected === "2" ? "/images/runner_init4.png" : "/images/runner_init2.png"}
             alt="Athlete"
             width={200}
             className="rounded-2xl"
