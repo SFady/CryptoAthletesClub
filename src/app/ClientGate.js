@@ -35,6 +35,18 @@ const WEEKLY_MESSAGE = {
 const MESSAGES = [
     //WEEKLY_MESSAGE,
     {
+        key: "infoMessage_github_test",
+        title: "Test GitHub Actions",
+        startDate: new Date("2026-04-25T00:00:00"),
+        deadline: new Date("2026-04-27T00:00:00"),
+        confetti: false,
+        content: (
+            <p className="text-center text-white/80 text-sm sm:text-base">
+                Déploiement automatique via GitHub Actions opérationnel.
+            </p>
+        ),
+    },
+    {
         key: "infoMessage_v5",
         title: "Félicitations",
         startDate: new Date("2026-04-20T00:00:00"),
@@ -81,10 +93,32 @@ export default function ClientGate({ children }) {
             }
         }
 
-        setQueue(pending);
-        setCurrent(0);
-        setReady(true);
-        setTimeout(() => setShowModal(true), 50);
+        fetch("/api/notifications")
+            .then(r => r.json())
+            .then(dynamic => {
+                for (const d of dynamic) {
+                    if (now > new Date(d.expiresAt)) continue;
+                    if (localStorage.getItem(d.key)) continue;
+                    pending.push({
+                        key: d.key,
+                        title: d.title,
+                        startDate: new Date(d.createdAt),
+                        deadline: new Date(d.expiresAt),
+                        confetti: false,
+                        content: <p className="text-center text-white/80 text-sm sm:text-base">{d.message}</p>,
+                    });
+                }
+                setQueue([...pending]);
+                setCurrent(0);
+                setReady(true);
+                setTimeout(() => setShowModal(true), 50);
+            })
+            .catch(() => {
+                setQueue([...pending]);
+                setCurrent(0);
+                setReady(true);
+                setTimeout(() => setShowModal(true), 50);
+            });
     }, [pathname]);
 
     // Lance les confettis quand un message avec confetti:true devient visible
