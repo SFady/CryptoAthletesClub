@@ -1,20 +1,13 @@
-name: Ping toutes les 10 minutes
+name: Ping toutes les minutes
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/2 * * * *"
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Appel webhook
-        run: |
-          BODY='{"event":"ping","source":"github-actions"}'
-          SIGNATURE="sha256=$(echo -n "$BODY" | openssl dgst -sha256 -hmac "${{ secrets.WEBHOOK_SECRET }}" | awk '{print $2}')"
-          curl -s -X POST "${{ secrets.WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            -H "x-hub-signature-256: $SIGNATURE" \
-            -H "x-github-event: ping" \
-            -d "$BODY"
+      - name: Ping
+        run: echo "ping"
