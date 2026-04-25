@@ -225,11 +225,15 @@ export default function Home() {
                   const raw = String(a.date_claimed);
                   const date = raw.slice(0, 10);
                   const time = raw.slice(11, 19).replace(/:/g, "");
-                  const type = a.activity_name?.toLowerCase().includes("run") ? "Run" : "Walk";
+                  const lowerName = a.activity_name?.toLowerCase() ?? "";
+                  const type = (lowerName.includes("run") || lowerName.includes("course")) ? "Run" : "Walk";
                   const km = Math.round(Number(a.kilometers) * 10);
-                  return `${date}_${time}_${type}_${km}`;
+                  const key = `${date}_${time}_${type}_${km}`;
+                  console.log("[DB key]", key, "| raw date_claimed:", raw, "| activity_name:", a.activity_name);
+                  return key;
                 })
               );
+              console.log("[Strava]", stravaData.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").map(a => `${a.start_date_local.slice(0,10)}_${a.start_date_local.slice(11,19).replace(/:/g,"")}_${a.sport_type}_${Math.round((a.distance/1000)*10)}`));
               setDbDates(dbEntries);
               setStravaActivities(stravaData);
               setStravaPopup(true);
