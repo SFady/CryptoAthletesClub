@@ -170,9 +170,8 @@ export default function Home() {
             ) : (
               <ul className="flex flex-col gap-2 overflow-y-auto max-h-[55vh]">
                 {stravaActivities.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
-                  const sd = new Date(a.start_date_local);
-                  const dateKey = sd.toISOString().slice(0, 10);
-                  const timeKey = `${String(sd.getUTCHours()).padStart(2,"0")}${String(sd.getUTCMinutes()).padStart(2,"0")}${String(sd.getUTCSeconds()).padStart(2,"0")}`;
+                  const dateKey = a.start_date_local.slice(0, 10);
+                  const timeKey = a.start_date_local.slice(11, 19).replace(/:/g, "");
                   const km = Math.round((a.distance / 1000) * 10);
                   const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
                   return (
@@ -223,9 +222,9 @@ export default function Home() {
               const dbData = await dbRes.json();
               const dbEntries = new Set(
                 (dbData.result ?? []).map(a => {
-                  const d = new Date(a.date_claimed);
-                  const date = d.toISOString().slice(0, 10);
-                  const time = `${String(d.getUTCHours()).padStart(2,"0")}${String(d.getUTCMinutes()).padStart(2,"0")}${String(d.getUTCSeconds()).padStart(2,"0")}`;
+                  const raw = String(a.date_claimed);
+                  const date = raw.slice(0, 10);
+                  const time = raw.slice(11, 19).replace(/:/g, "");
                   const type = a.activity_name?.toLowerCase().includes("run") ? "Run" : "Walk";
                   const km = Math.round(Number(a.kilometers) * 10);
                   return `${date}_${time}_${type}_${km}`;
