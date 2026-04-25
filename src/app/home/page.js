@@ -170,8 +170,9 @@ export default function Home() {
             ) : (
               <ul className="flex flex-col gap-2 overflow-y-auto max-h-[55vh]">
                 {stravaActivities.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
-                  const dateKey = a.start_date_local.slice(0, 10);
-                  const timeKey = a.start_date_local.slice(11, 19).replace(/:/g, "");
+                  const sd = new Date(a.start_date_local);
+                  const dateKey = `${sd.getFullYear()}-${String(sd.getMonth()+1).padStart(2,"0")}-${String(sd.getDate()).padStart(2,"0")}`;
+                  const timeKey = `${String(sd.getHours()).padStart(2,"0")}${String(sd.getMinutes()).padStart(2,"0")}${String(sd.getSeconds()).padStart(2,"0")}`;
                   const km = Math.round((a.distance / 1000) * 10);
                   const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
                   return (
