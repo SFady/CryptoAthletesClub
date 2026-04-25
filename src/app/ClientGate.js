@@ -121,6 +121,30 @@ export default function ClientGate({ children }) {
             });
     }, [pathname]);
 
+    // Polling : vérifie toutes les 30s si une nouvelle notification est arrivée
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            try {
+                const dynamic = await fetch("/api/notifications").then(r => r.json());
+                for (const d of dynamic) {
+                    if (new Date() > new Date(d.expiresAt)) continue;
+                    if (localStorage.getItem(d.key)) continue;
+                    const msg = {
+                        key: d.key,
+                        title: d.title,
+                        startDate: new Date(d.createdAt),
+                        deadline: new Date(d.expiresAt),
+                        confetti: false,
+                        content: <p className="text-center text-white/80 text-sm sm:text-base">{d.message}</p>,
+                    };
+                    setQueue(q => [...q, msg]);
+                    setShowModal(true);
+                }
+            } catch { /* ignore */ }
+        }, 30_000);
+        return () => clearInterval(interval);
+    }, []);
+
     // Lance les confettis quand un message avec confetti:true devient visible
     useEffect(() => {
         if (!showModal || current >= queue.length) return;
