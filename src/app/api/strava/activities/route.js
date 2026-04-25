@@ -1,13 +1,16 @@
 import sql from "@/lib/db";
 
-async function getAccessToken(refreshToken) {
+async function getAccessToken(stored) {
+  const clientId     = stored.client_id     ?? process.env.STRAVA_CLIENT_ID;
+  const clientSecret = stored.client_secret ?? process.env.STRAVA_CLIENT_SECRET;
+
   const res = await fetch("https://www.strava.com/oauth/token", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client_id:     process.env.STRAVA_CLIENT_ID,
-      client_secret: process.env.STRAVA_CLIENT_SECRET,
-      refresh_token: refreshToken,
+      client_id:     clientId,
+      client_secret: clientSecret,
+      refresh_token: stored.refresh_token,
       grant_type:    "refresh_token",
     }),
   });
@@ -23,8 +26,10 @@ export async function GET(req) {
   const [user] = await sql`SELECT token FROM users WHERE id = ${userId}`;
   if (!user?.token) return Response.json({ error: "Strava non connecté" }, { status: 400 });
 
-  const { refresh_token } = JSON.parse(user.token);
-  const accessToken = await getAccessToken(refresh_token);
+  const stored = JSON.parse(user.token);
+  if (!stored.refresh_token) return Response.json({ error: "Strava non connecté" }, { status: 400 });
+
+  const accessToken = await getAccessToken(stored);
 
   const after = Math.floor(Date.now() / 1000) - 7 * 24 * 3600;
   const res = await fetch(
@@ -32,6 +37,5 @@ export async function GET(req) {
     { headers: { Authorization: `Bearer ${accessToken}` } }
   );
 
-  const activities = await res.json();
-  return Response.json(activities);
+  return Response.json(await res.json());
 }
