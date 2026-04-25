@@ -214,7 +214,6 @@ export default function Home() {
             try {
               const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
               const userId = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" }[user];
-              console.log("[Strava btn] user:", user, "userId:", userId);
               if (!userId) return;
               const [stravaRes, dbRes] = await Promise.all([
                 fetch(`/api/strava/activities?userId=${userId}`),
@@ -222,7 +221,6 @@ export default function Home() {
               ]);
               const stravaData = await stravaRes.json();
               const dbData = await dbRes.json();
-              console.log("[DB] result count:", dbData.result?.length, "| first date_claimed:", dbData.result?.[0]?.date_claimed);
               const dbEntries = new Set(
                 (dbData.result ?? []).map(a => {
                   const raw = String(a.date_claimed);
@@ -231,12 +229,9 @@ export default function Home() {
                   const lowerName = a.activity_name?.toLowerCase() ?? "";
                   const type = (lowerName.includes("run") || lowerName.includes("course")) ? "Run" : "Walk";
                   const km = Math.round(Number(a.kilometers) * 10);
-                  const key = `${date}_${time}_${type}_${km}`;
-                  console.log("[DB key]", key, "| raw date_claimed:", raw, "| activity_name:", a.activity_name);
-                  return key;
+                  return `${date}_${time}_${type}_${km}`;
                 })
               );
-              console.log("[Strava]", stravaData.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").map(a => `${a.start_date_local.slice(0,10)}_${a.start_date_local.slice(11,19).replace(/:/g,"")}_${a.sport_type}_${Math.round((a.distance/1000)*10)}`));
               setDbDates(dbEntries);
               setStravaActivities(stravaData);
               setStravaPopup(true);
