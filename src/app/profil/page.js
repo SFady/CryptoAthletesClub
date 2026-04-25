@@ -1,17 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useBackToMain } from "../useBackToMain";
 
 const USER_ID_MAP = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" };
 
 export default function Profil() {
   const goBack = useBackToMain();
+  const searchParams = useSearchParams();
   const [userId, setUserId] = useState(null);
   const [email, setEmail] = useState("");
   const [saved, setSaved] = useState(false);
+  const [stravaConnected, setStravaConnected] = useState(false);
+  const [stravaStatus, setStravaStatus] = useState(null);
+  const [activities, setActivities] = useState(null);
+  const [loadingAct, setLoadingAct] = useState(false);
 
   useEffect(() => {
+    const s = searchParams.get("strava");
+    if (s === "ok")    setStravaStatus("ok");
+    if (s === "error") setStravaStatus("error");
+
     try {
       const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
       const id = USER_ID_MAP[user];
@@ -19,7 +29,12 @@ export default function Profil() {
       if (id) {
         fetch(`/api/profil?id=${id}`)
           .then(r => r.json())
-          .then(d => setEmail(d.email ?? ""));
+          .then(d => {
+            setEmail(d.email ?? "");
+            const connected = !!d.stravaConnected;
+            setStravaConnected(connected);
+            if (!connected) setStravaStatus(null);
+          });
       }
     } catch { /* ignore */ }
   }, []);
@@ -47,6 +62,8 @@ export default function Profil() {
       </div>
 
       <div className="w-full max-w-sm flex flex-col gap-4">
+
+        {/* Email */}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-300">&nbsp;Adresse e-mail</label>
           <div className="flex gap-2">
@@ -66,17 +83,69 @@ export default function Profil() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-1">
+        {/* Strava */}
+        {userId === "1" && <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-300">&nbsp;Strava</label>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <button
-              disabled
-              className="flex-shrink-0 bg-white/10 text-white/40 font-semibold px-4 py-2 rounded-lg cursor-not-allowed whitespace-nowrap"
+              disabled={!userId}
+              onClick={async () => {
+                const res = await fetch(`/api/strava/auth?userId=${userId}`);
+                const { link } = await res.json();
+                if (link) window.location.href = link;
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors whitespace-nowrap
+                ${userId ? "bg-[#FC4C02] hover:bg-[#e04402]" : "bg-[#FC4C02]/40 cursor-not-allowed"}`}
             >
-              Tester la connexion
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                <path d="M15.387 3.612a5.386 5.386 0 0 0-3.387 1.19V3.5a.5.5 0 0 0-1 0v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-2.53a4.387 4.387 0 1 1-1.47 3.25.5.5 0 0 0-1 0 5.387 5.387 0 1 0 4.887-6.638z"/>
+              </svg>
+              {stravaConnected ? "Reconnecter Strava" : "Connecter Strava"}
             </button>
+            {stravaStatus === "ok"    && <span className="text-emerald-400 text-sm">✓ Connecté</span>}
+            {stravaStatus === "error" && <span className="text-rose-400 text-sm">Erreur</span>}
+            {stravaConnected && !stravaStatus && <span className="text-emerald-400 text-sm">✓ Actif</span>}
+            {stravaConnected && (
+              <button
+                onClick={async () => {
+                  await fetch("/api/strava/disconnect", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userId }),
+                  });
+                  setStravaConnected(false);
+                  setStravaStatus(null);
+                  setActivities(null);
+                }}
+                className="text-rose-400 hover:text-rose-300 text-sm transition-colors whitespace-nowrap"
+              >
+                Déconnecter
+              </button>
+            )}
           </div>
-        </div>
+
+          {stravaConnected && (
+            <div className="mt-2">
+              <button
+                onClick={async () => {
+                  setLoadingAct(true);
+                  const res = await fetch(`/api/strava/activities?userId=${userId}`);
+                  setActivities(await res.json());
+                  setLoadingAct(false);
+                }}
+                className="text-sm text-gray-300 hover:text-white underline transition-colors"
+              >
+                {loadingAct ? "Chargement…" : "Voir les activités (brut)"}
+              </button>
+              {activities && (
+                <pre className="mt-3 text-xs bg-black/40 text-green-300 rounded-lg p-3 overflow-auto max-h-96 w-full">
+                  {JSON.stringify(activities, null, 2)}
+                </pre>
+              )}
+            </div>
+          )}
+        </div>}
+
       </div>
     </main>
   );
