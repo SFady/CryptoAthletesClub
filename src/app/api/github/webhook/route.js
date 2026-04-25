@@ -1,5 +1,4 @@
 import { createHmac, timingSafeEqual } from "crypto";
-import sql from "@/lib/db";
 
 function verify(secret, body, signature) {
   if (!signature) return false;
@@ -25,25 +24,7 @@ export async function POST(req) {
   const event = req.headers.get("x-github-event");
   const payload = JSON.parse(body);
 
-  if (event === "ping") {
-    console.log("Ping reçu depuis GitHub Actions");
-  }
-
-  if (event === "workflow_run" && payload.action === "completed" && payload.workflow_run.conclusion === "success") {
-    const { workflow_run } = payload;
-    const notification = {
-      key: `deploy_${workflow_run.id}`,
-      title: "Mise à jour disponible",
-      message: `Déploiement "${workflow_run.name}" effectué avec succès.`,
-      createdAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString(),
-    };
-    await sql`
-      INSERT INTO app_config (key, value)
-      VALUES ('last_notification', ${JSON.stringify(notification)})
-      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
-    `;
-  }
+  console.log(`GitHub event: ${event}`, payload?.action ?? "");
 
   return Response.json({ ok: true });
 }
