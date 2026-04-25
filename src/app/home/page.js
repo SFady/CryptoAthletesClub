@@ -213,6 +213,7 @@ export default function Home() {
             try {
               const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
               const userId = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" }[user];
+              console.log("[Strava btn] user:", user, "userId:", userId);
               if (!userId) return;
               const [stravaRes, dbRes] = await Promise.all([
                 fetch(`/api/strava/activities?userId=${userId}`),
@@ -220,6 +221,7 @@ export default function Home() {
               ]);
               const stravaData = await stravaRes.json();
               const dbData = await dbRes.json();
+              console.log("[DB] result count:", dbData.result?.length, "| first date_claimed:", dbData.result?.[0]?.date_claimed);
               const dbEntries = new Set(
                 (dbData.result ?? []).map(a => {
                   const raw = String(a.date_claimed);
