@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
+import { FaRunning, FaWalking } from "react-icons/fa";
 
 export default function Home() {
 
@@ -18,6 +19,10 @@ export default function Home() {
 
   const [open, setOpen] = useState(false);
   const [boostMax, setBoostMax] = useState(null);
+  const [stravaConnected, setStravaConnected] = useState(false);
+  const [stravaActivities, setStravaActivities] = useState(null);
+  const [stravaPopup, setStravaPopup] = useState(false);
+  const [dbDates, setDbDates] = useState(new Set());
 
   const fetchBoostMax = async (athleteId) => {
     try {
@@ -69,6 +74,16 @@ export default function Home() {
     localStorage.setItem("selectedAthlete", finalId);
     fetchDefitAmount(finalId);
     fetchBoostMax(finalId);
+
+    try {
+      const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+      const userId = USER_ID_MAP[user];
+      if (userId) {
+        fetch(`/api/profil?id=${userId}`)
+          .then(r => r.json())
+          .then(d => setStravaConnected(!!d.stravaConnected));
+      }
+    } catch { /* ignore */ }
   }, []);
 
 
@@ -120,15 +135,124 @@ export default function Home() {
   };
 
 
+  const activityIcon = {
+    Run: (
+      <span className="inline-flex items-center gap-0.5">
+        <span className="flex flex-col gap-0.5">
+          <span className="block h-px w-1.5 bg-white/60 rounded-full" />
+          <span className="block h-px w-1 bg-white/40 rounded-full" />
+          <span className="block h-px w-1.5 bg-white/60 rounded-full" />
+        </span>
+        <FaRunning className="text-white/80 text-lg" />
+      </span>
+    ),
+    Walk: <FaWalking className="text-white/80 text-lg" />,
+  };
+
   return (
     <main className="relative w-full max-w-[1600px] mx-auto px-6 md:px-16 flex flex-col justify-center min-h-[calc(100svh-144px)] md:min-h-[calc(100vh-96px)] md:justify-start md:pt-0 md:pb-0">
 
+      {/* Popup activités Strava */}
+      {stravaPopup && stravaActivities && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4" onClick={() => setStravaPopup(false)}>
+          <div className="bg-[#2a1a6e] border border-white/20 rounded-2xl shadow-2xl p-5 w-full max-w-sm" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                <svg viewBox="0 0 24 24" fill="#FC4C02" className="w-5 h-5">
+                  <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169"/>
+                </svg>
+                Activités récentes
+              </h2>
+              <button onClick={() => setStravaPopup(false)} className="text-gray-400 hover:text-white text-xl leading-none">×</button>
+            </div>
+            {stravaActivities.length === 0 ? (
+              <p className="text-gray-400 text-sm text-center">Aucune activité cette semaine</p>
+            ) : (
+              <ul className="flex flex-col gap-2 overflow-y-auto max-h-[55vh]">
+                {stravaActivities.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
+                  const sd = new Date(a.start_date_local);
+                  const dateKey = sd.toISOString().slice(0, 10);
+                  const timeKey = `${String(sd.getUTCHours()).padStart(2,"0")}${String(sd.getUTCMinutes()).padStart(2,"0")}${String(sd.getUTCSeconds()).padStart(2,"0")}`;
+                  const km = Math.round((a.distance / 1000) * 10);
+                  const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
+                  return (
+                  <li key={a.id} className={`flex items-center justify-between rounded-xl px-4 py-2.5 ${alreadyIn ? "bg-white/[0.02] opacity-40" : "bg-white/5"}`}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 flex justify-center flex-shrink-0">{activityIcon[a.sport_type]}</div>
+                      <div className="flex flex-col">
+                        <span className="text-gray-400 text-xs">
+                          {new Date(a.start_date_local).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}
+                          {" · "}
+                          {new Date(a.start_date_local).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#FF8C5A] font-bold text-sm">{(a.distance / 1000).toFixed(2)} km</span>
+                      <a href={`https://www.strava.com/activities/${a.id}`} target="_blank" rel="noopener noreferrer"
+                        className="ml-2 text-white/60 hover:text-white transition-colors border border-white/30 hover:border-white/60 rounded p-1">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-5 h-5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
+                        </svg>
+                      </a>
+                    </div>
+                  </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Sélecteur d’athlète centré au-dessus de l’image */}
-      <div className="flex justify-center mb-2 mt-1 md:mt-10">
+      <div className="relative w-full max-w-sm md:max-w-[550px] mx-auto flex justify-center items-end gap-3 mb-2 mt-1 md:mt-10">
+        <button
+          disabled={!stravaConnected}
+          onClick={async () => {
+            if (!stravaConnected) return;
+            try {
+              const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+              const userId = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" }[user];
+              if (!userId) return;
+              const [stravaRes, dbRes] = await Promise.all([
+                fetch(`/api/strava/activities?userId=${userId}`),
+                fetch(`/api/get-users-activities?userId=${userId}&limit=100`),
+              ]);
+              const stravaData = await stravaRes.json();
+              const dbData = await dbRes.json();
+              const dbEntries = new Set(
+                (dbData.result ?? []).map(a => {
+                  const d = new Date(a.date_claimed);
+                  const date = d.toISOString().slice(0, 10);
+                  const time = `${String(d.getUTCHours()).padStart(2,"0")}${String(d.getUTCMinutes()).padStart(2,"0")}${String(d.getUTCSeconds()).padStart(2,"0")}`;
+                  const type = a.activity_name?.toLowerCase().includes("run") ? "Run" : "Walk";
+                  const km = Math.round(Number(a.kilometers) * 10);
+                  return `${date}_${time}_${type}_${km}`;
+                })
+              );
+              setDbDates(dbEntries);
+              setStravaActivities(stravaData);
+              setStravaPopup(true);
+            } catch { /* ignore */ }
+          }}
+          title="Récupérer activités Strava"
+          className={`absolute left-2 inset-y-0 my-auto h-fit flex items-center gap-0.5 transition-all rounded-lg border p-1
+            ${stravaConnected
+              ? "text-[#FC4C02] border-white/20 hover:border-[#FC4C02]/60 bg-white/5 hover:bg-white/10 cursor-pointer"
+              : "text-[#FC4C02]/30 border-white/10 bg-white/5 cursor-not-allowed"}`}
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+            <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169"/>
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6 -ml-2 text-white/60">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
+          </svg>
+        </button>
         <select
           value={selected}
           onChange={handleSelect}
-          className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20 
+          className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20
                focus:outline-none focus:ring-2 focus:ring-white/30
                md:px-4 md:py-2 md:text-base"
         >

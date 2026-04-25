@@ -107,7 +107,12 @@ export default function Profil() {
         </div>
 
         {/* Strava */}
-        <div className="flex flex-col gap-3">
+        <div className="relative flex flex-col gap-3">
+          {userId !== "1" && (
+            <div className="absolute inset-0 z-10 rounded-xl backdrop-blur-[1px] bg-black/30 flex items-center justify-center">
+              <span className="text-xs text-gray-400 bg-black/60 px-3 py-1.5 rounded-lg">Strava disponible uniquement pour Usopp</span>
+            </div>
+          )}
           <label className="text-sm text-gray-300">&nbsp;Strava</label>
 
           {/* Étape 1 : credentials */}
@@ -199,6 +204,7 @@ export default function Profil() {
             </div>
           )}
         </div>
+
 
       </div>
     </main>

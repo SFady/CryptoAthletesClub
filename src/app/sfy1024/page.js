@@ -48,6 +48,12 @@ export default function Sfy1024() {
             defaultValue={today}
             className="px-3 py-2 rounded text-black"
           />
+          <input
+            type="time"
+            name="time_claimed"
+            defaultValue="00:00"
+            className="px-3 py-2 rounded text-black"
+          />
         </div>
 
         <div className="flex items-center gap-2">

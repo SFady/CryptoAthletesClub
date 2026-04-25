@@ -6,8 +6,9 @@ export async function POST(req) {
     const formData = await req.formData();
 
     const user_id = formData.get("user_id");
-    const rawDate = formData.get("date_claimed"); // "25/12/2025"
-    const date_claimed = rawDate
+    const rawDate = formData.get("date_claimed"); // "2025-12-25"
+    const rawTime = formData.get("time_claimed") ?? "00:00";
+    const date_claimed = `${rawDate}T${rawTime}:00`;
     const defit_amount = Number(formData.get("defit_amount"));
     const activity_type = formData.get("activity_type");
     const participation_percentage = formData.get("participation_percentage");
