@@ -84,6 +84,13 @@ export default function ClientGate({ children }) {
             .filter(k => k.startsWith("infoMessage_") && !activeKeys.has(k))
             .forEach(k => localStorage.removeItem(k));
 
+        Object.keys(localStorage)
+            .filter(k => k.startsWith("deploy_"))
+            .forEach(k => {
+                const deadline = localStorage.getItem(k);
+                if (deadline && new Date() > new Date(deadline)) localStorage.removeItem(k);
+            });
+
         for (const msg of MESSAGES) {
             if (now > msg.deadline) {
                 localStorage.removeItem(msg.key);
