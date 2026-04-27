@@ -35,10 +35,10 @@ const WEEKLY_MESSAGE = {
 const MESSAGES = [
     //WEEKLY_MESSAGE,
     {
-        key: "infoMessage_v5",
+        key: "infoMessage_v1",
         title: "Félicitations",
-        startDate: new Date("2026-04-20T00:00:00"),
-        deadline: new Date("2026-04-26T00:00:00"),
+        startDate: new Date("2026-04-27T00:00:00"),
+        deadline: new Date("2026-05-02T00:00:00"),
         confetti: true,
         content: (
             <div className="flex items-start gap-4">
