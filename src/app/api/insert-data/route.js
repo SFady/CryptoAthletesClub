@@ -66,14 +66,6 @@ export async function POST(req) {
 
     // Distributed
 
-    const [row1] = await sql`
-      SELECT sum(benef) as benef
-      FROM user_activities
-      WHERE benef_treated IS NULL
-      LIMIT 1
-    `;
-    const distributed_benef = Number(row1?.benef ?? 0);
-
     const [row7] = await sql`
       SELECT sum(upgrade) as upgrade
       FROM user_activities
@@ -126,14 +118,14 @@ export async function POST(req) {
     const defit_percentage = defit_amount > max_defits ? 1 : defit_amount / max_defits;
 
     let available_fees = walletUSDC;
-    available_fees = available_fees - (distributed_benef + distributed_upgrade + distributed_bonus + distributed_boost + distributed_bonus_to_credit + liquidity_repair);
+    available_fees = available_fees - (distributed_upgrade + distributed_bonus + distributed_boost + distributed_bonus_to_credit + liquidity_repair);
     available_fees = available_fees * defit_percentage;
     if (available_fees < 0) available_fees = 0;
 
 
     // Fees spread  
 
-    let benef = 0.20 * percent * percent_global * available_fees;
+    let benef = 0;
     //let upgrade = 0.10 * percent * percent_global * available_fees;
     let upgrade = 0;
     let bonus = 0.10 * percent * percent_global * available_fees;

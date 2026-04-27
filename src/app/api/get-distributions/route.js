@@ -35,7 +35,7 @@ export async function GET() {
 
     return Response.json({
       benef, boost, bonus,
-      total: benef + boost + bonus,
+      total: boost + bonus,
       byUser: byUser.map(r => {
         const liq = liquidity.find(l => l.id === r.id);
         return {
