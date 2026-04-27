@@ -69,7 +69,7 @@ export default function ClientGate({ children }) {
 
         const activeKeys = new Set(MESSAGES.map(m => m.key));
         Object.keys(localStorage)
-            .filter(k => k.startsWith("infoMessage_") && !activeKeys.has(k))
+            .filter(k => k.startsWith("infoMessage") && !activeKeys.has(k))
             .forEach(k => localStorage.removeItem(k));
 
         for (const msg of MESSAGES) {
