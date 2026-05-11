@@ -44,9 +44,9 @@ const MESSAGES = [
             <div className="flex items-start gap-4">
                 <GiTrophy className="w-16 h-16 shrink-0 mt-1 text-[#D6C48A]" />
                 <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
-                    <li>Grand vainqueur de la plus longue distance de running hebdomadaire : Jinbe</li>
-                    <li>Distance de 11 km.</li>
-                    <li>Prix exceptionnel de 0.15 $ !!!</li>
+                    <li>Grand vainqueur de la plus longue distance de running hebdomadaire : Nico Robin</li>
+                    <li>Distance de 28.4 km.</li>
+                    <li>Prix exceptionnel de 2.43 $ !!!</li>
                 </ul>
             </div>
         ),
