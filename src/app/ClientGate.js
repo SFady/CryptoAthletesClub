@@ -37,8 +37,8 @@ const MESSAGES = [
     {
         key: "infoMessage_v1",
         title: "Félicitations",
-        startDate: new Date("2026-05-04T00:00:00"),
-        deadline: new Date("2026-05-10T00:00:00"),
+        startDate: new Date("2026-05-11T00:00:00"),
+        deadline: new Date("2026-05-17T00:00:00"),
         confetti: true,
         content: (
             <div className="flex items-start gap-4">
