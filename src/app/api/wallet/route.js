@@ -3,7 +3,7 @@ export const maxDuration = 30;
 
 const WETH_ADDRESS = "0x4200000000000000000000000000000000000006";
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-const WALLET       = "0xaf96ca0b19b3966105bf2f28a05c10d586692499";
+const WALLET       = process.env.WALLET_ADDRESS;
 
 const RPC_URLS = [
   "https://base.drpc.org",
