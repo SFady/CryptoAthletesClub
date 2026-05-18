@@ -43,12 +43,19 @@ export async function POST(req) {
     const starting_offered_liquidity = Number(row0?.starting_offered_liquidity ?? 0);
 
     const [row3] = await sql`
-      SELECT initial_liquidity
-      FROM users
-      where id=${user_id}
-      LIMIT 1;
+      SELECT COALESCE(SUM(i.price), 0) AS initial_liquidity
+      FROM user_items ui
+      JOIN items i ON ui.item = i.id
+      WHERE ui.user = ${user_id}
     `;
     const initial_user_liquidity = Number(row3?.initial_liquidity ?? 0);
+
+    const [row3b] = await sql`
+      SELECT COALESCE(SUM(i.price), 0) AS sum_initials
+      FROM user_items ui
+      JOIN items i ON ui.item = i.id
+    `;
+    const sum_initials_liquidity = Number(row3b?.sum_initials ?? 0);
 
 
 
@@ -159,6 +166,7 @@ export async function POST(req) {
     // let new_liquidity = initial_user_liquidity * ( weth_value / 2332 );
     // if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
     let new_liquidity = (walletPool / (2084.99 + 10 + 50)) * initial_user_liquidity;
+    //let new_liquidity = (walletPool / (Somme des initials_liquidity)) * initial_user_liquidity;
     if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
 
 
