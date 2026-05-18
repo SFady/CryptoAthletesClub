@@ -2,11 +2,19 @@ export const runtime     = "nodejs";
 export const maxDuration = 30;
 
 import sql from "@/lib/db";
+import { ethers } from "ethers";
 
-// Aerodrome CL — WETH/USDC — wallet 0xaf96ca0b19b3966105bf2f28a05c10d586692499
-const WALLET = "0xaf96ca0b19b3966105bf2f28a05c10d586692499";
+const WALLET = process.env.WALLET_ADDRESS;
 const NFPM   = "0x827922686190790b37229fd06084350E74485b72";
 const POOL   = "0xb2cc224c1c9fee385f8ad6a55b4d94e92359dc59";
+const VOTER  = "0x16613524e02ad97eDfeF371bC883F2F5d6C480A5";
+
+const VOTER_IFACE = new ethers.Interface([
+  "function gauges(address pool) view returns (address)",
+]);
+const GAUGE_IFACE = new ethers.Interface([
+  "function stakedValues(address depositor) view returns (uint256[])",
+]);
 
 const RPC_URLS = [
   "https://base.drpc.org",
@@ -101,6 +109,26 @@ async function isWethUsdc(call, id) {
 }
 
 async function scanActiveId(rpcUrl, call) {
+  // 0. Positions stakées dans le gauge Aerodrome
+  try {
+    const gaugeHex = await call(VOTER, VOTER_IFACE.encodeFunctionData("gauges", [POOL])).catch(() => null);
+    if (gaugeHex) {
+      const [gaugeAddr] = ethers.AbiCoder.defaultAbiCoder().decode(["address"], gaugeHex);
+      if (gaugeAddr && gaugeAddr !== ethers.ZeroAddress) {
+        const stakedHex = await call(gaugeAddr, GAUGE_IFACE.encodeFunctionData("stakedValues", [WALLET])).catch(() => null);
+        if (stakedHex && stakedHex !== "0x") {
+          const [stakedIds] = GAUGE_IFACE.decodeFunctionResult("stakedValues", stakedHex);
+          const hexes = await Promise.all(stakedIds.map(id => call(NFPM, "0x99fbab88" + pad64(id)).catch(() => null)));
+          for (let i = 0; i < stakedIds.length; i++) {
+            const h = hexes[i];
+            if (h && toAddr(word(h, 2)) === WETH_ADDR && toAddr(word(h, 3)) === USDC_ADDR && toUint(word(h, 7)) > 0n)
+              return stakedIds[i];
+          }
+        }
+      }
+    }
+  } catch (_) {}
+
   // 1. NFTs directement dans le wallet — filtrer par paire WETH/USDC
   const countHex = await call(NFPM, "0x70a08231" + walletPad);
   const count    = Number(toUint(countHex));
@@ -115,7 +143,7 @@ async function scanActiveId(rpcUrl, call) {
     }
   }
 
-  // 2. Scan des mints vers le wallet (5 derniers mois)
+  // 2. Scan des mints vers le wallet (dernier recours)
   const latestRes = await fetch(rpcUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -132,8 +160,8 @@ async function scanActiveId(rpcUrl, call) {
     toBlock: "latest",
   }]).catch(() => []);
 
-  const ids = logs.map(l => BigInt(l.topics[3])).reverse();
-  for (const id of ids) {
+  const ids2 = logs.map(l => BigInt(l.topics[3])).reverse();
+  for (const id of ids2) {
     if (await isWethUsdc(call, id)) return id;
   }
   return null;
