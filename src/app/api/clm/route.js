@@ -93,8 +93,8 @@ function toInt(w)  { const n = toUint(w); return n >= M256 / 2n ? n - M256 : n; 
 function toAddr(w) { return "0x" + w.slice(24).toLowerCase(); }
 function mod256(n) { return ((n % M256) + M256) % M256; }
 
-const walletPad      = WALLET.slice(2).toLowerCase().padStart(64, "0");
-const walletTopic    = "0x000000000000000000000000" + WALLET.slice(2).toLowerCase();
+const walletPad      = WALLET ? WALLET.slice(2).toLowerCase().padStart(64, "0") : "";
+const walletTopic    = WALLET ? "0x000000000000000000000000" + WALLET.slice(2).toLowerCase() : "";
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const ZERO_TOPIC     = "0x0000000000000000000000000000000000000000000000000000000000000000";
 const WETH_ADDR      = "0x4200000000000000000000000000000000000006";
