@@ -165,8 +165,8 @@ export async function POST(req) {
 
     // let new_liquidity = initial_user_liquidity * ( weth_value / 2332 );
     // if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
-    let new_liquidity = (walletPool / (2084.99 + 10 + 50)) * initial_user_liquidity;
-    //let new_liquidity = (walletPool / (Somme des initials_liquidity)) * initial_user_liquidity;
+    //let new_liquidity = (walletPool / (2084.99 + 10 + 50)) * initial_user_liquidity;
+    let new_liquidity = (walletPool / (Somme des initials_liquidity)) * initial_user_liquidity;
     if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
 
 
