@@ -20,20 +20,9 @@ function balanceOfData(wallet) {
   return "0x70a08231" + wallet.toLowerCase().replace("0x", "").padStart(64, "0");
 }
 
-async function pickRpc() {
-  for (const url of RPC_URLS) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }),
-        signal: AbortSignal.timeout(4000),
-      });
-      const json = await res.json();
-      if (json.result) return url;
-    } catch { /* essayer le suivant */ }
-  }
-  throw new Error("Aucun RPC disponible");
+function hexToBigInt(hex) {
+  if (!hex || hex === "0x" || hex === "0x0") return 0n;
+  return BigInt(hex);
 }
 
 async function getBalances(rpcUrl) {
@@ -49,19 +38,40 @@ async function getBalances(rpcUrl) {
     signal: AbortSignal.timeout(5000),
   });
   const json = await res.json();
-  if (json.error) throw new Error(JSON.stringify(json.error));
-  const weth = Number(BigInt(json[0].result)) / 1e18;
-  const usdc = Number(BigInt(json[1].result)) / 1e6;
+  if (!Array.isArray(json)) throw new Error("Réponse RPC invalide");
+  const r0 = json.find(r => r.id === 0);
+  const r1 = json.find(r => r.id === 1);
+  if (r0?.error) throw new Error(r0.error.message ?? "RPC error WETH");
+  if (r1?.error) throw new Error(r1.error.message ?? "RPC error USDC");
+  const weth = Number(hexToBigInt(r0?.result)) / 1e18;
+  const usdc = Number(hexToBigInt(r1?.result)) / 1e6;
   return { weth, usdc };
+}
+
+async function pickRpc() {
+  return Promise.any(
+    RPC_URLS.map(url =>
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }),
+        signal: AbortSignal.timeout(4000),
+      })
+        .then(r => r.json())
+        .then(json => { if (!json.result) throw new Error("no result"); return url; })
+    )
+  ).catch(() => { throw new Error("Aucun RPC disponible"); });
 }
 
 async function getEthPrice() {
   const res = await fetch(
     "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-    { headers: { Accept: "application/json" } }
+    { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(5000) }
   );
   const json = await res.json();
-  return json.ethereum.usd;
+  const price = json?.ethereum?.usd;
+  if (!price) throw new Error("Prix ETH indisponible");
+  return price;
 }
 
 export async function GET() {
