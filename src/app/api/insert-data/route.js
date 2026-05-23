@@ -28,7 +28,7 @@ export async function POST(req) {
     ]);
     const clmData = await clmRes.json();
     const walletData = await walletRes.json();
-    const walletPool = Number(clmData.totalPoolUSD ?? 0); // Total pool CLM (WETH + USDC en position)
+    const walletPool = Number(clmData.totalPoolUSD ?? 0) + Number(walletData.wethUSD ?? 0) + Number(walletData.usdc ?? 0); // CLM + WETH + USDC hors position dans le wallet
     const walletUSDC = Number(walletData.usdc ?? 0); // USDC dans le wallet
 
 
@@ -166,8 +166,8 @@ export async function POST(req) {
     // let new_liquidity = initial_user_liquidity * ( weth_value / 2332 );
     // if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
     //let new_liquidity = (walletPool / (2084.99 + 10 + 50)) * initial_user_liquidity;
-    //let new_liquidity = (walletPool / (sum_initials_liquidity)) * initial_user_liquidity;
-    let new_liquidity = ((2084.99 + 10 + 50) / (2084.99 + 10 + 50)) * initial_user_liquidity;
+    let new_liquidity = (walletPool / (sum_initials_liquidity)) * initial_user_liquidity;
+    //let new_liquidity = ((2084.99 + 10 + 50) / (2084.99 + 10 + 50)) * initial_user_liquidity;
     if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
 
 
