@@ -217,7 +217,7 @@ export default function Home() {
               <tr className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white text-xs uppercase tracking-wide">
                 <th className="py-3.5 px-5 font-semibold">Date</th>
                 <th className="py-3.5 px-5 font-semibold">Athlete</th>
-                <th className="py-3.5 px-5 font-semibold">Activité</th>
+                <th className="py-3.5 px-5 font-semibold text-center">Activité</th>
                 <th className="py-3.5 px-5 font-semibold">Effort</th>
                 <th className="py-3.5 px-5 font-semibold">Distance (km)</th>
                 <th className="py-3.5 px-5 font-semibold">Vitesse</th>
@@ -244,7 +244,7 @@ export default function Home() {
                       {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
                     </td>
                     <td className="py-4 px-5 text-white font-semibold whitespace-nowrap">{row.user_name}</td>
-                    <td className="py-4 px-5"><ActivityIcon name={row.activity_name} /></td>
+                    <td className="py-4 px-5"><div className="flex justify-center"><ActivityIcon name={row.activity_name} /></div></td>
                     <td className="py-4 px-5">
                       <span className={`inline-flex items-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-xs font-semibold ${effortBadge(effort)}`}>
                         {effort} %
