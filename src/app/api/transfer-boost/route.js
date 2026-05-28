@@ -36,7 +36,7 @@ async function pickRpc() {
 }
 
 async function sendUsdc(usdc, to, amount) {
-  const raw     = ethers.parseUnits(amount.toString(), USDC_DECIMALS);
+  const raw     = ethers.parseUnits(Number(amount).toFixed(USDC_DECIMALS), USDC_DECIMALS);
   const tx      = await usdc.transfer(to, raw);
   const receipt = await tx.wait();
   return receipt.hash;
@@ -82,7 +82,7 @@ export async function POST(request) {
     const wallet   = new ethers.Wallet(privateKey, provider);
     const usdc     = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, wallet);
 
-    const totalRaw = ethers.parseUnits((boost + bonus).toString(), USDC_DECIMALS);
+    const totalRaw = ethers.parseUnits((boost + bonus).toFixed(USDC_DECIMALS), USDC_DECIMALS);
     const balance  = await usdc.balanceOf(wallet.address);
     if (balance < totalRaw) {
       return Response.json({
