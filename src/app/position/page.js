@@ -20,10 +20,12 @@ export default function Position() {
   const [sendResult, setSendResult]     = useState(null);
 
   const handleUserChange = (userId) => {
+    const scrollY = window.scrollY;
     const user = users.find(u => u.id === Number(userId));
     setSelectedUser(user ?? null);
     setLastBoost("");
     setSendResult(null);
+    requestAnimationFrame(() => window.scrollTo({ top: scrollY, behavior: "instant" }));
     if (!userId) return;
     fetch(`/api/get-last-boost?userId=${userId}`)
       .then(r => r.json())
