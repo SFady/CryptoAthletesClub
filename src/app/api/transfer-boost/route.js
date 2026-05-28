@@ -66,10 +66,9 @@ export async function POST(request) {
     return Response.json({ error: "Wallet non configuré pour cet utilisateur" }, { status: 400 });
   }
 
-  const [config] = await sql`SELECT value FROM app_config WHERE key = 'bonus_wallet'`;
-  const bonusWallet = config?.value;
+  const bonusWallet = process.env.WALLET_BONUS;
   if (bonus > 0 && !bonusWallet) {
-    return Response.json({ error: "bonus_wallet non configuré dans app_config" }, { status: 400 });
+    return Response.json({ error: "Clé WALLET_BONUS non configurée" }, { status: 400 });
   }
 
   const privateKey = process.env.WALLET_PRIVATE_KEY;
