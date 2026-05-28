@@ -1,8 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useBackToMain } from "../useBackToMain";
+
+const Card = ({ icon, title, subtitle, action, children }) => (
+  <div className="rounded-2xl overflow-hidden shadow-lg border border-white/10">
+    <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
+        <span className="text-lg flex-shrink-0">{icon}</span>
+        <div className="flex flex-col">
+          <h2 className="text-white text-sm font-bold uppercase tracking-widest">{title}</h2>
+          {subtitle && <span className="text-white/70 text-xs">{subtitle}</span>}
+        </div>
+      </div>
+      {action}
+    </div>
+    <div className="bg-white/[0.05] backdrop-blur-md">{children}</div>
+  </div>
+);
+
+const Row = ({ label, value, gold, zebra }) => (
+  <tr className={`border-b border-white/10 text-sm ${zebra ? "bg-white/[0.03]" : "bg-transparent"}`}>
+    <td className="py-2.5 px-5 text-gray-300">{label}</td>
+    <td className={`py-2.5 px-5 text-right font-semibold whitespace-nowrap ${gold ? "text-[#D6C48A] font-bold" : "text-white"}`}>{value}</td>
+  </tr>
+);
+
+const SubHeader = ({ children }) => (
+  <tr className="border-b border-white/10">
+    <td colSpan={2} className="py-1.5 px-5 text-white/40 text-xs uppercase tracking-wide bg-white/[0.03]">{children}</td>
+  </tr>
+);
 
 export default function Position() {
   const router = useRouter();
@@ -18,14 +47,15 @@ export default function Position() {
   const [lastBoost, setLastBoost]       = useState("");
   const [sending, setSending]           = useState(false);
   const [sendResult, setSendResult]     = useState(null);
+  const savedScrollY = useRef(0);
 
   const handleUserChange = (userId) => {
-    const scrollY = window.scrollY;
     const user = users.find(u => u.id === Number(userId));
     setSelectedUser(user ?? null);
     setLastBoost("");
     setSendResult(null);
-    requestAnimationFrame(() => window.scrollTo({ top: scrollY, behavior: "instant" }));
+    const y = savedScrollY.current;
+    requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: y, behavior: "instant" })));
     if (!userId) return;
     fetch(`/api/get-last-boost?userId=${userId}`)
       .then(r => r.json())
@@ -83,35 +113,6 @@ export default function Position() {
     }).catch(() => {});
     fetchClm();
   }, []);
-
-  const Card = ({ icon, title, subtitle, action, children }) => (
-    <div className="rounded-2xl overflow-hidden shadow-lg border border-white/10">
-      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 py-3 px-5 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="text-lg flex-shrink-0">{icon}</span>
-          <div className="flex flex-col">
-            <h2 className="text-white text-sm font-bold uppercase tracking-widest">{title}</h2>
-            {subtitle && <span className="text-white/70 text-xs">{subtitle}</span>}
-          </div>
-        </div>
-        {action}
-      </div>
-      <div className="bg-white/[0.05] backdrop-blur-md">{children}</div>
-    </div>
-  );
-
-  const Row = ({ label, value, gold, zebra }) => (
-    <tr className={`border-b border-white/10 text-sm ${zebra ? "bg-white/[0.03]" : "bg-transparent"}`}>
-      <td className="py-2.5 px-5 text-gray-300">{label}</td>
-      <td className={`py-2.5 px-5 text-right font-semibold whitespace-nowrap ${gold ? "text-[#D6C48A] font-bold" : "text-white"}`}>{value}</td>
-    </tr>
-  );
-
-  const SubHeader = ({ children }) => (
-    <tr className="border-b border-white/10">
-      <td colSpan={2} className="py-1.5 px-5 text-white/40 text-xs uppercase tracking-wide bg-white/[0.03]">{children}</td>
-    </tr>
-  );
 
   return (
     <main className="flex flex-col w-full max-w-[1600px] mx-auto px-4 md:px-8 pt-4 pb-10">
@@ -225,6 +226,7 @@ export default function Position() {
               <label className="text-gray-400 text-xs uppercase tracking-wide">Utilisateur</label>
               <select
                 value={selectedUser?.id ?? ""}
+                onMouseDown={() => { savedScrollY.current = window.scrollY; }}
                 onChange={e => handleUserChange(e.target.value)}
                 className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
               >
