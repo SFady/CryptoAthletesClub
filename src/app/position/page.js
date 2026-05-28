@@ -49,7 +49,25 @@ export default function Position() {
   const [activityId, setActivityId]     = useState(null);
   const [sending, setSending]           = useState(false);
   const [sendResult, setSendResult]     = useState(null);
+  const [confirming, setConfirming]     = useState(false);
+  const [countdown, setCountdown]       = useState(3);
+  const confirmTimer = useRef(null);
   const savedScrollY = useRef(0);
+
+  useEffect(() => {
+    if (!confirming) return;
+    setCountdown(3);
+    let n = 3;
+    confirmTimer.current = setInterval(() => {
+      n -= 1;
+      setCountdown(n);
+      if (n <= 0) {
+        clearInterval(confirmTimer.current);
+        setConfirming(false);
+      }
+    }, 1000);
+    return () => clearInterval(confirmTimer.current);
+  }, [confirming]);
 
   const handleUserChange = (userId) => {
     const user = users.find(u => u.id === Number(userId));
@@ -68,16 +86,19 @@ export default function Position() {
   };
 
   const handleSend = async () => {
+    if (!confirming) {
+      setConfirming(true);
+      return;
+    }
+    clearInterval(confirmTimer.current);
+    setConfirming(false);
+
     const boost = Number(lastBoost);
     const bonus = Number(lastBonus);
     if (boost <= 0 && bonus <= 0) {
       setSendResult({ error: "Montants invalides" });
       return;
     }
-    const lines = [];
-    if (boost > 0) lines.push(`Boost : ${boost} USDC → ${selectedUser.name}`);
-    if (bonus > 0) lines.push(`Bonus : ${bonus} USDC → wallet bonus`);
-    if (!window.confirm(lines.join("\n"))) return;
 
     setSending(true);
     setSendResult(null);
@@ -287,9 +308,13 @@ export default function Position() {
             <button
               onClick={handleSend}
               disabled={sending || !selectedUser || !lastBoost}
-              className="self-start bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2 rounded-lg transition-all"
+              className={`self-start text-white text-sm font-semibold px-5 py-2 rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                confirming
+                  ? "bg-rose-500 hover:bg-rose-400 animate-pulse"
+                  : "bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400"
+              }`}
             >
-              {sending ? "Envoi…" : "Envoyer"}
+              {sending ? "Envoi…" : confirming ? `Confirmer ? (${countdown}s)` : "Envoyer"}
             </button>
 
             {sendResult && (
