@@ -45,6 +45,8 @@ export default function Position() {
   const [users, setUsers]               = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [lastBoost, setLastBoost]       = useState("");
+  const [lastBonus, setLastBonus]       = useState("");
+  const [activityId, setActivityId]     = useState(null);
   const [sending, setSending]           = useState(false);
   const [sendResult, setSendResult]     = useState(null);
   const savedScrollY = useRef(0);
@@ -53,26 +55,29 @@ export default function Position() {
     const user = users.find(u => u.id === Number(userId));
     setSelectedUser(user ?? null);
     setLastBoost("");
+    setLastBonus("");
+    setActivityId(null);
     setSendResult(null);
     const y = savedScrollY.current;
     requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: y, behavior: "instant" })));
     if (!userId) return;
     fetch(`/api/get-last-boost?userId=${userId}`)
       .then(r => r.json())
-      .then(d => setLastBoost(d.boost ?? ""))
+      .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setActivityId(d.activityId ?? null); })
       .catch(() => {});
   };
 
   const handleSend = async () => {
-    const amount = Number(lastBoost);
-    if (!amount || amount <= 0) {
-      setSendResult({ error: "Montant invalide" });
+    const boost = Number(lastBoost);
+    const bonus = Number(lastBonus);
+    if (boost <= 0 && bonus <= 0) {
+      setSendResult({ error: "Montants invalides" });
       return;
     }
-    const confirmed = window.confirm(
-      `Envoyer ${amount} USDC à ${selectedUser.name} ?`
-    );
-    if (!confirmed) return;
+    const lines = [];
+    if (boost > 0) lines.push(`Boost : ${boost} USDC → ${selectedUser.name}`);
+    if (bonus > 0) lines.push(`Bonus : ${bonus} USDC → wallet bonus`);
+    if (!window.confirm(lines.join("\n"))) return;
 
     setSending(true);
     setSendResult(null);
@@ -80,7 +85,12 @@ export default function Position() {
       const res = await fetch("/api/transfer-boost", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: selectedUser.id, amount }),
+        body: JSON.stringify({
+          userId:      selectedUser.id,
+          activityId,
+          boostAmount: boost,
+          bonusAmount: bonus,
+        }),
       });
       const data = await res.json();
       setSendResult(data);
@@ -109,7 +119,13 @@ export default function Position() {
     fetch("/api/get-user-boost?userId=1").then(r => r.json()).then(d => setBoostPending(d.boost_pending ?? 0)).catch(() => {});
     fetch("/api/get-users").then(r => r.json()).then(list => {
       setUsers(list);
-      if (list.length > 0) setSelectedUser(list[0]);
+      if (list.length > 0) {
+        setSelectedUser(list[0]);
+        fetch(`/api/get-last-boost?userId=${list[0].id}`)
+          .then(r => r.json())
+          .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setActivityId(d.activityId ?? null); })
+          .catch(() => {});
+      }
     }).catch(() => {});
     fetchClm();
   }, []);
@@ -241,17 +257,31 @@ export default function Position() {
               )}
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-gray-400 text-xs uppercase tracking-wide">Montant (USDC)</label>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={lastBoost}
-                onChange={e => setLastBoost(e.target.value)}
-                placeholder="0.00"
-                className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-40"
-              />
+            <div className="flex gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-gray-400 text-xs uppercase tracking-wide">Boost (USDC)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={lastBoost}
+                  onChange={e => setLastBoost(e.target.value)}
+                  placeholder="0.00"
+                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-36"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-gray-400 text-xs uppercase tracking-wide">Bonus (USDC)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={lastBonus}
+                  onChange={e => setLastBonus(e.target.value)}
+                  placeholder="0.00"
+                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-36"
+                />
+              </div>
             </div>
 
             <button
@@ -263,10 +293,13 @@ export default function Position() {
             </button>
 
             {sendResult && (
-              <div className={`text-sm rounded-lg px-4 py-3 ${sendResult.error ? "bg-rose-500/20 text-rose-300" : "bg-emerald-500/20 text-emerald-300"}`}>
+              <div className={`text-sm rounded-lg px-4 py-3 flex flex-col gap-1 ${sendResult.error ? "bg-rose-500/20 text-rose-300" : "bg-emerald-500/20 text-emerald-300"}`}>
                 {sendResult.error
                   ? `Erreur : ${sendResult.error}`
-                  : `✓ Transaction envoyée — ${sendResult.txHash}`
+                  : <>
+                      {sendResult.txBoost && <span>✓ Boost — {sendResult.txBoost}</span>}
+                      {sendResult.txBonus && <span>✓ Bonus — {sendResult.txBonus}</span>}
+                    </>
                 }
               </div>
             )}

@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import sql from "@/lib/db";
 
 export const runtime     = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const USDC_ADDRESS  = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -35,6 +35,13 @@ async function pickRpc() {
   ).catch(() => { throw new Error("Aucun RPC disponible"); });
 }
 
+async function sendUsdc(usdc, to, amount) {
+  const raw     = ethers.parseUnits(amount.toString(), USDC_DECIMALS);
+  const tx      = await usdc.transfer(to, raw);
+  const receipt = await tx.wait();
+  return receipt.hash;
+}
+
 export async function POST(request) {
   let body;
   try {
@@ -43,18 +50,26 @@ export async function POST(request) {
     return Response.json({ error: "Body JSON invalide" }, { status: 400 });
   }
 
-  const { userId, amount } = body ?? {};
+  const { userId, activityId, boostAmount, bonusAmount } = body ?? {};
 
-  if (!userId) return Response.json({ error: "userId requis" }, { status: 400 });
+  if (!userId)     return Response.json({ error: "userId requis" },     { status: 400 });
+  if (!activityId) return Response.json({ error: "activityId requis" }, { status: 400 });
 
-  const amountNum = Number(amount);
-  if (!amountNum || amountNum <= 0) {
-    return Response.json({ error: "Montant invalide" }, { status: 400 });
+  const boost = Number(boostAmount);
+  const bonus = Number(bonusAmount);
+  if (boost <= 0 && bonus <= 0) {
+    return Response.json({ error: "Montants invalides" }, { status: 400 });
   }
 
   const [user] = await sql`SELECT wallet_address, name FROM users WHERE id = ${userId}`;
   if (!user?.wallet_address) {
     return Response.json({ error: "Wallet non configuré pour cet utilisateur" }, { status: 400 });
+  }
+
+  const [config] = await sql`SELECT value FROM app_config WHERE key = 'bonus_wallet'`;
+  const bonusWallet = config?.value;
+  if (bonus > 0 && !bonusWallet) {
+    return Response.json({ error: "bonus_wallet non configuré dans app_config" }, { status: 400 });
   }
 
   const privateKey = process.env.WALLET_PRIVATE_KEY;
@@ -68,28 +83,34 @@ export async function POST(request) {
     const wallet   = new ethers.Wallet(privateKey, provider);
     const usdc     = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, wallet);
 
-    const rawAmount = ethers.parseUnits(amountNum.toString(), USDC_DECIMALS);
-
-    const balance = await usdc.balanceOf(wallet.address);
-    if (balance < rawAmount) {
+    const totalRaw = ethers.parseUnits((boost + bonus).toString(), USDC_DECIMALS);
+    const balance  = await usdc.balanceOf(wallet.address);
+    if (balance < totalRaw) {
       return Response.json({
         error:     "Solde USDC insuffisant",
         balance:   ethers.formatUnits(balance, USDC_DECIMALS),
-        requested: amountNum,
+        requested: boost + bonus,
       }, { status: 400 });
     }
 
-    const tx      = await usdc.transfer(user.wallet_address, rawAmount);
-    const receipt = await tx.wait();
+    let txBoost = null;
+    let txBonus = null;
+
+    if (boost > 0) {
+      txBoost = await sendUsdc(usdc, user.wallet_address, boost);
+      await sql`UPDATE user_activities SET tx_boost = ${txBoost} WHERE id = ${activityId}`;
+    }
+
+    if (bonus > 0 && bonusWallet) {
+      txBonus = await sendUsdc(usdc, bonusWallet, bonus);
+      await sql`UPDATE user_activities SET tx_bonus = ${txBonus} WHERE id = ${activityId}`;
+    }
 
     return Response.json({
-      success:     true,
-      txHash:      receipt.hash,
-      from:        wallet.address,
-      to:          user.wallet_address,
-      user:        user.name,
-      amount:      amountNum,
-      blockNumber: receipt.blockNumber,
+      success:    true,
+      user:       user.name,
+      txBoost,
+      txBonus,
     });
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });
