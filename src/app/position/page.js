@@ -13,6 +13,52 @@ export default function Position() {
   const [distrib, setDistrib]       = useState(null);
   const [boostPending, setBoostPending] = useState(0);
 
+  const [users, setUsers]               = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [lastBoost, setLastBoost]       = useState("");
+  const [sending, setSending]           = useState(false);
+  const [sendResult, setSendResult]     = useState(null);
+
+  const handleUserChange = (userId) => {
+    const user = users.find(u => u.id === Number(userId));
+    setSelectedUser(user ?? null);
+    setLastBoost("");
+    setSendResult(null);
+    if (!userId) return;
+    fetch(`/api/get-last-boost?userId=${userId}`)
+      .then(r => r.json())
+      .then(d => setLastBoost(d.boost ?? ""))
+      .catch(() => {});
+  };
+
+  const handleSend = async () => {
+    const amount = Number(lastBoost);
+    if (!amount || amount <= 0) {
+      setSendResult({ error: "Montant invalide" });
+      return;
+    }
+    const confirmed = window.confirm(
+      `Envoyer ${amount} USDC à ${selectedUser.name} ?`
+    );
+    if (!confirmed) return;
+
+    setSending(true);
+    setSendResult(null);
+    try {
+      const res = await fetch("/api/transfer-boost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: selectedUser.id, amount }),
+      });
+      const data = await res.json();
+      setSendResult(data);
+    } catch (err) {
+      setSendResult({ error: err.message });
+    } finally {
+      setSending(false);
+    }
+  };
+
   const fetchClm = () => {
     setClmLoading(true);
     fetch("/api/clm")
@@ -29,6 +75,10 @@ export default function Position() {
     fetch("/api/wallet").then(r => r.json()).then(setWallet).catch(() => {});
     fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => {});
     fetch("/api/get-user-boost?userId=1").then(r => r.json()).then(d => setBoostPending(d.boost_pending ?? 0)).catch(() => {});
+    fetch("/api/get-users").then(r => r.json()).then(list => {
+      setUsers(list);
+      if (list.length > 0) setSelectedUser(list[0]);
+    }).catch(() => {});
     fetchClm();
   }, []);
 
@@ -164,6 +214,61 @@ export default function Position() {
             </table>
           </Card>
         )}
+
+        {/* ── TRANSFERT USDC ── */}
+        <Card icon="💸" title="Transfert USDC">
+          <div className="p-5 flex flex-col gap-4">
+
+            <div className="flex flex-col gap-1">
+              <label className="text-gray-400 text-xs uppercase tracking-wide">Utilisateur</label>
+              <select
+                value={selectedUser?.id ?? ""}
+                onChange={e => handleUserChange(e.target.value)}
+                className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+              >
+                {users.map(u => (
+                  <option key={u.id} value={u.id} className="bg-gray-900">{u.name}</option>
+                ))}
+              </select>
+              {selectedUser && (
+                <span className="text-white/30 text-xs truncate">
+                  {selectedUser.wallet_address || "Pas de wallet configuré"}
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-gray-400 text-xs uppercase tracking-wide">Montant (USDC)</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={lastBoost}
+                onChange={e => setLastBoost(e.target.value)}
+                placeholder="0.00"
+                className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-40"
+              />
+            </div>
+
+            <button
+              onClick={handleSend}
+              disabled={sending || !selectedUser || !lastBoost}
+              className="self-start bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2 rounded-lg transition-all"
+            >
+              {sending ? "Envoi…" : "Envoyer"}
+            </button>
+
+            {sendResult && (
+              <div className={`text-sm rounded-lg px-4 py-3 ${sendResult.error ? "bg-rose-500/20 text-rose-300" : "bg-emerald-500/20 text-emerald-300"}`}>
+                {sendResult.error
+                  ? `Erreur : ${sendResult.error}`
+                  : `✓ Transaction envoyée — ${sendResult.txHash}`
+                }
+              </div>
+            )}
+
+          </div>
+        </Card>
 
       </div>
     </main>
