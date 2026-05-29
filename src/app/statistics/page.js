@@ -14,18 +14,18 @@ const ACTIVITIES = [
 export default function Home() {
   const { price: defitPrice } = useDefitPrice();
 
-  const [totals, setTotals]   = useState([]);
+  const [totals, setTotals] = useState([]);
   const [totals2, setTotals2] = useState([]);
   const [totals3, setTotals3] = useState([]);
-  const [bonus, setBonus]     = useState([]);
+  const [bonus, setBonus] = useState([]);
 
-  const [selected,  setSelected]  = useState(1);
+  const [selected, setSelected] = useState(1);
   const [selected2, setSelected2] = useState(1);
   const [selected3, setSelected3] = useState(1);
-  const [activity,  setActivity]  = useState(0);
+  const [activity, setActivity] = useState(0);
   const [activity2, setActivity2] = useState(0);
   const [activity3, setActivity3] = useState(0);
-  const [mounted,   setMounted]   = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const fetchTotals = async (period, act) => {
     try {
@@ -56,23 +56,23 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setSelected( Number(localStorage.getItem("statsPeriodGains"))       || 1);
-    setSelected2(Number(localStorage.getItem("statsPeriodDistance"))    || 1);
-    setSelected3(Number(localStorage.getItem("statsPeriodDefits"))      || 1);
-    setActivity( Number(localStorage.getItem("statsActivityGains"))     || 0);
-    setActivity2(Number(localStorage.getItem("statsActivityDistance"))  || 0);
-    setActivity3(Number(localStorage.getItem("statsActivityDefits"))    || 0);
+    setSelected(Number(localStorage.getItem("statsPeriodGains")) || 1);
+    setSelected2(Number(localStorage.getItem("statsPeriodDistance")) || 1);
+    setSelected3(Number(localStorage.getItem("statsPeriodDefits")) || 1);
+    setActivity(Number(localStorage.getItem("statsActivityGains")) || 0);
+    setActivity2(Number(localStorage.getItem("statsActivityDistance")) || 0);
+    setActivity3(Number(localStorage.getItem("statsActivityDefits")) || 0);
     setMounted(true);
     fetchBonus();
   }, []);
 
-  useEffect(() => { if (!mounted) return; fetchTotals(selected, activity);    localStorage.setItem("statsPeriodGains",    selected);  localStorage.setItem("statsActivityGains",    activity);  }, [mounted, selected, activity]);
+  useEffect(() => { if (!mounted) return; fetchTotals(selected, activity); localStorage.setItem("statsPeriodGains", selected); localStorage.setItem("statsActivityGains", activity); }, [mounted, selected, activity]);
   useEffect(() => { if (!mounted) return; fetchTotals2(selected2, activity2); localStorage.setItem("statsPeriodDistance", selected2); localStorage.setItem("statsActivityDistance", activity2); }, [mounted, selected2, activity2]);
-  useEffect(() => { if (!mounted) return; fetchTotals3(selected3, activity3); localStorage.setItem("statsPeriodDefits",   selected3); localStorage.setItem("statsActivityDefits",   activity3); }, [mounted, selected3, activity3]);
+  useEffect(() => { if (!mounted) return; fetchTotals3(selected3, activity3); localStorage.setItem("statsPeriodDefits", selected3); localStorage.setItem("statsActivityDefits", activity3); }, [mounted, selected3, activity3]);
 
-  const sortedTotals  = [...totals].sort((a, b)  => (b.boost ?? 0) - (a.boost ?? 0));
+  const sortedTotals = [...totals].sort((a, b) => (b.boost ?? 0) - (a.boost ?? 0));
   const sortedTotals2 = [...totals2].sort((a, b) => (b.kilometers ?? 0) - (a.kilometers ?? 0));
-  const sortedDefits  = [...totals3].sort((a, b) =>
+  const sortedDefits = [...totals3].sort((a, b) =>
     (defitPrice ?? 0) * (b.defit_amount ?? 0) - (defitPrice ?? 0) * (a.defit_amount ?? 0)
   );
 
@@ -87,9 +87,8 @@ export default function Home() {
           key={id}
           onMouseDown={noFocus}
           onClick={() => onChange(id)}
-          className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
-            value === id ? "bg-[#D6C48A] text-[#2A2550] shadow-md" : "text-white hover:bg-white/10"
-          }`}
+          className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${value === id ? "bg-[#D6C48A] text-[#2A2550] shadow-md" : "text-white hover:bg-white/10"
+            }`}
         >
           {id === 1 ? "Année" : id === 2 ? "Mois" : "Semaine"}
         </button>
@@ -104,9 +103,8 @@ export default function Home() {
           key={id}
           onMouseDown={noFocus}
           onClick={() => onChange(id)}
-          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex-shrink-0 ${
-            value === id ? "bg-white/30 text-white shadow-md" : "text-white/60 hover:bg-white/10"
-          }`}
+          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex-shrink-0 ${value === id ? "bg-white/30 text-white shadow-md" : "text-white/60 hover:bg-white/10"
+            }`}
         >
           {label}
         </button>
@@ -143,9 +141,8 @@ export default function Home() {
           {rows.length > 0 ? rows.map((row, idx) => (
             <tr
               key={idx}
-              className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${
-                idx % 2 === 0 ? "bg-white/[0.03]" : "bg-transparent"
-              }`}
+              className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${idx % 2 === 0 ? "bg-white/[0.03]" : "bg-transparent"
+                }`}
             >
               {cols.map((col) => (
                 <td key={col.key} className={`py-2.5 px-4 ${col.right ? "text-right" : ""} ${col.gold ? "text-[#D6C48A] font-bold" : "text-gray-200"}`}>
@@ -199,7 +196,7 @@ export default function Home() {
       <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 xl:items-start">
 
         {/* BONUS EN COURS */}
-        <Card icon="🎯" title="Bonus en cours" subtitle="du 18/05 au 24/05" className="xl:col-span-2">
+        <Card icon="🎯" title="Bonus en cours" subtitle="du 25/05 au 31/05" className="xl:col-span-2">
           <p className="text-center text-gray-200 text-sm">
             Meilleure distance running hebdomadaire :{" "}
             <span className="text-[#D6C48A] font-bold ml-1">
