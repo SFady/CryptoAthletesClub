@@ -7,10 +7,20 @@ export default function Sfy1024() {
 
   const goBack = useBackToMain();
   const [today, setToday] = useState("");
+  const [poolData, setPoolData] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("dataEntry", "saisie");
     setToday(new Date().toISOString().split("T")[0]);
+    Promise.all([fetch("/api/clm"), fetch("/api/wallet-pool")])
+      .then(([r1, r2]) => Promise.all([r1.json(), r2.json()]))
+      .then(([clm, wp]) => {
+        const pool = Number(clm.totalPoolUSD ?? 0);
+        const usdc = Number(wp.usdc ?? 0);
+        const wethUSD = Number(wp.wethUSD ?? 0);
+        setPoolData({ pool: pool.toFixed(2), usdc: usdc.toFixed(2), wethUSD: wethUSD.toFixed(2), total: (pool + usdc + wethUSD).toFixed(2) });
+      })
+      .catch(() => {});
   }, []);
 
   return (
@@ -112,6 +122,27 @@ export default function Sfy1024() {
 
         <input type="hidden" name="rewards_usdc" defaultValue="0" />
 
+        {poolData && (
+          <div className="flex flex-col gap-1 text-sm border border-white/20 rounded-lg px-4 py-3 bg-white/5">
+            <div className="flex justify-between">
+              <span className="text-white/60">Pool</span>
+              <span className="font-bold text-white">{poolData.pool} $</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white/60">Wallet USDC</span>
+              <span className="font-bold text-white">{poolData.usdc} $</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white/60">Wallet WETH</span>
+              <span className="font-bold text-white">{poolData.wethUSD} $</span>
+            </div>
+            <div className="flex justify-between border-t border-white/20 pt-1 mt-1">
+              <span className="text-white/60">Total</span>
+              <span className="font-bold text-[#D6C48A]">{poolData.total} $</span>
+            </div>
+          </div>
+        )}
+
         <button
           type="submit"
           className="bg-white text-[#5f3dc4] font-semibold py-2 rounded hover:bg-gray-200"
@@ -119,15 +150,6 @@ export default function Sfy1024() {
           Envoyer
         </button>
 
-        <button
-          type="button"
-          className="flex items-center justify-center gap-2 bg-[#FC4C02] text-white font-semibold py-2 rounded hover:bg-[#e04402]"
-        >
-          <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-            <path d="M15.387 3.612a5.386 5.386 0 0 0-3.387 1.19V3.5a.5.5 0 0 0-1 0v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-2.53a4.387 4.387 0 1 1-1.47 3.25.5.5 0 0 0-1 0 5.387 5.387 0 1 0 4.887-6.638z"/>
-          </svg>
-          Récupérer Strava
-        </button>
       </form>
     </main>
   );

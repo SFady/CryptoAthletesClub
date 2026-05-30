@@ -22,14 +22,16 @@ export async function POST(req) {
     // Valeur du pool CLM + USDC wallet (en parallèle)
 
     const origin = new URL(req.url).origin;
-    const [clmRes, walletRes] = await Promise.all([
+    const [clmRes, walletRes, walletPoolRes] = await Promise.all([
       fetch(`${origin}/api/clm`),
       fetch(`${origin}/api/wallet`),
+      fetch(`${origin}/api/wallet-pool`),
     ]);
     const clmData = await clmRes.json();
     const walletData = await walletRes.json();
-    const walletPool = Number(clmData.totalPoolUSD ?? 0) + Number(walletData.wethUSD ?? 0) + Number(walletData.usdc ?? 0); // CLM + WETH + USDC hors position dans le wallet
-    const walletUSDC = Number(walletData.usdc ?? 0); // USDC dans le wallet
+    const walletPoolData = await walletPoolRes.json();
+    const walletPool = Number(clmData.totalPoolUSD ?? 0) + Number(walletPoolData.usdc ?? 0) + Number(walletPoolData.wethUSD ?? 0); // CLM + USDC/WETH du wallet pool
+    const walletUSDC = Number(walletData.usdc ?? 0); // USDC du wallet principal (WALLET_ADDRESS)
 
 
     // Initilal liquidity

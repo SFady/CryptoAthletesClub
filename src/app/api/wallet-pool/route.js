@@ -1,0 +1,99 @@
+export const runtime     = "nodejs";
+export const maxDuration = 30;
+
+const WETH_ADDRESS = "0x4200000000000000000000000000000000000006";
+const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+const WALLET       = process.env.WALLET_POOL;
+
+const RPC_URLS = [
+  "https://base.drpc.org",
+  "https://base-rpc.publicnode.com",
+  "https://mainnet.base.org",
+  "https://base.gateway.tenderly.co",
+  "https://1rpc.io/base",
+];
+
+const CACHE_TTL_MS = 120_000;
+if (!global._walletPoolCache) global._walletPoolCache = { data: null, time: 0 };
+
+function balanceOfData(wallet) {
+  return "0x70a08231" + wallet.toLowerCase().replace("0x", "").padStart(64, "0");
+}
+
+function hexToBigInt(hex) {
+  if (!hex || hex === "0x" || hex === "0x0") return 0n;
+  return BigInt(hex);
+}
+
+async function getBalances(rpcUrl) {
+  const calldata = balanceOfData(WALLET);
+  const batch = [
+    { jsonrpc: "2.0", method: "eth_call", params: [{ to: WETH_ADDRESS, data: calldata }, "latest"], id: 0 },
+    { jsonrpc: "2.0", method: "eth_call", params: [{ to: USDC_ADDRESS, data: calldata }, "latest"], id: 1 },
+  ];
+  const res = await fetch(rpcUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(batch),
+    signal: AbortSignal.timeout(5000),
+  });
+  const json = await res.json();
+  if (!Array.isArray(json)) throw new Error("Réponse RPC invalide");
+  const r0 = json.find(r => r.id === 0);
+  const r1 = json.find(r => r.id === 1);
+  if (r0?.error) throw new Error(r0.error.message ?? "RPC error WETH");
+  if (r1?.error) throw new Error(r1.error.message ?? "RPC error USDC");
+  const weth = Number(hexToBigInt(r0?.result)) / 1e18;
+  const usdc = Number(hexToBigInt(r1?.result)) / 1e6;
+  return { weth, usdc };
+}
+
+async function pickRpc() {
+  return Promise.any(
+    RPC_URLS.map(url =>
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }),
+        signal: AbortSignal.timeout(4000),
+      })
+        .then(r => r.json())
+        .then(json => { if (!json.result) throw new Error("no result"); return url; })
+    )
+  ).catch(() => { throw new Error("Aucun RPC disponible"); });
+}
+
+async function getEthPrice() {
+  const res = await fetch(
+    "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
+    { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(5000) }
+  );
+  const json = await res.json();
+  const price = json?.ethereum?.usd;
+  if (!price) throw new Error("Prix ETH indisponible");
+  return price;
+}
+
+export async function GET() {
+  if (!WALLET) return Response.json({ error: "WALLET_POOL non configuré" }, { status: 500 });
+  const c = global._walletPoolCache;
+  if (c.data && Date.now() - c.time < CACHE_TTL_MS) return Response.json(c.data);
+  try {
+    const rpcUrl = await pickRpc();
+    const [{ weth, usdc }, ethPrice] = await Promise.all([getBalances(rpcUrl), getEthPrice()]);
+    const wethUSD  = weth * ethPrice;
+    const totalUSD = wethUSD + usdc;
+    const payload = {
+      weth:     weth.toFixed(6),
+      usdc:     usdc.toFixed(2),
+      wethUSD:  wethUSD.toFixed(2),
+      totalUSD: totalUSD.toFixed(2),
+      ethPrice: ethPrice.toFixed(2),
+    };
+    global._walletPoolCache = { data: payload, time: Date.now() };
+    return Response.json(payload);
+  } catch (err) {
+    if (global._walletPoolCache.data) return Response.json(global._walletPoolCache.data);
+    return Response.json({ error: err.message }, { status: 500 });
+  }
+}
