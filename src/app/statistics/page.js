@@ -196,7 +196,7 @@ export default function Home() {
       <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 xl:items-start">
 
         {/* BONUS EN COURS */}
-        <Card icon="🎯" title="Bonus en cours" subtitle="du 25/05 au 31/05" className="xl:col-span-2">
+        <Card icon="🎯" title="Bonus en cours" subtitle="du 01/06 au 07/06" className="xl:col-span-2">
           <p className="text-center text-gray-200 text-sm">
             Meilleure distance running hebdomadaire :{" "}
             <span className="text-[#D6C48A] font-bold ml-1">
