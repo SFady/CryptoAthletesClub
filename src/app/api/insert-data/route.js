@@ -56,7 +56,7 @@ export async function POST(req) {
     const allUsersInvest = await sql`
       SELECT u.id, COALESCE(SUM(i.price), 0) AS initial_liquidity
       FROM users u
-      LEFT JOIN user_items ui ON ui.user = u.id
+      LEFT JOIN user_items ui ON ui."user" = u.id
       LEFT JOIN items i ON ui.item = i.id
       GROUP BY u.id
     `;
