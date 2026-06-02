@@ -1,4 +1,5 @@
 import sql from '@/lib/db';
+import { sqrtPercent } from '@/lib/percent';
 
 export async function POST(req) {
   try {
@@ -15,8 +16,8 @@ export async function POST(req) {
     const kilometers = formData.get("kilometers");
     let current_liquidity = Number(formData.get("current_liquidity"));
     const duration = (Number(formData.get("duration_h") || 0) * 3600)
-                   + (Number(formData.get("duration_m") || 0) * 60)
-                   + (Number(formData.get("duration_s") || 0));
+      + (Number(formData.get("duration_m") || 0) * 60)
+      + (Number(formData.get("duration_s") || 0));
 
 
     // Valeur du pool CLM + USDC wallet (en parallèle)
@@ -30,16 +31,16 @@ export async function POST(req) {
     const clmData = await clmRes.json();
     const walletData = await walletRes.json();
     const walletPoolData = await walletPoolRes.json();
-    const walletPool = Number(clmData.totalPoolUSD ?? 0) + Number(walletPoolData.usdc ?? 0) + Number(walletPoolData.wethUSD ?? 0); // CLM + USDC/WETH du wallet pool
-    const walletUSDC = Number(walletData.usdc ?? 0); // USDC du wallet principal (WALLET_ADDRESS)
+    const walletPool = Number(clmData.totalPoolUSD ?? 0) + Number(walletPoolData.usdc ?? 0) + Number(walletPoolData.wethUSD ?? 0);
+    const walletUSDC = Number(walletData.usdc ?? 0);
 
 
-    // Initilal liquidity
+    // Initial liquidity
 
     const [row0] = await sql`
       SELECT starting_offered_liquidity
       FROM users
-      where id=${user_id}
+      WHERE id=${user_id}
       LIMIT 1;
     `;
     const starting_offered_liquidity = Number(row0?.starting_offered_liquidity ?? 0);
@@ -52,19 +53,19 @@ export async function POST(req) {
     `;
     const initial_user_liquidity = Number(row3?.initial_liquidity ?? 0);
 
-    const [row3b] = await sql`
-      SELECT COALESCE(SUM(i.price), 0) AS sum_initials
-      FROM user_items ui
-      JOIN items i ON ui.item = i.id
+    const allUsersInvest = await sql`
+      SELECT u.id, COALESCE(SUM(i.price), 0) AS initial_liquidity
+      FROM users u
+      LEFT JOIN user_items ui ON ui.user = u.id
+      LEFT JOIN items i ON ui.item = i.id
+      GROUP BY u.id
     `;
-    const sum_initials_liquidity = Number(row3b?.sum_initials ?? 0);
+    const allInvestValues = allUsersInvest.map(r => Number(r.initial_liquidity));
+    const sum_initials_liquidity = allInvestValues.reduce((a, b) => a + b, 0);
 
+    const percent_global = 1;
+    const percent = sqrtPercent(initial_user_liquidity, allInvestValues);
 
-
-    // Percentage allocated 2 134,99
-
-    const percent_global = (100 + 135 + 885 + (10 + 50)) / (2084.99 + (10 + 50));
-    const percent = (starting_offered_liquidity + initial_user_liquidity) / (100 + 135 + 885 + (10 + 50));
 
     // Coefficients :
     // Course : 1
@@ -120,21 +121,25 @@ export async function POST(req) {
     const [row4] = await sql`
       SELECT max_defits
       FROM users
-      where id=${user_id}
+      WHERE id=${user_id}
       LIMIT 1;
     `;
     const max_defits = Number(row4?.max_defits ?? 0);
     const defit_percentage = defit_amount > max_defits ? 1 : defit_amount / max_defits;
 
+    // let available_fees = walletUSDC;
+    // available_fees = available_fees - (distributed_upgrade + distributed_bonus + distributed_boost + distributed_bonus_to_credit + liquidity_repair);
+    // available_fees = available_fees * defit_percentage;
+    // if (available_fees < 0) available_fees = 0;
+    // New
     let available_fees = walletUSDC;
-    available_fees = available_fees - (distributed_upgrade + distributed_bonus + distributed_boost + distributed_bonus_to_credit + liquidity_repair);
     available_fees = available_fees * defit_percentage;
     if (available_fees < 0) available_fees = 0;
 
 
-    // Fees spread  
+    // Fees spread
 
-    let benef = 0;
+    let benef = 0.20 * percent * percent_global * available_fees;
     //let upgrade = 0.10 * percent * percent_global * available_fees;
     let upgrade = 0;
     let bonus = 0.10 * percent * percent_global * available_fees;
@@ -154,15 +159,6 @@ export async function POST(req) {
     const defitsToAdd = defit_amount * Number(participation_percentage) / 100;
 
 
-    // LP a 2089$ sans les 10$ et 50$ le 28/03
-    // LP a 2180.85 le 17/03
-    // pour revenir au 17/03 * coef =2180.85/2089
-    // (10 + 50) * (2180.82/2089) = 62.64
-    // Ajouter 62.64 au 2180.85
-
-    // Fees - Boost nt - liquidity_repair nt - benef nt - upgrade nt - bonus not send
-
-
     // New liquidity
 
     // let new_liquidity = initial_user_liquidity * ( weth_value / 2332 );
@@ -170,10 +166,7 @@ export async function POST(req) {
     //let new_liquidity = (walletPool / (2084.99 + 10 + 50)) * initial_user_liquidity;
     let new_liquidity = (walletPool / (sum_initials_liquidity)) * initial_user_liquidity;
     //let new_liquidity = ((2084.99 + 10 + 50) / (2084.99 + 10 + 50)) * initial_user_liquidity;
-    if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity; 
-
-
-
+    if (new_liquidity > initial_user_liquidity) new_liquidity = initial_user_liquidity;
 
 
     // Insert
@@ -184,11 +177,11 @@ export async function POST(req) {
     `;
 
     const result2 = await sql`
-      UPDATE USERS set dollars=dollars+${boost} where id=${user_id} 
+      UPDATE USERS set dollars=dollars+${boost} where id=${user_id}
     `;
 
     const result3 = await sql`
-      UPDATE USERS set defits=defits+${defitsToAdd} where id=${user_id} 
+      UPDATE USERS set defits=defits+${defitsToAdd} where id=${user_id}
     `;
 
     const result4 = await sql`
@@ -197,7 +190,6 @@ export async function POST(req) {
       WHERE id = ${user_id}
     `;
 
-    //const test = Number(distributed_benef + distributed_upgrade + distributed_bonus + distributed_boost + distributed_bonus_to_credit);
     return Response.json({ message: '✅ Insert OK', starting_offered_liquidity, initial_user_liquidity, percent_global, percent, defit_percentage, available_fees, benef, upgrade, bonus, fees: boost, new_liquidity, walletUSDC, distributed_bonus_to_credit, walletPool });
 
   } catch (err) {
@@ -208,4 +200,3 @@ export async function POST(req) {
     });
   }
 }
-

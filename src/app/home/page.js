@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 import { FaRunning, FaWalking } from "react-icons/fa";
+import { sqrtPercent } from "@/lib/percent";
 
 export default function Home() {
 
@@ -32,13 +33,13 @@ export default function Home() {
       ]);
       const wallet = await wRes.json();
       const distrib = await dRes.json();
-      const disponible = Number(wallet.usdc) - Number(distrib.total);
-      const nameMap = { "1": "Usopp", "2": "DTeach", "3": "Nico Robin", "4": "Jinbe" };
-      const u = distrib.byUser?.find(r => r.name === nameMap[athleteId]);
+      const disponible = Number(wallet.usdc);
+      const u = distrib.byUser?.find(r => String(r.id) === String(athleteId));
       if (!u) { setBoostMax(null); return; }
-      const percent = (u.starting_offered_liquidity + u.initial_liquidity) / (100 + 135 + 885 + 60);
-      const val = 0.5 * ((100 + 135 + 885 + 60) / (2180.85 + 60)) * disponible * percent;
-      setBoostMax(val);
+      const allInvestValues = distrib.byUser.map(r => r.initial_liquidity);
+      const userInvest = u.initial_liquidity;
+      const percent = sqrtPercent(userInvest, allInvestValues);
+      setBoostMax(0.5 * disponible * percent);
     } catch (e) {
       console.error(e);
     }
@@ -159,7 +160,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-bold text-lg flex items-center gap-2">
                 <svg viewBox="0 0 24 24" fill="#FC4C02" className="w-5 h-5">
-                  <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169"/>
+                  <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169" />
                 </svg>
                 Activités récentes
               </h2>
@@ -171,32 +172,32 @@ export default function Home() {
               <ul className="flex flex-col gap-2 overflow-y-auto max-h-[55vh]">
                 {stravaActivities.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
                   const sd = new Date(a.start_date_local);
-                  const dateKey = `${sd.getFullYear()}-${String(sd.getMonth()+1).padStart(2,"0")}-${String(sd.getDate()).padStart(2,"0")}`;
-                  const timeKey = `${String(sd.getHours()).padStart(2,"0")}${String(sd.getMinutes()).padStart(2,"0")}${String(sd.getSeconds()).padStart(2,"0")}`;
+                  const dateKey = `${sd.getFullYear()}-${String(sd.getMonth() + 1).padStart(2, "0")}-${String(sd.getDate()).padStart(2, "0")}`;
+                  const timeKey = `${String(sd.getHours()).padStart(2, "0")}${String(sd.getMinutes()).padStart(2, "0")}${String(sd.getSeconds()).padStart(2, "0")}`;
                   const km = Math.round((a.distance / 1000) * 10);
                   const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
                   return (
-                  <li key={a.id} className={`flex items-center justify-between rounded-xl px-4 py-2.5 ${alreadyIn ? "bg-white/[0.02] opacity-40" : "bg-white/5"}`}>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 flex justify-center flex-shrink-0">{activityIcon[a.sport_type]}</div>
-                      <div className="flex flex-col">
-                        <span className="text-gray-400 text-xs">
-                          {new Date(a.start_date_local).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}
-                          {" · "}
-                          {new Date(a.start_date_local).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-                        </span>
+                    <li key={a.id} className={`flex items-center justify-between rounded-xl px-4 py-2.5 ${alreadyIn ? "bg-white/[0.02] opacity-40" : "bg-white/5"}`}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 flex justify-center flex-shrink-0">{activityIcon[a.sport_type]}</div>
+                        <div className="flex flex-col">
+                          <span className="text-gray-400 text-xs">
+                            {new Date(a.start_date_local).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}
+                            {" · "}
+                            {new Date(a.start_date_local).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[#FF8C5A] font-bold text-sm">{(a.distance / 1000).toFixed(2)} km</span>
-                      <a href={`https://www.strava.com/activities/${a.id}`} target="_blank" rel="noopener noreferrer"
-                        className="ml-2 text-white/60 hover:text-white transition-colors border border-white/30 hover:border-white/60 rounded p-1">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-5 h-5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
-                        </svg>
-                      </a>
-                    </div>
-                  </li>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#FF8C5A] font-bold text-sm">{(a.distance / 1000).toFixed(2)} km</span>
+                        <a href={`https://www.strava.com/activities/${a.id}`} target="_blank" rel="noopener noreferrer"
+                          className="ml-2 text-white/60 hover:text-white transition-colors border border-white/30 hover:border-white/60 rounded p-1">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-5 h-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
+                          </svg>
+                        </a>
+                      </div>
+                    </li>
                   );
                 })}
               </ul>
@@ -244,7 +245,7 @@ export default function Home() {
               : "text-[#FC4C02]/30 border-white/10 bg-white/5 cursor-not-allowed"}`}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-            <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169"/>
+            <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169" />
           </svg>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6 -ml-2 text-white/60">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />

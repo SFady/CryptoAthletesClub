@@ -24,9 +24,15 @@ export async function GET() {
     `;
 
     const liquidity = await sql`
-      SELECT id, starting_offered_liquidity, initial_liquidity
-      FROM users
-      ORDER BY id
+      SELECT
+        u.id,
+        u.starting_offered_liquidity,
+        COALESCE(SUM(i.price), 0) AS initial_liquidity
+      FROM users u
+      LEFT JOIN user_items ui ON ui.user = u.id
+      LEFT JOIN items i ON ui.item = i.id
+      GROUP BY u.id, u.starting_offered_liquidity
+      ORDER BY u.id
     `;
 
     const benef = Number(global.benef);
@@ -39,6 +45,7 @@ export async function GET() {
       byUser: byUser.map(r => {
         const liq = liquidity.find(l => l.id === r.id);
         return {
+          id:   r.id,
           name: r.name,
           starting_offered_liquidity: Number(liq?.starting_offered_liquidity ?? 0),
           initial_liquidity: Number(liq?.initial_liquidity ?? 0),
