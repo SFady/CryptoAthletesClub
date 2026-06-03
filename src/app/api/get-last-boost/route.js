@@ -6,7 +6,7 @@ export async function GET(req) {
 
   try {
     const [row] = await sql`
-      SELECT id, boost, bonus
+      SELECT id, boost, bonus, benef
       FROM user_activities
       WHERE user_id = ${userId}
       ORDER BY date_claimed DESC, id DESC
@@ -16,6 +16,7 @@ export async function GET(req) {
       activityId: row?.id ?? null,
       boost:      row ? Number(row.boost) : 0,
       bonus:      row ? Number(row.bonus) : 0,
+      benef:      row ? Number(row.benef) : 0,
     });
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });

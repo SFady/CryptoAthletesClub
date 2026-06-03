@@ -46,6 +46,7 @@ export default function Position() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [lastBoost, setLastBoost]       = useState("");
   const [lastBonus, setLastBonus]       = useState("");
+  const [lastBenef, setLastBenef]       = useState("");
   const [activityId, setActivityId]     = useState(null);
   const [sending, setSending]           = useState(false);
   const [sendResult, setSendResult]     = useState(null);
@@ -74,6 +75,7 @@ export default function Position() {
     setSelectedUser(user ?? null);
     setLastBoost("");
     setLastBonus("");
+    setLastBenef("");
     setActivityId(null);
     setSendResult(null);
     const y = savedScrollY.current;
@@ -81,7 +83,7 @@ export default function Position() {
     if (!userId) return;
     fetch(`/api/get-last-boost?userId=${userId}`)
       .then(r => r.json())
-      .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setActivityId(d.activityId ?? null); })
+      .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setLastBenef(d.benef ?? ""); setActivityId(d.activityId ?? null); })
       .catch(() => {});
   };
 
@@ -95,7 +97,8 @@ export default function Position() {
 
     const boost = Number(lastBoost);
     const bonus = Number(lastBonus);
-    if (boost <= 0 && bonus <= 0) {
+    const benef = Number(lastBenef);
+    if (boost <= 0 && bonus <= 0 && benef <= 0) {
       setSendResult({ error: "Montants invalides" });
       return;
     }
@@ -111,6 +114,7 @@ export default function Position() {
           activityId,
           boostAmount: boost,
           bonusAmount: bonus,
+          benefAmount: benef,
         }),
       });
       const data = await res.json();
@@ -144,7 +148,7 @@ export default function Position() {
         setSelectedUser(list[0]);
         fetch(`/api/get-last-boost?userId=${list[0].id}`)
           .then(r => r.json())
-          .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setActivityId(d.activityId ?? null); })
+          .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setLastBenef(d.benef ?? ""); setActivityId(d.activityId ?? null); })
           .catch(() => {});
       }
     }).catch(() => {});
@@ -278,7 +282,7 @@ export default function Position() {
               )}
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               <div className="flex flex-col gap-1">
                 <label className="text-gray-400 text-xs uppercase tracking-wide">Boost (USDC)</label>
                 <input
@@ -288,7 +292,7 @@ export default function Position() {
                   value={lastBoost}
                   onChange={e => setLastBoost(e.target.value)}
                   placeholder="0.00"
-                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-36"
+                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-32"
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -300,7 +304,19 @@ export default function Position() {
                   value={lastBonus}
                   onChange={e => setLastBonus(e.target.value)}
                   placeholder="0.00"
-                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-36"
+                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-32"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-gray-400 text-xs uppercase tracking-wide">Benef (USDC)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={lastBenef}
+                  onChange={e => setLastBenef(e.target.value)}
+                  placeholder="0.00"
+                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-32"
                 />
               </div>
             </div>
@@ -324,6 +340,7 @@ export default function Position() {
                   : <>
                       {sendResult.txBoost && <span>✓ Boost — {sendResult.txBoost}</span>}
                       {sendResult.txBonus && <span>✓ Bonus — {sendResult.txBonus}</span>}
+                      {sendResult.txBenef && <span>✓ Benef — {sendResult.txBenef}</span>}
                     </>
                 }
               </div>

@@ -50,20 +50,26 @@ export async function POST(request) {
     return Response.json({ error: "Body JSON invalide" }, { status: 400 });
   }
 
-  const { userId, activityId, boostAmount, bonusAmount } = body ?? {};
+  const { userId, activityId, boostAmount, bonusAmount, benefAmount } = body ?? {};
 
   if (!userId)     return Response.json({ error: "userId requis" },     { status: 400 });
   if (!activityId) return Response.json({ error: "activityId requis" }, { status: 400 });
 
   const boost = Number(boostAmount);
   const bonus = Number(bonusAmount);
-  if (boost <= 0 && bonus <= 0) {
+  const benef = Number(benefAmount);
+  if (boost <= 0 && bonus <= 0 && benef <= 0) {
     return Response.json({ error: "Montants invalides" }, { status: 400 });
   }
 
   const [user] = await sql`SELECT wallet_address, name FROM users WHERE id = ${userId}`;
-  if (!user?.wallet_address) {
+  if (boost > 0 && !user?.wallet_address) {
     return Response.json({ error: "Wallet non configuré pour cet utilisateur" }, { status: 400 });
+  }
+
+  const [user1] = await sql`SELECT wallet_address FROM users WHERE id = 1`;
+  if (benef > 0 && !user1?.wallet_address) {
+    return Response.json({ error: "Wallet non configuré pour l'utilisateur 1" }, { status: 400 });
   }
 
   const bonusWallet = process.env.WALLET_BONUS;
@@ -82,18 +88,19 @@ export async function POST(request) {
     const wallet   = new ethers.Wallet(privateKey, provider);
     const usdc     = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, wallet);
 
-    const totalRaw = ethers.parseUnits((boost + bonus).toFixed(USDC_DECIMALS), USDC_DECIMALS);
+    const totalRaw = ethers.parseUnits((boost + bonus + benef).toFixed(USDC_DECIMALS), USDC_DECIMALS);
     const balance  = await usdc.balanceOf(wallet.address);
     if (balance < totalRaw) {
       return Response.json({
         error:     "Solde USDC insuffisant",
         balance:   ethers.formatUnits(balance, USDC_DECIMALS),
-        requested: boost + bonus,
+        requested: boost + bonus + benef,
       }, { status: 400 });
     }
 
     let txBoost = null;
     let txBonus = null;
+    let txBenef = null;
 
     if (boost > 0) {
       txBoost = await sendUsdc(usdc, user.wallet_address, boost);
@@ -105,11 +112,17 @@ export async function POST(request) {
       await sql`UPDATE user_activities SET tx_bonus = ${txBonus} WHERE id = ${activityId}`;
     }
 
+    if (benef > 0 && user1?.wallet_address) {
+      txBenef = await sendUsdc(usdc, user1.wallet_address, benef);
+      await sql`UPDATE user_activities SET tx_benef = ${txBenef} WHERE id = ${activityId}`;
+    }
+
     return Response.json({
-      success:    true,
-      user:       user.name,
+      success: true,
+      user:    user.name,
       txBoost,
       txBonus,
+      txBenef,
     });
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });
