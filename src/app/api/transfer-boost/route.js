@@ -38,51 +38,54 @@ async function pickRpc() {
 async function sendUsdc(usdc, to, amount) {
   const raw     = ethers.parseUnits(Number(amount).toFixed(USDC_DECIMALS), USDC_DECIMALS);
   const tx      = await usdc.transfer(to, raw);
-  const receipt = await tx.wait();
+  const receipt = await Promise.race([
+    tx.wait(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error(`Timeout confirmation tx vers ${to}`)), 90_000)),
+  ]);
   return receipt.hash;
 }
 
 export async function POST(request) {
-  let body;
   try {
-    body = await request.json();
-  } catch {
-    return Response.json({ error: "Body JSON invalide" }, { status: 400 });
-  }
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return Response.json({ error: "Body JSON invalide" }, { status: 400 });
+    }
 
-  const { userId, activityId, boostAmount, bonusAmount, benefAmount } = body ?? {};
+    const { userId, activityId, boostAmount, bonusAmount, benefAmount } = body ?? {};
 
-  if (!userId)     return Response.json({ error: "userId requis" },     { status: 400 });
-  if (!activityId) return Response.json({ error: "activityId requis" }, { status: 400 });
+    if (!userId)     return Response.json({ error: "userId requis" },     { status: 400 });
+    if (!activityId) return Response.json({ error: "activityId requis" }, { status: 400 });
 
-  const boost = Number(boostAmount);
-  const bonus = Number(bonusAmount);
-  const benef = Number(benefAmount);
-  if (boost <= 0 && bonus <= 0 && benef <= 0) {
-    return Response.json({ error: "Montants invalides" }, { status: 400 });
-  }
+    const boost = Number(boostAmount);
+    const bonus = Number(bonusAmount);
+    const benef = Number(benefAmount);
+    if (boost <= 0 && bonus <= 0 && benef <= 0) {
+      return Response.json({ error: "Montants invalides" }, { status: 400 });
+    }
 
-  const [user] = await sql`SELECT wallet_address, name FROM users WHERE id = ${userId}`;
-  if (boost > 0 && !user?.wallet_address) {
-    return Response.json({ error: "Wallet non configuré pour cet utilisateur" }, { status: 400 });
-  }
+    const [user]  = await sql`SELECT wallet_address, name FROM users WHERE id = ${userId}`;
+    const [user1] = await sql`SELECT wallet_address FROM users WHERE id = 1`;
 
-  const [user1] = await sql`SELECT wallet_address FROM users WHERE id = 1`;
-  if (benef > 0 && !user1?.wallet_address) {
-    return Response.json({ error: "Wallet non configuré pour l'utilisateur 1" }, { status: 400 });
-  }
+    if (boost > 0 && !user?.wallet_address) {
+      return Response.json({ error: "Wallet non configuré pour cet utilisateur" }, { status: 400 });
+    }
+    if (benef > 0 && !user1?.wallet_address) {
+      return Response.json({ error: "Wallet non configuré pour l'utilisateur 1" }, { status: 400 });
+    }
 
-  const bonusWallet = process.env.WALLET_BONUS;
-  if (bonus > 0 && !bonusWallet) {
-    return Response.json({ error: "Clé WALLET_BONUS non configurée" }, { status: 400 });
-  }
+    const bonusWallet = process.env.WALLET_BONUS;
+    if (bonus > 0 && !bonusWallet) {
+      return Response.json({ error: "Clé WALLET_BONUS non configurée" }, { status: 400 });
+    }
 
-  const privateKey = process.env.WALLET_PRIVATE_KEY;
-  if (!privateKey) {
-    return Response.json({ error: "Clé privée non configurée (WALLET_PRIVATE_KEY)" }, { status: 500 });
-  }
+    const privateKey = process.env.WALLET_PRIVATE_KEY;
+    if (!privateKey) {
+      return Response.json({ error: "Clé privée non configurée (WALLET_PRIVATE_KEY)" }, { status: 500 });
+    }
 
-  try {
     const rpcUrl   = await pickRpc();
     const provider = new ethers.JsonRpcProvider(rpcUrl);
     const wallet   = new ethers.Wallet(privateKey, provider);
@@ -117,13 +120,8 @@ export async function POST(request) {
       await sql`UPDATE user_activities SET tx_benef = ${txBenef} WHERE id = ${activityId}`;
     }
 
-    return Response.json({
-      success: true,
-      user:    user.name,
-      txBoost,
-      txBonus,
-      txBenef,
-    });
+    return Response.json({ success: true, user: user.name, txBoost, txBonus, txBenef });
+
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });
   }
