@@ -19,7 +19,7 @@ export default function Home() {
   const { price: defitPrice } = useDefitPrice();
 
   const [open, setOpen] = useState(false);
-  const [showDefits, setShowDefits] = useState(true);
+  const [showDefits, setShowDefits] = useState(false);
   const [boostMax, setBoostMax] = useState(null);
   const [stravaConnected, setStravaConnected] = useState(false);
   const [stravaActivities, setStravaActivities] = useState(null);
@@ -76,7 +76,7 @@ export default function Home() {
     localStorage.setItem("selectedAthlete", finalId);
     fetchDefitAmount(finalId);
     fetchBoostMax(finalId);
-    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setShowDefits(d.value !== 'false')).catch(() => {});
+    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setShowDefits(d.value === 'true')).catch(() => {});
 
     try {
       const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");

@@ -26,7 +26,7 @@ export default function Home() {
   const [activity2, setActivity2] = useState(0);
   const [activity3, setActivity3] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const [defitsEnabled, setDefitsEnabled] = useState(true);
+  const [defitsEnabled, setDefitsEnabled] = useState(false);
 
   const fetchTotals = async (period, act) => {
     try {
@@ -65,7 +65,7 @@ export default function Home() {
     setActivity3(Number(localStorage.getItem("statsActivityDefits")) || 0);
     setMounted(true);
     fetchBonus();
-    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value !== 'false')).catch(() => {});
+    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value === 'true')).catch(() => {});
   }, []);
 
   useEffect(() => { if (!mounted) return; fetchTotals(selected, activity); localStorage.setItem("statsPeriodGains", selected); localStorage.setItem("statsActivityGains", activity); }, [mounted, selected, activity]);

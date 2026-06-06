@@ -20,7 +20,7 @@ export default function Home() {
   const sentinelRef = useRef(null);
 
   const [showGains, setShowGains] = useState(false);
-  const [defitsEnabled, setDefitsEnabled] = useState(true);
+  const [defitsEnabled, setDefitsEnabled] = useState(false);
 
   const loadActivities = async (userId, pageNum, reset = false) => {
     if (loadingRef.current) return;
@@ -48,7 +48,7 @@ export default function Home() {
   useEffect(() => {
     setIsClient(true);
     loadActivities("0", 1, true);
-    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value !== 'false')).catch(() => {});
+    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value === 'true')).catch(() => {});
   }, []);
 
   useEffect(() => {
