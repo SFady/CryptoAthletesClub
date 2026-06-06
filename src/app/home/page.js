@@ -19,6 +19,7 @@ export default function Home() {
   const { price: defitPrice } = useDefitPrice();
 
   const [open, setOpen] = useState(false);
+  const [showDefits, setShowDefits] = useState(true);
   const [boostMax, setBoostMax] = useState(null);
   const [stravaConnected, setStravaConnected] = useState(false);
   const [stravaActivities, setStravaActivities] = useState(null);
@@ -75,6 +76,7 @@ export default function Home() {
     localStorage.setItem("selectedAthlete", finalId);
     fetchDefitAmount(finalId);
     fetchBoostMax(finalId);
+    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setShowDefits(d.value !== 'false')).catch(() => {});
 
     try {
       const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
@@ -337,7 +339,7 @@ export default function Home() {
       <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-4 mb-4 w-full max-w-sm md:max-w-[550px] mx-auto">
         <table className="w-full text-base">
           <tbody>
-            <tr className="border-b border-white/20">
+            {showDefits && <tr className="border-b border-white/20">
               <td className="py-2 px-2">
                 <span className="inline-flex items-center">
                   DEFIT
@@ -372,7 +374,7 @@ export default function Home() {
                   maximumFractionDigits: 2,
                 }) + " $" ?? "..."}
               </td>
-            </tr>
+            </tr>}
             <tr className="border-b border-white/20">
               <td className="py-2 px-2">Améliorations</td>
               <td className="py-2 px-2 text-right font-semibold">

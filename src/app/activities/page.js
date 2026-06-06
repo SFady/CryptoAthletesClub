@@ -20,6 +20,7 @@ export default function Home() {
   const sentinelRef = useRef(null);
 
   const [showGains, setShowGains] = useState(false);
+  const [defitsEnabled, setDefitsEnabled] = useState(true);
 
   const loadActivities = async (userId, pageNum, reset = false) => {
     if (loadingRef.current) return;
@@ -47,6 +48,7 @@ export default function Home() {
   useEffect(() => {
     setIsClient(true);
     loadActivities("0", 1, true);
+    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value !== 'false')).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -142,22 +144,24 @@ export default function Home() {
           <option value="4" className="bg-[#3b2d8a]">Jinbe</option>
         </select>
 
-        <div
-          className="flex items-center gap-2 text-white text-sm cursor-pointer select-none"
-          onClick={() => setShowGains(!showGains)}
-        >
-          <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${showGains ? "bg-[#D6C48A]" : "bg-white/20"}`}>
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showGains ? "translate-x-5" : "translate-x-0"}`} />
+        {defitsEnabled && (
+          <div
+            className="flex items-center gap-2 text-white text-sm cursor-pointer select-none"
+            onClick={() => setShowGains(!showGains)}
+          >
+            <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${showGains ? "bg-[#D6C48A]" : "bg-white/20"}`}>
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showGains ? "translate-x-5" : "translate-x-0"}`} />
+            </div>
+            Afficher les Defits&nbsp;
           </div>
-          Afficher les Defits&nbsp;
-        </div>
+        )}
       </div>
 
       {/* CARDS — mobile uniquement */}
       <div className="flex flex-col gap-5 mb-6 w-full md:hidden">
         {currentRows.map((row, idx) => {
           const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100);
-          const gainDefit = showGains ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
+          const gainDefit = (defitsEnabled && showGains) ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
           return (
             <div key={row.id} className={`rounded-2xl shadow-lg px-4 py-3 text-white border border-white/10 ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}>
               {/* Header */}
@@ -189,7 +193,7 @@ export default function Home() {
                     <span className="opacity-70 font-normal">Boost</span>
                     <span className="font-semibold">{Number(row.boost).toFixed(2)} $</span>
                   </span>
-                  {showGains && (
+                  {defitsEnabled && showGains && (
                     <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
                       <span className="opacity-70 font-normal">Defits</span>
                       <span className="font-semibold">{((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})</span>
@@ -221,7 +225,7 @@ export default function Home() {
                 <th className="py-3.5 px-5 font-semibold">Effort</th>
                 <th className="py-3.5 px-5 font-semibold">Distance (km)</th>
                 <th className="py-3.5 px-5 font-semibold">Vitesse</th>
-                {showGains && (
+                {defitsEnabled && showGains && (
                   <>
                     <th className="py-3.5 px-5 font-semibold">Gain brut (Defit)</th>
                     <th className="py-3.5 px-5 font-semibold">Gain net Defit ($)</th>
@@ -234,7 +238,7 @@ export default function Home() {
             <tbody>
               {currentRows.map((row, idx) => {
                 const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100);
-                const gainDefit = showGains ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
+                const gainDefit = (defitsEnabled && showGains) ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
                 return (
                   <tr
                     key={row.id}
@@ -254,7 +258,7 @@ export default function Home() {
                     <td className="py-4 px-5 text-gray-200 whitespace-nowrap">
                       {pace(row.duration, row.kilometers, row.activity_name) ?? <span className="text-white/30">—</span>}
                     </td>
-                    {showGains && (
+                    {defitsEnabled && showGains && (
                       <>
                         <td className="py-4 px-5 text-gray-200">{row.defit_amount}</td>
                         <td className="py-4 px-5 text-gray-200">

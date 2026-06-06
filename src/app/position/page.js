@@ -41,6 +41,7 @@ export default function Position() {
   const [clmLoading, setClmLoading] = useState(true);
   const [distrib, setDistrib]       = useState(null);
   const [boostPending, setBoostPending] = useState(0);
+  const [showGains, setShowGains] = useState(false);
   const [users, setUsers]               = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [lastBoost, setLastBoost]       = useState("");
@@ -147,6 +148,7 @@ export default function Position() {
       if (user !== "usopp") { router.replace("/home"); return; }
     } catch { router.replace("/home"); return; }
     fetch("/api/wallet").then(r => r.json()).then(setWallet).catch(() => {});
+    fetch("/api/app-config?key=show_defits").then(r => r.json()).then(d => setShowGains(d.value === 'true')).catch(() => {});
     fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => {});
     fetch("/api/get-user-boost?userId=1").then(r => r.json()).then(d => setBoostPending(d.boost_pending ?? 0)).catch(() => {});
     fetch("/api/get-users").then(r => r.json()).then(list => {
@@ -384,6 +386,24 @@ export default function Position() {
               </div>
             )}
 
+          </div>
+        </Card>
+
+        <Card icon="⚙️" title="Option Defits">
+          <div className="p-5">
+            <div
+              className="flex items-center gap-2 text-white text-sm cursor-pointer select-none"
+              onClick={() => {
+                const next = !showGains;
+                setShowGains(next);
+                fetch('/api/app-config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: 'show_defits', value: next }) }).catch(() => {});
+              }}
+            >
+              <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${showGains ? "bg-[#D6C48A]" : "bg-white/20"}`}>
+                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showGains ? "translate-x-5" : "translate-x-0"}`} />
+              </div>
+              Afficher les Defits
+            </div>
           </div>
         </Card>
 

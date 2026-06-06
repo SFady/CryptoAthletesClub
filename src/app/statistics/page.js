@@ -26,6 +26,7 @@ export default function Home() {
   const [activity2, setActivity2] = useState(0);
   const [activity3, setActivity3] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [defitsEnabled, setDefitsEnabled] = useState(true);
 
   const fetchTotals = async (period, act) => {
     try {
@@ -64,6 +65,7 @@ export default function Home() {
     setActivity3(Number(localStorage.getItem("statsActivityDefits")) || 0);
     setMounted(true);
     fetchBonus();
+    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value !== 'false')).catch(() => {});
   }, []);
 
   useEffect(() => { if (!mounted) return; fetchTotals(selected, activity); localStorage.setItem("statsPeriodGains", selected); localStorage.setItem("statsActivityGains", activity); }, [mounted, selected, activity]);
@@ -230,7 +232,7 @@ export default function Home() {
         </Card>
 
         {/* GAINS (DEFITS) */}
-        <Card
+        {defitsEnabled && <Card
           icon="💰"
           title={<>Gains Defit <span className="text-[#D6C48A] font-bold normal-case tracking-normal ml-1">({defitPrice?.toFixed(4) ?? "…"} $)</span></>}
         >
@@ -246,7 +248,7 @@ export default function Home() {
               },
             ]}
           />
-        </Card>
+        </Card>}
 
       </div>
     </main>
