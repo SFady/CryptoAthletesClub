@@ -12,11 +12,11 @@ const RPC_URLS = [
 ];
 
 async function sendUsdc(toAddress, amountUsdc) {
-  if (!process.env.PRIVATE_KEY || !toAddress || amountUsdc <= 0) return null;
+  if (!process.env.WALLET_PRIVATE_KEY || !toAddress || amountUsdc <= 0) return null;
   for (const rpc of RPC_URLS) {
     try {
       const provider = new ethers.JsonRpcProvider(rpc);
-      const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+      const signer = new ethers.Wallet(process.env.WALLET_PRIVATE_KEY, provider);
       const usdc = new ethers.Contract(
         USDC_ADDRESS,
         ['function transfer(address to, uint256 amount) returns (bool)'],

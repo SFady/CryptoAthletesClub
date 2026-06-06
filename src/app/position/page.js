@@ -125,7 +125,7 @@ export default function Position() {
       ]);
       const data      = await res.json();
       const bonusData = await bonusRes.json();
-      setSendResult({ ...data, bonusResults: bonusData.results ?? [] });
+      setSendResult({ ...data, bonusResults: bonusData.results ?? [], bonusMsg: bonusData.error ?? bonusData.message ?? null });
     } catch (err) {
       setSendResult({ error: err.message });
     } finally {
@@ -378,6 +378,7 @@ export default function Position() {
                           {r.tx_bonus3 && <>✓ Bonus3 #{r.id} — {r.tx_bonus3}</>}
                         </span>
                       ))}
+                      {sendResult.bonusMsg && <span className="text-yellow-300">⚠ Bonus2/3 : {sendResult.bonusMsg}</span>}
                     </>
                 }
               </div>
