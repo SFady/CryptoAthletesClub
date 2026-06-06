@@ -41,11 +41,12 @@ export default function Position() {
   const [clmLoading, setClmLoading] = useState(true);
   const [distrib, setDistrib]       = useState(null);
   const [boostPending, setBoostPending] = useState(0);
-
   const [users, setUsers]               = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [lastBoost, setLastBoost]       = useState("");
   const [lastBonus, setLastBonus]       = useState("");
+  const [lastBonus2, setLastBonus2]     = useState("");
+  const [lastBonus3, setLastBonus3]     = useState("");
   const [lastBenef, setLastBenef]       = useState("");
   const [activityId, setActivityId]     = useState(null);
   const [sending, setSending]           = useState(false);
@@ -83,7 +84,7 @@ export default function Position() {
     if (!userId) return;
     fetch(`/api/get-last-boost?userId=${userId}`)
       .then(r => r.json())
-      .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setLastBenef(d.benef ?? ""); setActivityId(d.activityId ?? null); })
+      .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setLastBonus2(d.bonus2 ?? ""); setLastBonus3(d.bonus3 ?? ""); setLastBenef(d.benef ?? ""); setActivityId(d.activityId ?? null); })
       .catch(() => {});
   };
 
@@ -95,10 +96,12 @@ export default function Position() {
     clearInterval(confirmTimer.current);
     setConfirming(false);
 
-    const boost = Number(lastBoost);
-    const bonus = Number(lastBonus);
-    const benef = Number(lastBenef);
-    if (boost <= 0 && bonus <= 0 && benef <= 0) {
+    const boost  = Number(lastBoost);
+    const bonus  = Number(lastBonus);
+    const bonus2 = Number(lastBonus2);
+    const bonus3 = Number(lastBonus3);
+    const benef  = Number(lastBenef);
+    if (boost <= 0 && bonus <= 0 && benef <= 0 && bonus2 <= 0 && bonus3 <= 0) {
       setSendResult({ error: "Montants invalides" });
       return;
     }
@@ -106,19 +109,23 @@ export default function Position() {
     setSending(true);
     setSendResult(null);
     try {
-      const res = await fetch("/api/transfer-boost", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId:      selectedUser.id,
-          activityId,
-          boostAmount: boost,
-          bonusAmount: bonus,
-          benefAmount: benef,
+      const [res, bonusRes] = await Promise.all([
+        fetch("/api/transfer-boost", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId:      selectedUser.id,
+            activityId,
+            boostAmount: boost,
+            bonusAmount: bonus,
+            benefAmount: benef,
+          }),
         }),
-      });
-      const data = await res.json();
-      setSendResult(data);
+        fetch("/api/send-bonus", { method: "POST" }),
+      ]);
+      const data      = await res.json();
+      const bonusData = await bonusRes.json();
+      setSendResult({ ...data, bonusResults: bonusData.results ?? [] });
     } catch (err) {
       setSendResult({ error: err.message });
     } finally {
@@ -148,7 +155,7 @@ export default function Position() {
         setSelectedUser(list[0]);
         fetch(`/api/get-last-boost?userId=${list[0].id}`)
           .then(r => r.json())
-          .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setLastBenef(d.benef ?? ""); setActivityId(d.activityId ?? null); })
+          .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setLastBonus2(d.bonus2 ?? ""); setLastBonus3(d.bonus3 ?? ""); setLastBenef(d.benef ?? ""); setActivityId(d.activityId ?? null); })
           .catch(() => {});
       }
     }).catch(() => {});
@@ -308,6 +315,30 @@ export default function Position() {
                 />
               </div>
               <div className="flex flex-col gap-1">
+                <label className="text-gray-400 text-xs uppercase tracking-wide">Bonus2 (USDC)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={lastBonus2}
+                  onChange={e => setLastBonus2(e.target.value)}
+                  placeholder="0.00"
+                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-32"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-gray-400 text-xs uppercase tracking-wide">Bonus3 (USDC)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={lastBonus3}
+                  onChange={e => setLastBonus3(e.target.value)}
+                  placeholder="0.00"
+                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 w-32"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
                 <label className="text-gray-400 text-xs uppercase tracking-wide">Benef (USDC)</label>
                 <input
                   type="number"
@@ -338,9 +369,15 @@ export default function Position() {
                 {sendResult.error
                   ? `Erreur : ${sendResult.error}`
                   : <>
-                      {sendResult.txBoost && <span>✓ Boost — {sendResult.txBoost}</span>}
-                      {sendResult.txBonus && <span>✓ Bonus — {sendResult.txBonus}</span>}
-                      {sendResult.txBenef && <span>✓ Benef — {sendResult.txBenef}</span>}
+                      {sendResult.txBoost  && <span>✓ Boost — {sendResult.txBoost}</span>}
+                      {sendResult.txBonus  && <span>✓ Bonus — {sendResult.txBonus}</span>}
+                      {sendResult.txBenef  && <span>✓ Benef — {sendResult.txBenef}</span>}
+                      {sendResult.bonusResults?.map(r => (
+                        <span key={r.id}>
+                          {r.tx_bonus2 && <>✓ Bonus2 #{r.id} — {r.tx_bonus2}<br/></>}
+                          {r.tx_bonus3 && <>✓ Bonus3 #{r.id} — {r.tx_bonus3}</>}
+                        </span>
+                      ))}
                     </>
                 }
               </div>

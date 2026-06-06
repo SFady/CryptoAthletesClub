@@ -144,6 +144,9 @@ export async function POST(req) {
     let upgrade = 0;
     let bonus = 0.10 * percent * percent_global * available_fees;
     let boost = 0.50 * percent * percent_global * available_fees;
+    let bonus2 = 0.10 * percent * percent_global * available_fees;
+    let bonus3 = 0.10 * percent * percent_global * available_fees;
+
     //let repair = 0.10 * percent * percent_global * available_fees;
     let repair = 0;
     benef = Math.floor(benef * 100) / 100;
@@ -151,6 +154,9 @@ export async function POST(req) {
     bonus = Math.floor(bonus * 100) / 100;
     boost = Math.floor(boost * 100) / 100;
     repair = Math.floor(repair * 100) / 100;
+    bonus2 = Math.floor(bonus2 * 100) / 100;
+    bonus3 = Math.floor(bonus3 * 100) / 100;
+
 
 
 
@@ -172,8 +178,8 @@ export async function POST(req) {
     // Insert
 
     const result = await sql`
-      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus, liquidity_repair, pool_usdc, pool_weth, rewards_usdc, rewards_weth, duration)
-        VALUES ( ${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${0}, ${benef}, ${upgrade}, ${bonus}, ${repair}, ${walletUSDC}, ${0}, ${0}, ${0}, ${duration});
+      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus, liquidity_repair, pool_usdc, pool_weth, rewards_usdc, rewards_weth, duration, bonus2, bonus3)
+        VALUES (${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${0}, ${benef}, ${upgrade}, ${bonus}, ${repair}, ${walletUSDC}, ${0}, ${0}, ${0}, ${duration}, ${bonus2}, ${bonus3});
     `;
 
     const result2 = await sql`
