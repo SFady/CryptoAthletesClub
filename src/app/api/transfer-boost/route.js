@@ -36,13 +36,9 @@ async function pickRpc() {
 }
 
 async function sendUsdc(usdc, to, amount) {
-  const raw     = ethers.parseUnits(Number(amount).toFixed(USDC_DECIMALS), USDC_DECIMALS);
-  const tx      = await usdc.transfer(to, raw);
-  const receipt = await Promise.race([
-    tx.wait(),
-    new Promise((_, reject) => setTimeout(() => reject(new Error(`Timeout confirmation tx vers ${to}`)), 90_000)),
-  ]);
-  return receipt.hash;
+  const raw = ethers.parseUnits(Number(amount).toFixed(USDC_DECIMALS), USDC_DECIMALS);
+  const tx  = await usdc.transfer(to, raw);
+  return tx.hash;
 }
 
 export async function POST(request) {
