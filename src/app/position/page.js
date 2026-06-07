@@ -131,7 +131,10 @@ export default function Position() {
       ]);
       const data      = await safeJson(res);
       const bonusData = await safeJson(bonusRes);
-      setSendResult({ ...data, bonusResults: bonusData.results ?? [], bonusMsg: bonusData.error ?? bonusData.message ?? null });
+      const bonusDebug = bonusData.debug;
+      const bonusMsg = bonusData.error
+        ?? (bonusData.message ? `${bonusData.message}${bonusDebug ? ` (id=${bonusDebug.id} bonus2=${bonusDebug.bonus2} tx2=${bonusDebug.tx_bonus2})` : ''}` : null);
+      setSendResult({ ...data, bonusResults: bonusData.results ?? [], bonusMsg });
     } catch (err) {
       setSendResult({ error: err.message });
     } finally {

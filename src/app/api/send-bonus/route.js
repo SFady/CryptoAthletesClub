@@ -71,7 +71,10 @@ export async function POST(req) {
         AND tx_bonus3 IS NULL
     `;
 
-    if (pending.length === 0) return Response.json({ message: 'Rien à envoyer' });
+    if (pending.length === 0) {
+      const [row] = await sql`SELECT id, bonus2, bonus3, tx_bonus2, tx_bonus3 FROM user_activities WHERE id = ${activityId} LIMIT 1`;
+      return Response.json({ message: 'Rien à envoyer', debug: row ?? null });
+    }
 
     const rpcUrl  = await pickRpc();
     const provider = new ethers.JsonRpcProvider(rpcUrl);
