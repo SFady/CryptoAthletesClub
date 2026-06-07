@@ -110,6 +110,11 @@ export default function Position() {
     setSending(true);
     setSendResult(null);
     try {
+      const safeJson = async (r) => {
+        const text = await r.text();
+        try { return JSON.parse(text); } catch { return { error: text.slice(0, 120) }; }
+      };
+
       const [res, bonusRes] = await Promise.all([
         fetch("/api/transfer-boost", {
           method: "POST",
@@ -124,8 +129,8 @@ export default function Position() {
         }),
         fetch("/api/send-bonus", { method: "POST" }),
       ]);
-      const data      = await res.json();
-      const bonusData = await bonusRes.json();
+      const data      = await safeJson(res);
+      const bonusData = await safeJson(bonusRes);
       setSendResult({ ...data, bonusResults: bonusData.results ?? [], bonusMsg: bonusData.error ?? bonusData.message ?? null });
     } catch (err) {
       setSendResult({ error: err.message });
