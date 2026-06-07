@@ -42,9 +42,17 @@ async function withTimeout(promise, ms, label) {
   ]);
 }
 
-async function sendUsdc(usdc, to, amount) {
+async function sendUsdc(usdc, to, amount, nonce, feeData) {
   const raw = ethers.parseUnits(Number(amount).toFixed(USDC_DECIMALS), USDC_DECIMALS);
-  const tx  = await withTimeout(usdc.transfer(to, raw), 15000, `transfer vers ${to}`);
+  const tx  = await withTimeout(
+    usdc.transfer(to, raw, {
+      nonce,
+      maxFeePerGas:         feeData.maxFeePerGas         * 2n,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2n,
+    }),
+    15000,
+    `transfer vers ${to}`
+  );
   return tx.hash;
 }
 
@@ -95,7 +103,11 @@ export async function POST(request) {
     const usdc     = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, wallet);
 
     const totalRaw = ethers.parseUnits((boost + bonus + benef).toFixed(USDC_DECIMALS), USDC_DECIMALS);
-    const balance  = await withTimeout(usdc.balanceOf(wallet.address), 8000, "balanceOf");
+    const [balance, feeData, startNonce] = await Promise.all([
+      withTimeout(usdc.balanceOf(wallet.address), 8000, "balanceOf"),
+      withTimeout(provider.getFeeData(), 8000, "getFeeData"),
+      withTimeout(provider.getTransactionCount(wallet.address, "pending"), 8000, "getNonce"),
+    ]);
     if (balance < totalRaw) {
       return Response.json({
         error:     "Solde USDC insuffisant",
@@ -104,14 +116,14 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    // Transactions séquentielles (nonce géré par ethers)
     let txBoost = null;
     let txBonus = null;
     let txBenef = null;
+    let nonce = startNonce;
 
-    if (boost > 0)                  txBoost = await sendUsdc(usdc, user.wallet_address,  boost);
-    if (bonus > 0 && bonusWallet)   txBonus = await sendUsdc(usdc, bonusWallet,          bonus);
-    if (benef > 0 && user1?.wallet_address) txBenef = await sendUsdc(usdc, user1.wallet_address, benef);
+    if (boost > 0)                          { txBoost = await sendUsdc(usdc, user.wallet_address,       boost, nonce++, feeData); }
+    if (bonus > 0 && bonusWallet)           { txBonus = await sendUsdc(usdc, bonusWallet,               bonus, nonce++, feeData); }
+    if (benef > 0 && user1?.wallet_address) { txBenef = await sendUsdc(usdc, user1.wallet_address,      benef, nonce++, feeData); }
 
     // Mise à jour DB en une seule requête
     await sql`
