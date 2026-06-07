@@ -40,6 +40,7 @@ async function sendUsdc(usdc, toAddress, amountUsdc, nonce, feeData) {
   const tx = await withTimeout(
     usdc.transfer(toAddress, BigInt(Math.round(amountUsdc * 1e6)), {
       nonce,
+      gasLimit:             100_000n,
       maxFeePerGas:         feeData.maxFeePerGas         * 2n,
       maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2n,
     }),
@@ -49,8 +50,11 @@ async function sendUsdc(usdc, toAddress, amountUsdc, nonce, feeData) {
   return tx.hash;
 }
 
-export async function POST() {
+export async function POST(req) {
   try {
+    const { activityId } = await req.json().catch(() => ({}));
+    if (!activityId) return Response.json({ error: 'activityId requis' }, { status: 400 });
+
     const privateKey = process.env.WALLET_PRIVATE_KEY;
     if (!privateKey) return Response.json({ error: 'WALLET_PRIVATE_KEY manquant' }, { status: 500 });
 
@@ -61,10 +65,10 @@ export async function POST() {
     const pending = await sql`
       SELECT id, bonus2, bonus3
       FROM user_activities
-      WHERE (bonus2 > 0 OR bonus3 > 0)
+      WHERE id = ${activityId}
+        AND (bonus2 > 0 OR bonus3 > 0)
         AND tx_bonus2 IS NULL
         AND tx_bonus3 IS NULL
-      ORDER BY id
     `;
 
     if (pending.length === 0) return Response.json({ message: 'Rien à envoyer' });

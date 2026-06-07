@@ -127,7 +127,7 @@ export default function Position() {
             benefAmount: benef,
           }),
         }),
-        fetch("/api/send-bonus", { method: "POST" }),
+        fetch("/api/send-bonus", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ activityId }) }),
       ]);
       const data      = await safeJson(res);
       const bonusData = await safeJson(bonusRes);

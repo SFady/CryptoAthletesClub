@@ -47,6 +47,7 @@ async function sendUsdc(usdc, to, amount, nonce, feeData) {
   const tx  = await withTimeout(
     usdc.transfer(to, raw, {
       nonce,
+      gasLimit:             100_000n,
       maxFeePerGas:         feeData.maxFeePerGas         * 2n,
       maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2n,
     }),
