@@ -121,19 +121,18 @@ export async function POST(request) {
     let txBenef = null;
     let nonce = startNonce;
 
-    if (boost > 0)                          { txBoost = await sendUsdc(usdc, user.wallet_address,       boost, nonce++, feeData); }
-    if (bonus > 0 && bonusWallet)           { txBonus = await sendUsdc(usdc, bonusWallet,               bonus, nonce++, feeData); }
-    if (benef > 0 && user1?.wallet_address) { txBenef = await sendUsdc(usdc, user1.wallet_address,      benef, nonce++, feeData); }
-
-    // Mise à jour DB en une seule requête
-    await sql`
-      UPDATE user_activities
-      SET
-        tx_boost = COALESCE(${txBoost}, tx_boost),
-        tx_bonus = COALESCE(${txBonus}, tx_bonus),
-        tx_benef = COALESCE(${txBenef}, tx_benef)
-      WHERE id = ${activityId}
-    `;
+    if (boost > 0) {
+      txBoost = await sendUsdc(usdc, user.wallet_address, boost, nonce++, feeData);
+      await sql`UPDATE user_activities SET tx_boost = ${txBoost} WHERE id = ${activityId}`;
+    }
+    if (bonus > 0 && bonusWallet) {
+      txBonus = await sendUsdc(usdc, bonusWallet, bonus, nonce++, feeData);
+      await sql`UPDATE user_activities SET tx_bonus = ${txBonus} WHERE id = ${activityId}`;
+    }
+    if (benef > 0 && user1?.wallet_address) {
+      txBenef = await sendUsdc(usdc, user1.wallet_address, benef, nonce++, feeData);
+      await sql`UPDATE user_activities SET tx_benef = ${txBenef} WHERE id = ${activityId}`;
+    }
 
     return Response.json({ success: true, user: user.name, txBoost, txBonus, txBenef });
 

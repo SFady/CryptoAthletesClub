@@ -88,13 +88,11 @@ export async function POST() {
 
     for (const row of pending) {
       const tx_bonus2 = await sendUsdc(usdc, user1Wallet, Number(row.bonus2), nonce++, feeData).catch(() => null);
+      if (tx_bonus2) await sql`UPDATE user_activities SET tx_bonus2 = ${tx_bonus2} WHERE id = ${row.id}`;
+
       const tx_bonus3 = await sendUsdc(usdc, user1Wallet, Number(row.bonus3), nonce++, feeData).catch(() => null);
-      await sql`
-        UPDATE user_activities
-        SET tx_bonus2 = COALESCE(${tx_bonus2}, tx_bonus2),
-            tx_bonus3 = COALESCE(${tx_bonus3}, tx_bonus3)
-        WHERE id = ${row.id}
-      `;
+      if (tx_bonus3) await sql`UPDATE user_activities SET tx_bonus3 = ${tx_bonus3} WHERE id = ${row.id}`;
+
       results.push({ id: row.id, tx_bonus2, tx_bonus3 });
     }
 
