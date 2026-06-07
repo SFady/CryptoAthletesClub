@@ -1,5 +1,5 @@
 export const runtime     = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 import sql from '@/lib/db';
 import { ethers } from 'ethers';
@@ -9,24 +9,35 @@ const RPC_URLS = [
   'https://base.drpc.org',
   'https://base-rpc.publicnode.com',
   'https://mainnet.base.org',
+  'https://base.gateway.tenderly.co',
+  'https://1rpc.io/base',
 ];
 
-async function sendUsdc(toAddress, amountUsdc) {
+async function pickRpc() {
+  return Promise.any(
+    RPC_URLS.map(url =>
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_blockNumber', params: [] }),
+        signal: AbortSignal.timeout(4000),
+      })
+        .then(r => r.json())
+        .then(json => { if (!json.result) throw new Error('no result'); return url; })
+    )
+  ).catch(() => { throw new Error('Aucun RPC disponible'); });
+}
+
+async function sendUsdc(provider, toAddress, amountUsdc) {
   if (!process.env.WALLET_PRIVATE_KEY || !toAddress || amountUsdc <= 0) return null;
-  for (const rpc of RPC_URLS) {
-    try {
-      const provider = new ethers.JsonRpcProvider(rpc);
-      const signer = new ethers.Wallet(process.env.WALLET_PRIVATE_KEY, provider);
-      const usdc = new ethers.Contract(
-        USDC_ADDRESS,
-        ['function transfer(address to, uint256 amount) returns (bool)'],
-        signer
-      );
-      const tx = await usdc.transfer(toAddress, BigInt(Math.round(amountUsdc * 1e6)));
-      return tx.hash;
-    } catch { /* essayer le suivant */ }
-  }
-  return null;
+  const signer = new ethers.Wallet(process.env.WALLET_PRIVATE_KEY, provider);
+  const usdc = new ethers.Contract(
+    USDC_ADDRESS,
+    ['function transfer(address to, uint256 amount) returns (bool)'],
+    signer
+  );
+  const tx = await usdc.transfer(toAddress, BigInt(Math.round(amountUsdc * 1e6)));
+  return tx.hash;
 }
 
 export async function POST() {
@@ -46,11 +57,14 @@ export async function POST() {
 
     if (pending.length === 0) return Response.json({ message: 'Rien à envoyer' });
 
+    const rpcUrl  = await pickRpc();
+    const provider = new ethers.JsonRpcProvider(rpcUrl);
+
     const results = [];
     for (const row of pending) {
       const [tx_bonus2, tx_bonus3] = await Promise.all([
-        sendUsdc(user1Wallet, Number(row.bonus2)),
-        sendUsdc(user1Wallet, Number(row.bonus3)),
+        sendUsdc(provider, user1Wallet, Number(row.bonus2)).catch(() => null),
+        sendUsdc(provider, user1Wallet, Number(row.bonus3)).catch(() => null),
       ]);
       await sql`
         UPDATE user_activities
