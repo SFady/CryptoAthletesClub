@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import sql from "@/lib/db";
 
 export const runtime     = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 30;
 
 const USDC_ADDRESS  = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const USDC_DECIMALS = 6;
@@ -35,9 +35,16 @@ async function pickRpc() {
   ).catch(() => { throw new Error("Aucun RPC disponible"); });
 }
 
+async function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(`Timeout ${label}`)), ms)),
+  ]);
+}
+
 async function sendUsdc(usdc, to, amount) {
   const raw = ethers.parseUnits(Number(amount).toFixed(USDC_DECIMALS), USDC_DECIMALS);
-  const tx  = await usdc.transfer(to, raw);
+  const tx  = await withTimeout(usdc.transfer(to, raw), 15000, `transfer vers ${to}`);
   return tx.hash;
 }
 
@@ -88,7 +95,7 @@ export async function POST(request) {
     const usdc     = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, wallet);
 
     const totalRaw = ethers.parseUnits((boost + bonus + benef).toFixed(USDC_DECIMALS), USDC_DECIMALS);
-    const balance  = await usdc.balanceOf(wallet.address);
+    const balance  = await withTimeout(usdc.balanceOf(wallet.address), 8000, "balanceOf");
     if (balance < totalRaw) {
       return Response.json({
         error:     "Solde USDC insuffisant",
@@ -97,24 +104,24 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
+    // Transactions séquentielles (nonce géré par ethers)
     let txBoost = null;
     let txBonus = null;
     let txBenef = null;
 
-    if (boost > 0) {
-      txBoost = await sendUsdc(usdc, user.wallet_address, boost);
-      await sql`UPDATE user_activities SET tx_boost = ${txBoost} WHERE id = ${activityId}`;
-    }
+    if (boost > 0)                  txBoost = await sendUsdc(usdc, user.wallet_address,  boost);
+    if (bonus > 0 && bonusWallet)   txBonus = await sendUsdc(usdc, bonusWallet,          bonus);
+    if (benef > 0 && user1?.wallet_address) txBenef = await sendUsdc(usdc, user1.wallet_address, benef);
 
-    if (bonus > 0 && bonusWallet) {
-      txBonus = await sendUsdc(usdc, bonusWallet, bonus);
-      await sql`UPDATE user_activities SET tx_bonus = ${txBonus} WHERE id = ${activityId}`;
-    }
-
-    if (benef > 0 && user1?.wallet_address) {
-      txBenef = await sendUsdc(usdc, user1.wallet_address, benef);
-      await sql`UPDATE user_activities SET tx_benef = ${txBenef} WHERE id = ${activityId}`;
-    }
+    // Mise à jour DB en une seule requête
+    await sql`
+      UPDATE user_activities
+      SET
+        tx_boost = COALESCE(${txBoost}, tx_boost),
+        tx_bonus = COALESCE(${txBonus}, tx_bonus),
+        tx_benef = COALESCE(${txBenef}, tx_benef)
+      WHERE id = ${activityId}
+    `;
 
     return Response.json({ success: true, user: user.name, txBoost, txBonus, txBenef });
 
