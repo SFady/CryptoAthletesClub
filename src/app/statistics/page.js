@@ -65,7 +65,7 @@ export default function Home() {
     setActivity3(Number(localStorage.getItem("statsActivityDefits")) || 0);
     setMounted(true);
     fetchBonus();
-    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value === 'true')).catch(() => {});
+    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value === 'true')).catch(() => { });
   }, []);
 
   useEffect(() => { if (!mounted) return; fetchTotals(selected, activity); localStorage.setItem("statsPeriodGains", selected); localStorage.setItem("statsActivityGains", activity); }, [mounted, selected, activity]);
@@ -198,7 +198,7 @@ export default function Home() {
       <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 xl:items-start">
 
         {/* BONUS EN COURS */}
-        <Card icon="🎯" title="Bonus en cours" subtitle="du 01/06 au 07/06" className="xl:col-span-2">
+        <Card icon="🎯" title="Bonus en cours" subtitle="du 08/06 au 14/06" className="xl:col-span-2">
           <p className="text-center text-gray-200 text-sm">
             Meilleure distance running hebdomadaire :{" "}
             <span className="text-[#D6C48A] font-bold ml-1">
