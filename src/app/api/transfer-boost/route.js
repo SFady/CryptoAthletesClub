@@ -42,19 +42,28 @@ async function withTimeout(promise, ms, label) {
   ]);
 }
 
-async function sendUsdc(usdc, to, amount, nonce, feeData) {
+const USDC_ABI = ["function transfer(address to, uint256 amount) returns (bool)"];
+
+async function sendUsdc(privateKey, to, amount, nonce, feeData) {
   const raw = ethers.parseUnits(Number(amount).toFixed(USDC_DECIMALS), USDC_DECIMALS);
-  const tx  = await withTimeout(
-    usdc.transfer(to, raw, {
-      nonce,
-      gasLimit:             100_000n,
-      maxFeePerGas:         feeData.maxFeePerGas         * 2n,
-      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2n,
-    }),
-    15000,
-    `transfer vers ${to}`
-  );
-  return tx.hash;
+  const overrides = {
+    nonce,
+    gasLimit:             100_000n,
+    maxFeePerGas:         feeData.maxFeePerGas         * 2n,
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2n,
+  };
+  return Promise.any(
+    RPC_URLS.map(async url => {
+      const provider = new ethers.JsonRpcProvider(url);
+      const signer   = new ethers.Wallet(privateKey, provider);
+      const usdc     = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
+      return withTimeout(
+        usdc.transfer(to, raw, overrides).then(tx => tx.hash),
+        12000,
+        `transfer ${url}`
+      );
+    })
+  ).catch(err => { throw new Error(`Tous les RPCs ont échoué : ${err.errors?.[0]?.message ?? err.message}`); });
 }
 
 export async function POST(request) {
@@ -101,11 +110,11 @@ export async function POST(request) {
     const rpcUrl   = await pickRpc();
     const provider = new ethers.JsonRpcProvider(rpcUrl);
     const wallet   = new ethers.Wallet(privateKey, provider);
-    const usdc     = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, wallet);
+    const usdcRead = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, wallet);
 
     const totalRaw = ethers.parseUnits((boost + bonus + benef).toFixed(USDC_DECIMALS), USDC_DECIMALS);
     const [balance, feeData, startNonce] = await Promise.all([
-      withTimeout(usdc.balanceOf(wallet.address), 8000, "balanceOf"),
+      withTimeout(usdcRead.balanceOf(wallet.address), 8000, "balanceOf"),
       withTimeout(provider.getFeeData(), 8000, "getFeeData"),
       withTimeout(provider.getTransactionCount(wallet.address, "pending"), 8000, "getNonce"),
     ]);
@@ -123,15 +132,15 @@ export async function POST(request) {
     let nonce = startNonce;
 
     if (boost > 0) {
-      txBoost = await sendUsdc(usdc, user.wallet_address, boost, nonce++, feeData);
+      txBoost = await sendUsdc(privateKey, user.wallet_address, boost, nonce++, feeData);
       await sql`UPDATE user_activities SET tx_boost = ${txBoost} WHERE id = ${activityId}`;
     }
     if (bonus > 0 && bonusWallet) {
-      txBonus = await sendUsdc(usdc, bonusWallet, bonus, nonce++, feeData);
+      txBonus = await sendUsdc(privateKey, bonusWallet, bonus, nonce++, feeData);
       await sql`UPDATE user_activities SET tx_bonus = ${txBonus} WHERE id = ${activityId}`;
     }
     if (benef > 0 && user1?.wallet_address) {
-      txBenef = await sendUsdc(usdc, user1.wallet_address, benef, nonce++, feeData);
+      txBenef = await sendUsdc(privateKey, user1.wallet_address, benef, nonce++, feeData);
       await sql`UPDATE user_activities SET tx_benef = ${txBenef} WHERE id = ${activityId}`;
     }
 

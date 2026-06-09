@@ -35,19 +35,29 @@ async function withTimeout(promise, ms, label) {
   ]);
 }
 
-async function sendUsdc(usdc, toAddress, amountUsdc, nonce, feeData) {
+const USDC_ABI = ['function transfer(address to, uint256 amount) returns (bool)'];
+
+async function sendUsdc(privateKey, toAddress, amountUsdc, nonce, feeData) {
   if (!toAddress || amountUsdc <= 0) return null;
-  const tx = await withTimeout(
-    usdc.transfer(toAddress, BigInt(Math.round(amountUsdc * 1e6)), {
-      nonce,
-      gasLimit:             100_000n,
-      maxFeePerGas:         feeData.maxFeePerGas         * 2n,
-      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2n,
-    }),
-    15000,
-    `transfer vers ${toAddress}`
-  );
-  return tx.hash;
+  const raw = BigInt(Math.round(amountUsdc * 1e6));
+  const overrides = {
+    nonce,
+    gasLimit:             100_000n,
+    maxFeePerGas:         feeData.maxFeePerGas         * 2n,
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2n,
+  };
+  return Promise.any(
+    RPC_URLS.map(async url => {
+      const provider = new ethers.JsonRpcProvider(url);
+      const signer   = new ethers.Wallet(privateKey, provider);
+      const usdc     = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
+      return withTimeout(
+        usdc.transfer(toAddress, raw, overrides).then(tx => tx.hash),
+        12000,
+        `transfer ${url}`
+      );
+    })
+  ).catch(() => null);
 }
 
 export async function POST(req) {
@@ -76,28 +86,23 @@ export async function POST(req) {
       return Response.json({ message: 'Rien à envoyer', debug: row ?? null });
     }
 
-    const rpcUrl  = await pickRpc();
+    const rpcUrl   = await pickRpc();
     const provider = new ethers.JsonRpcProvider(rpcUrl);
-    const signer   = new ethers.Wallet(privateKey, provider);
-    const usdc     = new ethers.Contract(
-      USDC_ADDRESS,
-      ['function transfer(address to, uint256 amount) returns (bool)'],
-      signer
-    );
+    const signerAddr = new ethers.Wallet(privateKey).address;
 
     const [feeData, startNonce] = await Promise.all([
       withTimeout(provider.getFeeData(), 8000, 'getFeeData'),
-      withTimeout(provider.getTransactionCount(signer.address, 'pending'), 8000, 'getNonce'),
+      withTimeout(provider.getTransactionCount(signerAddr, 'pending'), 8000, 'getNonce'),
     ]);
 
     const results = [];
     let nonce = startNonce;
 
     for (const row of pending) {
-      const tx_bonus2 = await sendUsdc(usdc, user1Wallet, Number(row.bonus2), nonce++, feeData).catch(() => null);
+      const tx_bonus2 = await sendUsdc(privateKey, user1Wallet, Number(row.bonus2), nonce++, feeData);
       if (tx_bonus2) await sql`UPDATE user_activities SET tx_bonus2 = ${tx_bonus2} WHERE id = ${row.id}`;
 
-      const tx_bonus3 = await sendUsdc(usdc, user1Wallet, Number(row.bonus3), nonce++, feeData).catch(() => null);
+      const tx_bonus3 = await sendUsdc(privateKey, user1Wallet, Number(row.bonus3), nonce++, feeData);
       if (tx_bonus3) await sql`UPDATE user_activities SET tx_bonus3 = ${tx_bonus3} WHERE id = ${row.id}`;
 
       results.push({ id: row.id, tx_bonus2, tx_bonus3 });
