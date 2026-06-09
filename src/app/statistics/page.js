@@ -17,7 +17,6 @@ export default function Home() {
   const [totals, setTotals] = useState([]);
   const [totals2, setTotals2] = useState([]);
   const [totals3, setTotals3] = useState([]);
-  const [bonus, setBonus] = useState([]);
   const [walletBonus, setWalletBonus] = useState(null);
 
   const [selected, setSelected] = useState(1);
@@ -50,12 +49,6 @@ export default function Home() {
     } catch (e) { console.error("Erreur fetchTotals3:", e); }
   };
 
-  const fetchBonus = async () => {
-    try {
-      const res = await fetch(`/api/get-weekly-distance-bonus`);
-      setBonus((await res.json()) || []);
-    } catch (e) { console.error("Erreur fetchBonus:", e); }
-  };
 
   useEffect(() => {
     setSelected(Number(localStorage.getItem("statsPeriodGains")) || 1);
@@ -65,7 +58,6 @@ export default function Home() {
     setActivity2(Number(localStorage.getItem("statsActivityDistance")) || 0);
     setActivity3(Number(localStorage.getItem("statsActivityDefits")) || 0);
     setMounted(true);
-    fetchBonus();
     fetch('/api/wallet-bonus').then(r => r.json()).then(d => setWalletBonus(d.usdc ?? null)).catch(() => {});
     fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value === 'true')).catch(() => { });
   }, []);
@@ -201,20 +193,12 @@ export default function Home() {
 
         {/* BONUS EN COURS */}
         <Card icon="🎯" title="Bonus en cours" subtitle="du 08/06 au 14/06" className="xl:col-span-2">
-          <div className="flex flex-col items-center gap-1 text-sm text-gray-200">
-            <p>
-              Meilleure distance running hebdomadaire :{" "}
-              <span className="text-[#D6C48A] font-bold ml-1">
-                {bonus[0]?.bonus ? Number(bonus[0].bonus).toFixed(2) : "…"} $
-              </span>
-            </p>
-            <p>
-              Cagnotte bonus :{" "}
-              <span className="text-[#D6C48A] font-bold ml-1">
-                {walletBonus !== null ? `${walletBonus} $` : "…"}
-              </span>
-            </p>
-          </div>
+          <p className="text-center text-gray-200 text-sm">
+            Meilleure distance running hebdomadaire :{" "}
+            <span className="text-[#D6C48A] font-bold ml-1">
+              {walletBonus !== null ? `${walletBonus} $` : "…"}
+            </span>
+          </p>
         </Card>
 
         {/* GAINS ($) */}
