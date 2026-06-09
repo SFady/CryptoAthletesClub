@@ -115,21 +115,26 @@ export default function Position() {
         try { return JSON.parse(text); } catch { return { error: text.slice(0, 120) }; }
       };
 
-      const [res, bonusRes] = await Promise.all([
-        fetch("/api/transfer-boost", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId:      selectedUser.id,
-            activityId,
-            boostAmount: boost,
-            bonusAmount: bonus,
-            benefAmount: benef,
-          }),
+      // Toujours récupérer le dernier activityId avant d'envoyer
+      const freshId = await fetch(`/api/get-last-boost?userId=${selectedUser.id}`)
+        .then(r => r.json()).then(d => d.activityId).catch(() => activityId);
+      if (freshId) setActivityId(freshId);
+      const currentActivityId = freshId ?? activityId;
+
+      const res  = await fetch("/api/transfer-boost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId:      selectedUser.id,
+          activityId:  currentActivityId,
+          boostAmount: boost,
+          bonusAmount: bonus,
+          benefAmount: benef,
         }),
-        fetch("/api/send-bonus", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ activityId }) }),
-      ]);
-      const data      = await safeJson(res);
+      });
+      const data = await safeJson(res);
+
+      const bonusRes  = await fetch("/api/send-bonus", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ activityId: currentActivityId }) });
       const bonusData = await safeJson(bonusRes);
       const bonusDebug = bonusData.debug;
       const bonusMsg = bonusData.error
