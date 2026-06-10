@@ -134,7 +134,7 @@ export default function Position() {
       });
       const data = await safeJson(res);
 
-      const bonusRes  = await fetch("/api/send-bonus", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ activityId: currentActivityId }) });
+      const bonusRes  = await fetch("/api/send-bonus", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ activityId: currentActivityId, minNonce: data.nextNonce ?? undefined }) });
       const bonusData = await safeJson(bonusRes);
       const bonusDebug = bonusData.debug;
       const bonusMsg = bonusData.error

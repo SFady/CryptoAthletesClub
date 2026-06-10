@@ -144,7 +144,7 @@ export async function POST(request) {
       await sql`UPDATE user_activities SET tx_benef = ${txBenef} WHERE id = ${activityId}`;
     }
 
-    return Response.json({ success: true, user: user.name, txBoost, txBonus, txBenef });
+    return Response.json({ success: true, user: user.name, txBoost, txBonus, txBenef, nextNonce: nonce });
 
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });

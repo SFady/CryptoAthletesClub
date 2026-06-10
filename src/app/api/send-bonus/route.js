@@ -62,7 +62,7 @@ async function sendUsdc(privateKey, toAddress, amountUsdc, nonce, feeData) {
 
 export async function POST(req) {
   try {
-    const { activityId } = await req.json().catch(() => ({}));
+    const { activityId, minNonce } = await req.json().catch(() => ({}));
     if (!activityId) return Response.json({ error: 'activityId requis' }, { status: 400 });
 
     const privateKey = process.env.WALLET_PRIVATE_KEY;
@@ -90,10 +90,11 @@ export async function POST(req) {
     const provider = new ethers.JsonRpcProvider(rpcUrl);
     const signerAddr = new ethers.Wallet(privateKey).address;
 
-    const [feeData, startNonce] = await Promise.all([
+    const [feeData, pendingNonce] = await Promise.all([
       withTimeout(provider.getFeeData(), 8000, 'getFeeData'),
       withTimeout(provider.getTransactionCount(signerAddr, 'pending'), 8000, 'getNonce'),
     ]);
+    const startNonce = (minNonce != null && minNonce > pendingNonce) ? minNonce : pendingNonce;
 
     const results = [];
     let nonce = startNonce;
