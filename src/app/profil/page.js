@@ -19,6 +19,7 @@ export default function Profil() {
   const goBack = useBackToMain();
   const searchParams = useSearchParams();
   const [userId, setUserId] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [email, setEmail] = useState("");
   const [saved, setSaved] = useState(false);
   const [stravaConnected, setStravaConnected] = useState(false);
@@ -38,6 +39,7 @@ export default function Profil() {
       const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
       const id = USER_ID_MAP[user];
       setUserId(id);
+      setCurrentUser(user ?? null);
       if (id) {
         fetch(`/api/profil?id=${id}`, { headers: authHeader() })
           .then(r => r.json())
@@ -94,7 +96,12 @@ export default function Profil() {
       <div className="w-full max-w-sm flex flex-col gap-4">
 
         {/* Email */}
-        <div className="flex flex-col gap-1">
+        <div className="relative flex flex-col gap-1">
+          {currentUser !== 'usopp' && (
+            <div className="absolute inset-0 z-10 rounded-xl backdrop-blur-[1px] bg-black/30 flex items-center justify-center">
+              <span className="text-xs text-gray-400 bg-black/60 px-3 py-1.5 rounded-lg">Modification réservée à Usopp</span>
+            </div>
+          )}
           <label className="text-sm text-gray-300">&nbsp;Adresse e-mail</label>
           <div className="flex gap-2">
             <input

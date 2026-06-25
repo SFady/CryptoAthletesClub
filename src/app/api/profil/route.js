@@ -32,6 +32,7 @@ export async function POST(req) {
   }
 
   if (email !== undefined) {
+    if (username !== 'usopp') return Response.json({ error: 'Non autorisé' }, { status: 403 });
     await sql`UPDATE users SET email = ${email} WHERE id = ${id}`;
   }
 
