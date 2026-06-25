@@ -1,6 +1,10 @@
 import sql from '@/lib/db';
+import { requireAuth } from '@/lib/auth';
 
 export async function GET(req) {
+  const username = await requireAuth(req);
+  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+
   const key = new URL(req.url).searchParams.get('key');
   if (!key) return Response.json({ error: 'key requis' }, { status: 400 });
   try {
@@ -12,6 +16,9 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  const username = await requireAuth(req);
+  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+
   try {
     const { key, value } = await req.json();
     if (!key) return Response.json({ error: 'key requis' }, { status: 400 });

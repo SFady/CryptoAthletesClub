@@ -1,6 +1,10 @@
 import sql from "@/lib/db";
+import { requireAuth } from "@/lib/auth";
 
 export async function GET(req) {
+  const username = await requireAuth(req);
+  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+
   const id = new URL(req.url).searchParams.get("id");
   if (!id) return Response.json({ error: "missing id" }, { status: 400 });
   const [row] = await sql`SELECT email, token, wallet_address FROM users WHERE id = ${id}`;
@@ -14,6 +18,9 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  const username = await requireAuth(req);
+  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+
   const { id, email, walletAddress, stravaClientId, stravaClientSecret } = await req.json();
   if (!id) return Response.json({ error: "missing id" }, { status: 400 });
 

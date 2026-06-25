@@ -6,6 +6,13 @@ import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 import { FaRunning, FaWalking } from "react-icons/fa";
 import { sqrtPercent } from "@/lib/percent";
 
+function authHeader() {
+  try {
+    const { token } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch { return {}; }
+}
+
 export default function Home() {
 
   const [defitAmount, setDefitAmount] = useState(0);
@@ -76,13 +83,13 @@ export default function Home() {
     localStorage.setItem("selectedAthlete", finalId);
     fetchDefitAmount(finalId);
     fetchBoostMax(finalId);
-    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setShowDefits(d.value === 'true')).catch(() => {});
+    fetch('/api/app-config?key=show_defits', { headers: authHeader() }).then(r => r.json()).then(d => setShowDefits(d.value === 'true')).catch(() => {});
 
     try {
       const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
       const userId = USER_ID_MAP[user];
       if (userId) {
-        fetch(`/api/profil?id=${userId}`)
+        fetch(`/api/profil?id=${userId}`, { headers: authHeader() })
           .then(r => r.json())
           .then(d => setStravaConnected(!!d.stravaConnected));
       }

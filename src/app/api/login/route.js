@@ -1,3 +1,5 @@
+import sql from '@/lib/db';
+
 const USERS = {
   usopp:    process.env.PASSWORD_USOPP     ?? "usopp2024",
   nicor:    process.env.PASSWORD_NICOR     ?? "nicor2024",
@@ -21,6 +23,7 @@ export async function POST(req) {
     if (h1 !== h2) return Response.json({ ok: false }, { status: 401 });
 
     const token = await sha256(expected + Date.now());
+    await sql`INSERT INTO auth_sessions (token, username) VALUES (${token}, ${user}) ON CONFLICT (token) DO NOTHING`.catch(() => {});
     return Response.json({ ok: true, token, user });
   } catch (err) {
     return Response.json({ ok: false, error: err.message }, { status: 500 });

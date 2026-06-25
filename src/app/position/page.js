@@ -33,6 +33,13 @@ const SubHeader = ({ children }) => (
   </tr>
 );
 
+function authHeader() {
+  try {
+    const { token } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch { return {}; }
+}
+
 export default function Position() {
   const router = useRouter();
   const goBack = useBackToMain();
@@ -83,7 +90,7 @@ export default function Position() {
     const y = savedScrollY.current;
     requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: y, behavior: "instant" })));
     if (!userId) return;
-    fetch(`/api/get-last-boost?userId=${userId}`)
+    fetch(`/api/get-last-boost?userId=${userId}`, { headers: authHeader() })
       .then(r => r.json())
       .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setLastBonus2(d.bonus2 ?? ""); setLastBonus3(d.bonus3 ?? ""); setLastBenef(d.benef ?? ""); setActivityId(d.activityId ?? null); })
       .catch(() => {});
@@ -116,14 +123,14 @@ export default function Position() {
       };
 
       // Toujours récupérer le dernier activityId avant d'envoyer
-      const freshId = await fetch(`/api/get-last-boost?userId=${selectedUser.id}`)
+      const freshId = await fetch(`/api/get-last-boost?userId=${selectedUser.id}`, { headers: authHeader() })
         .then(r => r.json()).then(d => d.activityId).catch(() => activityId);
       if (freshId) setActivityId(freshId);
       const currentActivityId = freshId ?? activityId;
 
       const res  = await fetch("/api/transfer-boost", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeader() },
         body: JSON.stringify({
           userId:      selectedUser.id,
           activityId:  currentActivityId,
@@ -134,7 +141,7 @@ export default function Position() {
       });
       const data = await safeJson(res);
 
-      const bonusRes  = await fetch("/api/send-bonus", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ activityId: currentActivityId, minNonce: data.nextNonce ?? undefined }) });
+      const bonusRes  = await fetch("/api/send-bonus", { method: "POST", headers: { "Content-Type": "application/json", ...authHeader() }, body: JSON.stringify({ activityId: currentActivityId, minNonce: data.nextNonce ?? undefined }) });
       const bonusData = await safeJson(bonusRes);
       const bonusDebug = bonusData.debug;
       const bonusMsg = bonusData.error
@@ -161,14 +168,14 @@ export default function Position() {
       if (user !== "usopp") { router.replace("/home"); return; }
     } catch { router.replace("/home"); return; }
     fetch("/api/wallet").then(r => r.json()).then(setWallet).catch(() => {});
-    fetch("/api/app-config?key=show_defits").then(r => r.json()).then(d => setShowGains(d.value === 'true')).catch(() => {});
+    fetch("/api/app-config?key=show_defits", { headers: authHeader() }).then(r => r.json()).then(d => setShowGains(d.value === 'true')).catch(() => {});
     fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => {});
     fetch("/api/get-user-boost?userId=1").then(r => r.json()).then(d => setBoostPending(d.boost_pending ?? 0)).catch(() => {});
-    fetch("/api/get-users").then(r => r.json()).then(list => {
+    fetch("/api/get-users", { headers: authHeader() }).then(r => r.json()).then(list => {
       setUsers(list);
       if (list.length > 0) {
         setSelectedUser(list[0]);
-        fetch(`/api/get-last-boost?userId=${list[0].id}`)
+        fetch(`/api/get-last-boost?userId=${list[0].id}`, { headers: authHeader() })
           .then(r => r.json())
           .then(d => { setLastBoost(d.boost ?? ""); setLastBonus(d.bonus ?? ""); setLastBonus2(d.bonus2 ?? ""); setLastBonus3(d.bonus3 ?? ""); setLastBenef(d.benef ?? ""); setActivityId(d.activityId ?? null); })
           .catch(() => {});
@@ -409,7 +416,7 @@ export default function Position() {
               onClick={() => {
                 const next = !showGains;
                 setShowGains(next);
-                fetch('/api/app-config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: 'show_defits', value: next }) }).catch(() => {});
+                fetch('/api/app-config', { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeader() }, body: JSON.stringify({ key: 'show_defits', value: next }) }).catch(() => {});
               }}
             >
               <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${showGains ? "bg-[#D6C48A]" : "bg-white/20"}`}>

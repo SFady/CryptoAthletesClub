@@ -3,6 +3,7 @@ export const maxDuration = 30;
 
 import sql from '@/lib/db';
 import { ethers } from 'ethers';
+import { requireAuth } from '@/lib/auth';
 
 const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
 const RPC_URLS = [
@@ -61,6 +62,9 @@ async function sendUsdc(privateKey, toAddress, amountUsdc, nonce, feeData) {
 }
 
 export async function POST(req) {
+  const username = await requireAuth(req);
+  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+
   try {
     const { activityId, minNonce } = await req.json().catch(() => ({}));
     if (!activityId) return Response.json({ error: 'activityId requis' }, { status: 400 });

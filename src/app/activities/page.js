@@ -4,6 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 import { FaRunning, FaSwimmer, FaBiking, FaWalking, FaStar } from "react-icons/fa";
 
+function authHeader() {
+  try {
+    const { token } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch { return {}; }
+}
+
 export default function Home() {
   const [rows, setRows] = useState([]);
   const [isClient, setIsClient] = useState(false);
@@ -48,7 +55,7 @@ export default function Home() {
   useEffect(() => {
     setIsClient(true);
     loadActivities("0", 1, true);
-    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value === 'true')).catch(() => {});
+    fetch('/api/app-config?key=show_defits', { headers: authHeader() }).then(r => r.json()).then(d => setDefitsEnabled(d.value === 'true')).catch(() => {});
   }, []);
 
   useEffect(() => {

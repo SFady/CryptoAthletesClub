@@ -8,6 +8,13 @@ const USER_ID_MAP = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" };
 
 const inputCls = "flex-1 min-w-0 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30 text-sm";
 
+function authHeader() {
+  try {
+    const { token } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch { return {}; }
+}
+
 export default function Profil() {
   const goBack = useBackToMain();
   const searchParams = useSearchParams();
@@ -32,7 +39,7 @@ export default function Profil() {
       const id = USER_ID_MAP[user];
       setUserId(id);
       if (id) {
-        fetch(`/api/profil?id=${id}`)
+        fetch(`/api/profil?id=${id}`, { headers: authHeader() })
           .then(r => r.json())
           .then(d => {
             setEmail(d.email ?? "");
@@ -49,7 +56,7 @@ export default function Profil() {
     if (!userId) return;
     await fetch("/api/profil", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeader() },
       body: JSON.stringify({ id: userId, email }),
     });
     setSaved(true);
@@ -60,7 +67,7 @@ export default function Profil() {
     if (!userId || !clientId || !clientSecret) return;
     await fetch("/api/profil", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeader() },
       body: JSON.stringify({ id: userId, stravaClientId: clientId, stravaClientSecret: clientSecret }),
     });
     setCredSaved(true);

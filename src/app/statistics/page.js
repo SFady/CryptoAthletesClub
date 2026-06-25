@@ -3,6 +3,13 @@
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 import { useEffect, useState } from "react";
 
+function authHeader() {
+  try {
+    const { token } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch { return {}; }
+}
+
 const ACTIVITIES = [
   { id: 0, label: "Tout" },
   { id: 1, label: "Running" },
@@ -59,7 +66,7 @@ export default function Home() {
     setActivity3(Number(localStorage.getItem("statsActivityDefits")) || 0);
     setMounted(true);
     fetch('/api/wallet-bonus').then(r => r.json()).then(d => setWalletBonus(d.usdc ?? null)).catch(() => { });
-    fetch('/api/app-config?key=show_defits').then(r => r.json()).then(d => setDefitsEnabled(d.value === 'true')).catch(() => { });
+    fetch('/api/app-config?key=show_defits', { headers: authHeader() }).then(r => r.json()).then(d => setDefitsEnabled(d.value === 'true')).catch(() => { });
   }, []);
 
   useEffect(() => { if (!mounted) return; fetchTotals(selected, activity); localStorage.setItem("statsPeriodGains", selected); localStorage.setItem("statsActivityGains", activity); }, [mounted, selected, activity]);

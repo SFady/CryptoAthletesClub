@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import sql from "@/lib/db";
+import { requireAuth } from "@/lib/auth";
 
 export const runtime     = "nodejs";
 export const maxDuration = 30;
@@ -67,6 +68,9 @@ async function sendUsdc(privateKey, to, amount, nonce, feeData) {
 }
 
 export async function POST(request) {
+  const username = await requireAuth(request);
+  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+
   try {
     let body;
     try {
