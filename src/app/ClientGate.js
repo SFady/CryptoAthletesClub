@@ -45,8 +45,8 @@ const MESSAGES = [
                 <GiTrophy className="w-16 h-16 shrink-0 mt-1 text-[#D6C48A]" />
                 <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
                     <li>Grand vainqueur de la plus longue distance de running hebdomadaire : Usopp</li>
-                    <li>Distance de 32.60  km.</li>
-                    <li>Prix exceptionnel de 3.84 $ !!!</li>
+                    <li>Distance de 21.20  km.</li>
+                    <li>Prix exceptionnel de 1.92 $ !!!</li>
                 </ul>
             </div>
         ),
