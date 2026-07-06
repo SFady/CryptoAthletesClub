@@ -37,16 +37,16 @@ const MESSAGES = [
     {
         key: "infoMessage_v1",
         title: "Félicitations",
-        startDate: new Date("2026-06-29T00:00:00"),
-        deadline: new Date("2026-07-05T00:00:00"),
+        startDate: new Date("2026-07-06T00:00:00"),
+        deadline: new Date("2026-07-12T00:00:00"),
         confetti: true,
         content: (
             <div className="flex items-start gap-4">
                 <GiTrophy className="w-16 h-16 shrink-0 mt-1 text-[#D6C48A]" />
                 <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
                     <li>Grand vainqueur de la plus longue distance de running hebdomadaire : Usopp</li>
-                    <li>Distance de 21.20  km.</li>
-                    <li>Prix exceptionnel de 1.92 $ !!!</li>
+                    <li>Distance de 15.05  km.</li>
+                    <li>Prix exceptionnel de 1.64 $ !!!</li>
                 </ul>
             </div>
         ),
