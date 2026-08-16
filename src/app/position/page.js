@@ -110,7 +110,7 @@ export default function Position() {
     const bonus3 = Number(lastBonus3);
     const benef  = Number(lastBenef);
     if (boost <= 0 && bonus <= 0 && benef <= 0 && bonus2 <= 0 && bonus3 <= 0) {
-      setSendResult({ error: "Montants invalides" });
+      setSendResult({ error: "Invalid amounts" });
       return;
     }
 
@@ -204,15 +204,15 @@ export default function Position() {
           subtitle={clm?.pair ?? undefined}
           action={
             <div className="flex items-center gap-3">
-              {clm?.wethPrice && <span className="text-white/70 text-xs">ETH {Number(clm.wethPrice).toLocaleString("fr-FR")} $</span>}
+              {clm?.wethPrice && <span className="text-white/70 text-xs">ETH {Number(clm.wethPrice).toLocaleString("en-US")} $</span>}
               <button onClick={fetchClm} className="text-white/70 hover:text-white text-sm transition-colors">↻</button>
             </div>
           }
         >
           {clmLoading ? (
-            <div className="py-5 text-center text-gray-400 text-sm">Chargement…</div>
+            <div className="py-5 text-center text-gray-400 text-sm">Loading…</div>
           ) : clm?.error ? (
-            <div className="py-5 text-center text-rose-300 text-sm">Erreur : {clm.error}</div>
+            <div className="py-5 text-center text-rose-300 text-sm">Error: {clm.error}</div>
           ) : clm?.pair ? (
             <table className="w-full table-auto text-left border-collapse">
               <tbody>
@@ -225,12 +225,12 @@ export default function Position() {
                     )}
                   </td>
                 </tr>
-                <SubHeader>En position</SubHeader>
+                <SubHeader>In position</SubHeader>
                 {clm.pool.map((t, i) => (
                   <Row key={i} label={t.symbol} value={<><span className="text-white">{t.balance}</span><span className="text-gray-400 text-xs ml-2">~{t.usd} $</span></>} zebra={i % 2 === 0} />
                 ))}
                 <Row label="Total pool" value={`${clm.totalPoolUSD} $`} gold zebra />
-                <SubHeader>Frais non collectés</SubHeader>
+                <SubHeader>Uncollected fees</SubHeader>
                 {clm.fees.map((t, i) => (
                   <Row key={i} label={t.symbol} value={<><span className="text-white">{t.balance}</span><span className="text-gray-400 text-xs ml-2">~{t.usd} $</span></>} zebra={i % 2 === 0} />
                 ))}
@@ -238,7 +238,7 @@ export default function Position() {
               </tbody>
             </table>
           ) : (
-            <div className="py-5 text-center text-gray-400 text-sm">Position introuvable</div>
+            <div className="py-5 text-center text-gray-400 text-sm">Position not found</div>
           )}
         </Card>
 
@@ -248,8 +248,8 @@ export default function Position() {
             <table className="w-full table-auto text-left border-collapse">
               <tbody>
                 <SubHeader>Wallet</SubHeader>
-                <Row label="USDC"                value={`${wallet?.usdc ?? "—"} $`}      zebra />
-                <Row label="Frais non collectés" value={`${clm?.totalFeesUSD ?? "—"} $`} />
+                <Row label="USDC"              value={`${wallet?.usdc ?? "—"} $`}      zebra />
+                <Row label="Uncollected fees" value={`${clm?.totalFeesUSD ?? "—"} $`} />
               </tbody>
             </table>
           </Card>
@@ -257,10 +257,10 @@ export default function Position() {
 
         {/* ── RÉCAP ── */}
         {wallet && distrib && (
-          <Card icon="💰" title="Récap">
+          <Card icon="💰" title="Summary">
             <table className="w-full table-auto text-left border-collapse">
               <tbody>
-                <Row label="Disponible perso"
+                <Row label="Personal available"
                   value={`${(Number(wallet?.usdc ?? 0) * (1 - ((100 + 135 + 885 + (10 + 50)) / (2084.99 + (10 + 50)))) + Number(boostPending)).toFixed(2)} $`}
                   gold zebra />
                 {clm?.totalPoolUSD && (() => {
@@ -268,7 +268,7 @@ export default function Position() {
                   const pct = ((cur - ref) / ref) * 100; const up = pct >= 0;
                   return (
                     <tr className="border-b border-white/10 text-sm bg-white/5">
-                      <td className="py-2.5 px-5 text-gray-300">Évolution pool <span className="text-white text-xs">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></td>
+                      <td className="py-2.5 px-5 text-gray-300">Pool change <span className="text-white text-xs">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></td>
                       <td className={`py-2.5 px-5 text-right font-bold ${up ? "text-emerald-400" : "text-rose-400"}`}>{up ? "+" : ""}{pct.toFixed(2)} %</td>
                     </tr>
                   );
@@ -278,7 +278,7 @@ export default function Position() {
                   const pct = ((cur - ref) / ref) * 100; const up = pct >= 0;
                   return (
                     <tr className="text-sm bg-white/10">
-                      <td className="py-2.5 px-5 text-gray-300">Évolution ETH <span className="text-white text-xs">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></td>
+                      <td className="py-2.5 px-5 text-gray-300">ETH change <span className="text-white text-xs">{ref.toFixed(2)} → {cur.toFixed(2)} $</span></td>
                       <td className={`py-2.5 px-5 text-right font-bold ${up ? "text-emerald-400" : "text-rose-400"}`}>{up ? "+" : ""}{pct.toFixed(2)} %</td>
                     </tr>
                   );
@@ -289,11 +289,11 @@ export default function Position() {
         )}
 
         {/* ── TRANSFERT USDC ── */}
-        <Card icon="💸" title="Transfert USDC">
+        <Card icon="💸" title="USDC Transfer">
           <div className="p-5 flex flex-col gap-4">
 
             <div className="flex flex-col gap-1">
-              <label className="text-gray-400 text-xs uppercase tracking-wide">Utilisateur</label>
+              <label className="text-gray-400 text-xs uppercase tracking-wide">User</label>
               <select
                 value={selectedUser?.id ?? ""}
                 onMouseDown={() => { savedScrollY.current = window.scrollY; }}
@@ -306,7 +306,7 @@ export default function Position() {
               </select>
               {selectedUser && (
                 <span className="text-white/30 text-xs truncate">
-                  {selectedUser.wallet_address || "Pas de wallet configuré"}
+                  {selectedUser.wallet_address || "No wallet configured"}
                 </span>
               )}
             </div>
@@ -383,13 +383,13 @@ export default function Position() {
                   : "bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400"
               }`}
             >
-              {sending ? "Envoi…" : confirming ? `Confirmer ? (${countdown}s)` : "Envoyer"}
+              {sending ? "Sending…" : confirming ? `Confirm? (${countdown}s)` : "Send"}
             </button>
 
             {sendResult && (
               <div className={`text-sm rounded-lg px-4 py-3 flex flex-col gap-1 ${sendResult.error ? "bg-rose-500/20 text-rose-300" : "bg-emerald-500/20 text-emerald-300"}`}>
                 {sendResult.error
-                  ? `Erreur : ${sendResult.error}`
+                  ? `Error: ${sendResult.error}`
                   : <>
                       {sendResult.txBoost  && <span>✓ Boost — {sendResult.txBoost}</span>}
                       {sendResult.txBonus  && <span>✓ Bonus — {sendResult.txBonus}</span>}
@@ -400,7 +400,7 @@ export default function Position() {
                           {r.tx_bonus3 && <>✓ Bonus3 #{r.id} — {r.tx_bonus3}</>}
                         </span>
                       ))}
-                      {sendResult.bonusMsg && <span className="text-yellow-300">⚠ Bonus2/3 : {sendResult.bonusMsg}</span>}
+                      {sendResult.bonusMsg && <span className="text-yellow-300">⚠ Bonus2/3: {sendResult.bonusMsg}</span>}
                     </>
                 }
               </div>
@@ -409,7 +409,7 @@ export default function Position() {
           </div>
         </Card>
 
-        <Card icon="⚙️" title="Option Defits">
+        <Card icon="⚙️" title="Defits Option">
           <div className="p-5">
             <div
               className="flex items-center gap-2 text-white text-sm cursor-pointer select-none"
@@ -422,7 +422,7 @@ export default function Position() {
               <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${showGains ? "bg-[#D6C48A]" : "bg-white/20"}`}>
                 <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showGains ? "translate-x-5" : "translate-x-0"}`} />
               </div>
-              Afficher les Defits
+              Show Defits
             </div>
           </div>
         </Card>

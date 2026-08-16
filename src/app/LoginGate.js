@@ -6,10 +6,11 @@ const STORAGE_KEY = "auth_session";
 const TTL_DAYS    = 365;
 
 const ATHLETES = [
-  { id: "usopp",  label: "Usopp" },
-  { id: "nicor",  label: "Nico Robin" },
-  { id: "dteach", label: "DTeach" },
-  { id: "jinbe",  label: "Jinbe" },
+  { id: "usopp",     label: "Usopp" },
+  { id: "nicor",     label: "Nico Robin" },
+  { id: "dteach",    label: "DTeach" },
+  { id: "jinbe",     label: "Jinbe" },
+  { id: "justtosee", label: "Just To See" },
 ];
 
 function getSession() {

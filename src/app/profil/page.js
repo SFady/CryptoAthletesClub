@@ -90,7 +90,7 @@ export default function Profil() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <h1 className="text-2xl font-bold">Profil</h1>
+        <h1 className="text-2xl font-bold">Profile</h1>
       </div>
 
       <div className="w-full max-w-sm flex flex-col gap-4">
@@ -99,23 +99,23 @@ export default function Profil() {
         <div className="relative flex flex-col gap-1">
           {currentUser !== 'usopp' && (
             <div className="absolute inset-0 z-10 rounded-xl backdrop-blur-[1px] bg-black/30 flex items-center justify-center">
-              <span className="text-xs text-gray-400 bg-black/60 px-3 py-1.5 rounded-lg">Modification réservée à Usopp</span>
+              <span className="text-xs text-gray-400 bg-black/60 px-3 py-1.5 rounded-lg">Editable by Usopp only</span>
             </div>
           )}
-          <label className="text-sm text-gray-300">&nbsp;Adresse e-mail</label>
+          <label className="text-sm text-gray-300">&nbsp;Email address</label>
           <div className="flex gap-2">
             <input
               type="email"
               value={email}
               onChange={e => { setEmail(e.target.value); setSaved(false); }}
-              placeholder="exemple@mail.com"
+              placeholder="example@mail.com"
               className={inputCls}
             />
             <button
               onClick={handleSave}
               className="flex-shrink-0 bg-white text-[#5f3dc4] font-semibold px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors whitespace-nowrap"
             >
-              {saved ? "✓" : "Sauver"}
+              {saved ? "✓" : "Save"}
             </button>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function Profil() {
         <div className="relative flex flex-col gap-3">
           {userId !== "1" && (
             <div className="absolute inset-0 z-10 rounded-xl backdrop-blur-[1px] bg-black/30 flex items-center justify-center">
-              <span className="text-xs text-gray-400 bg-black/60 px-3 py-1.5 rounded-lg">Strava disponible uniquement pour Usopp</span>
+              <span className="text-xs text-gray-400 bg-black/60 px-3 py-1.5 rounded-lg">Strava available for Usopp only</span>
             </div>
           )}
           <label className="text-sm text-gray-300">&nbsp;Strava</label>
@@ -133,8 +133,8 @@ export default function Profil() {
           {!stravaConnected && (
             <div className="flex flex-col gap-2 bg-white/5 rounded-xl p-3">
               <p className="text-xs text-gray-400">
-                1. Crée une app sur <span className="text-white">strava.com/settings/api</span><br/>
-                2. Colle ton Client ID et Client Secret ci-dessous
+                1. Create an app at <span className="text-white">strava.com/settings/api</span><br/>
+                2. Paste your Client ID and Client Secret below
               </p>
               <input
                 type="text"
@@ -156,7 +156,7 @@ export default function Profil() {
                   disabled={!clientId || !clientSecret}
                   className="flex-shrink-0 bg-white text-[#5f3dc4] font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm disabled:opacity-40"
                 >
-                  {credSaved ? "✓" : "Sauver"}
+                  {credSaved ? "✓" : "Save"}
                 </button>
               </div>
             </div>
@@ -173,11 +173,11 @@ export default function Profil() {
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                 <path d="M15.387 3.612a5.386 5.386 0 0 0-3.387 1.19V3.5a.5.5 0 0 0-1 0v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-2.53a4.387 4.387 0 1 1-1.47 3.25.5.5 0 0 0-1 0 5.387 5.387 0 1 0 4.887-6.638z"/>
               </svg>
-              {stravaConnected ? "Reconnecter Strava" : "Connecter Strava"}
+              {stravaConnected ? "Reconnect Strava" : "Connect Strava"}
             </button>
-            {stravaStatus === "ok"    && <span className="text-emerald-400 text-sm">✓ Connecté</span>}
-            {stravaStatus === "error" && <span className="text-rose-400 text-sm">Erreur</span>}
-            {stravaConnected && !stravaStatus && <span className="text-emerald-400 text-sm">✓ Actif</span>}
+            {stravaStatus === "ok"    && <span className="text-emerald-400 text-sm">✓ Connected</span>}
+            {stravaStatus === "error" && <span className="text-rose-400 text-sm">Error</span>}
+            {stravaConnected && !stravaStatus && <span className="text-emerald-400 text-sm">✓ Active</span>}
             {stravaConnected && (
               <button
                 onClick={async () => {
@@ -192,7 +192,7 @@ export default function Profil() {
                 }}
                 className="text-rose-400 hover:text-rose-300 text-sm transition-colors whitespace-nowrap"
               >
-                Déconnecter
+                Disconnect
               </button>
             )}
           </div>
@@ -208,7 +208,7 @@ export default function Profil() {
                 }}
                 className="text-sm text-gray-300 hover:text-white underline transition-colors"
               >
-                {loadingAct ? "Chargement…" : "Voir les activités (brut)"}
+                {loadingAct ? "Loading…" : "View raw activities"}
               </button>
               {activities && (
                 <pre className="mt-3 text-xs bg-black/40 text-green-300 rounded-lg p-3 overflow-auto max-h-96 w-full">

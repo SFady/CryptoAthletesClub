@@ -27,16 +27,16 @@ export default function About() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <h1 className="text-2xl font-bold">A propos</h1>
+        <h1 className="text-2xl font-bold">About</h1>
       </div>
 
       <div className="w-full flex flex-col items-center text-center">
         <p className="max-w-md text-gray-200 mb-8">
-          The Crypto Athletes Club est une plateforme dédiée au suivi des
-          performances sportives et des actifs numériques des athlètes DEFIT.
+          The Crypto Athletes Club is a platform dedicated to tracking
+          DEFIT athletes&apos; sports performance and digital assets.
         </p>
         <div className="bg-white/10 border border-white/20 rounded-xl px-6 py-3 text-sm text-gray-300">
-          Version du <span className="text-white font-semibold">{buildDate}</span>
+          Build date: <span className="text-white font-semibold">{buildDate}</span>
         </div>
       </div>
     </main>

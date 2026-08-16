@@ -31,7 +31,7 @@ export default function Sfy1024() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <h1 className="text-2xl font-bold">Saisie</h1>
+        <h1 className="text-2xl font-bold">Entry</h1>
       </div>
 
       <form
@@ -50,7 +50,7 @@ export default function Sfy1024() {
         </select>
 
         <div className="flex items-center gap-2">
-          <label>&nbsp;Date : </label>
+          <label>&nbsp;Date: </label>
           <input
             type="date"
             name="date_claimed"
@@ -81,9 +81,9 @@ export default function Sfy1024() {
                focus:outline-none focus:ring-2 focus:ring-white/30
                md:px-4 md:py-2 md:text-base">
           <option value="1" className="bg-[#8d6bf2] text-[#f3f0ff]">Running</option>
-          <option value="2" className="bg-[#8d6bf2] text-[#f3f0ff]">Marche</option>
-          <option value="3" className="bg-[#8d6bf2] text-[#f3f0ff]">Cyclisme</option>
-          <option value="4" className="bg-[#8d6bf2] text-[#f3f0ff]">Natation</option>
+          <option value="2" className="bg-[#8d6bf2] text-[#f3f0ff]">Walking</option>
+          <option value="3" className="bg-[#8d6bf2] text-[#f3f0ff]">Cycling</option>
+          <option value="4" className="bg-[#8d6bf2] text-[#f3f0ff]">Swimming</option>
         </select>
 
         <select name="participation_percentage" className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20 
@@ -105,7 +105,7 @@ export default function Sfy1024() {
         </div>
 
         <div className="flex items-center gap-2">
-          <label>&nbsp;Durée : </label>
+          <label>&nbsp;Duration: </label>
           <input type="number" name="duration_h"  min="0" max="23" placeholder="hh" className="px-2 py-2 rounded text-black w-16 text-center" />
           <span className="text-white font-bold">h</span>
           <input type="number" name="duration_m"  min="0" max="59" placeholder="mm" className="px-2 py-2 rounded text-black w-16 text-center" />
@@ -147,7 +147,7 @@ export default function Sfy1024() {
           type="submit"
           className="bg-white text-[#5f3dc4] font-semibold py-2 rounded hover:bg-gray-200"
         >
-          Envoyer
+          Submit
         </button>
 
       </form>

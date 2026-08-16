@@ -171,12 +171,12 @@ export default function Home() {
                 <svg viewBox="0 0 24 24" fill="#FC4C02" className="w-5 h-5">
                   <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169" />
                 </svg>
-                Activités récentes
+                Recent activities
               </h2>
               <button onClick={() => setStravaPopup(false)} className="text-gray-400 hover:text-white text-xl leading-none">×</button>
             </div>
             {stravaActivities.length === 0 ? (
-              <p className="text-gray-400 text-sm text-center">Aucune activité cette semaine</p>
+              <p className="text-gray-400 text-sm text-center">No activity this week</p>
             ) : (
               <ul className="flex flex-col gap-2 overflow-y-auto max-h-[55vh]">
                 {stravaActivities.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
@@ -191,9 +191,9 @@ export default function Home() {
                         <div className="w-10 flex justify-center flex-shrink-0">{activityIcon[a.sport_type]}</div>
                         <div className="flex flex-col">
                           <span className="text-gray-400 text-xs">
-                            {new Date(a.start_date_local).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}
+                            {new Date(a.start_date_local).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" })}
                             {" · "}
-                            {new Date(a.start_date_local).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                            {new Date(a.start_date_local).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
                           </span>
                         </div>
                       </div>
@@ -247,7 +247,7 @@ export default function Home() {
               setStravaPopup(true);
             } catch { /* ignore */ }
           }}
-          title="Récupérer activités Strava"
+          title="Fetch Strava activities"
           className={`absolute left-2 inset-y-0 my-auto h-fit flex items-center gap-0.5 transition-all rounded-lg border p-1
             ${stravaConnected
               ? "text-[#FC4C02] border-white/20 hover:border-[#FC4C02]/60 bg-white/5 hover:bg-white/10 cursor-pointer"
@@ -315,8 +315,8 @@ export default function Home() {
             <thead>
               <tr className="text-white font-semibold">
                 <th className="px-2 py-1 hidden"></th>
-                <th className="px-2 py-1">Classe</th>
-                <th className="px-2 py-1">Niveau</th>
+                <th className="px-2 py-1">Class</th>
+                <th className="px-2 py-1">Level</th>
               </tr>
             </thead>
             <tbody>
@@ -338,7 +338,7 @@ export default function Home() {
 
       {/* Boost maximum disponible */}
       <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm md:max-w-[550px] mx-auto bg-[#5C42A6] flex items-center justify-between px-8 py-2">
-        <span className="text-white text-xs font-semibold uppercase tracking-wide">Boost max disponible</span>
+        <span className="text-white text-xs font-semibold uppercase tracking-wide">Max boost available</span>
         <span className="text-[#D6C48A] font-bold text-base">{boostMax !== null ? boostMax.toFixed(2) : "—"} $</span>
       </div>
 
@@ -368,8 +368,8 @@ export default function Home() {
                           whitespace-pre-line text-left sm:text-center
                           shadow-lg z-10"
                       >
-                        Defits actuellement bloqués et non récupérables.
-                        {`\n`}Non comptés dans le total.
+                        Defits currently locked and not withdrawable.
+                        {`\n`}Not counted in the total.
                       </span>
                     )}
                   </span>
@@ -383,7 +383,7 @@ export default function Home() {
               </td>
             </tr>}
             <tr className="border-b border-white/20">
-              <td className="py-2 px-2">Améliorations</td>
+              <td className="py-2 px-2">Upgrades</td>
               <td className="py-2 px-2 text-right font-semibold">
                 {Number(user_liquidity)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
@@ -392,7 +392,7 @@ export default function Home() {
               </td>
             </tr>
             <tr className="border-b border-white/20">
-              <td className="py-2 px-2">Disponible</td>
+              <td className="py-2 px-2">Available</td>
               <td className="py-2 px-2 text-right font-semibold">
                 {Number(dollarAmount)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,

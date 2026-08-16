@@ -1,10 +1,11 @@
 import sql from '@/lib/db';
 
 const USERS = {
-  usopp:    process.env.PASSWORD_USOPP     ?? "usopp2024",
-  nicor:    process.env.PASSWORD_NICOR     ?? "nicor2024",
-  dteach:   process.env.PASSWORD_DTEACH    ?? "dteach2024",
-  jinbe:    process.env.PASSWORD_JINBE     ?? "jinbe2024",
+  usopp:     process.env.PASSWORD_USOPP     ?? "usopp2024",
+  nicor:     process.env.PASSWORD_NICOR     ?? "nicor2024",
+  dteach:    process.env.PASSWORD_DTEACH    ?? "dteach2024",
+  jinbe:     process.env.PASSWORD_JINBE     ?? "jinbe2024",
+  justtosee: process.env.PASSWORD_JUSTTOSEE ?? "justtosee2024",
 };
 
 async function sha256(text) {

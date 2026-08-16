@@ -1,5 +1,5 @@
 import sql from '@/lib/db';
-import { requireAuth } from '@/lib/auth';
+import { requireAuth, isReadOnly } from '@/lib/auth';
 
 export async function GET(req) {
   const username = await requireAuth(req);
@@ -18,6 +18,7 @@ export async function GET(req) {
 export async function POST(req) {
   const username = await requireAuth(req);
   if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+  if (isReadOnly(username)) return Response.json({ error: 'Accès en lecture seule' }, { status: 403 });
 
   try {
     const { key, value } = await req.json();

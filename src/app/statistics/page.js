@@ -11,11 +11,11 @@ function authHeader() {
 }
 
 const ACTIVITIES = [
-  { id: 0, label: "Tout" },
+  { id: 0, label: "All" },
   { id: 1, label: "Running" },
-  { id: 2, label: "Marche" },
-  { id: 3, label: "Cyclisme" },
-  { id: 4, label: "Natation" },
+  { id: 2, label: "Walking" },
+  { id: 3, label: "Cycling" },
+  { id: 4, label: "Swimming" },
 ];
 
 export default function Home() {
@@ -93,7 +93,7 @@ export default function Home() {
           className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${value === id ? "bg-[#D6C48A] text-[#2A2550] shadow-md" : "text-white hover:bg-white/10"
             }`}
         >
-          {id === 1 ? "Année" : id === 2 ? "Mois" : "Semaine"}
+          {id === 1 ? "Year" : id === 2 ? "Month" : "Week"}
         </button>
       ))}
     </div>
@@ -118,7 +118,7 @@ export default function Home() {
   const Filters = ({ period, onPeriod, act, onAct }) => (
     <div className="flex flex-col gap-2 mb-5 pl-1">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-white/40 text-xs uppercase tracking-widest w-20 shrink-0">Période</span>
+        <span className="text-white/40 text-xs uppercase tracking-widest w-20 shrink-0">Period</span>
         <PeriodFilter value={period} onChange={onPeriod} />
       </div>
       <div className="flex flex-wrap items-center gap-2">
@@ -156,7 +156,7 @@ export default function Home() {
           )) : (
             <tr>
               <td colSpan={cols.length} className="py-4 px-4 text-gray-400 text-sm text-center italic">
-                Aucune donnée pour cette période
+                No data for this period
               </td>
             </tr>
           )}
@@ -168,7 +168,7 @@ export default function Home() {
   const fmt = (n) => Number(n ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(",", " ");
 
   const athleteCol = {
-    key: "name", label: "Athlète",
+    key: "name", label: "Athlete",
     render: (row, idx) => (
       <span className="flex items-center gap-2">
         {medal(idx)
@@ -199,9 +199,9 @@ export default function Home() {
       <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 xl:items-start">
 
         {/* BONUS EN COURS */}
-        <Card icon="🎯" title="Bonus en cours" subtitle="du 27/07 au 02/08" className="xl:col-span-2">
+        <Card icon="🎯" title="Current bonus" subtitle="Jul 27 – Aug 2" className="xl:col-span-2">
           <p className="text-center text-gray-200 text-sm">
-            Meilleure distance running hebdomadaire :{" "}
+            Best weekly running distance:{" "}
             <span className="text-[#D6C48A] font-bold ml-1">
               {walletBonus !== null ? `${walletBonus} $` : "…"}
             </span>
@@ -209,7 +209,7 @@ export default function Home() {
         </Card>
 
         {/* GAINS ($) */}
-        <Card icon="💰" title="Gains ($)">
+        <Card icon="💰" title="Earnings ($)">
           <Filters period={selected} onPeriod={setSelected} act={activity} onAct={setActivity} />
           <LeaderboardTable
             rows={sortedTotals}
@@ -227,7 +227,7 @@ export default function Home() {
             rows={sortedTotals2}
             cols={[
               athleteCol,
-              { key: "kilometers", label: "Kilomètres", right: true, gold: true, render: (row) => fmt(row.kilometers) },
+              { key: "kilometers", label: "Kilometers", right: true, gold: true, render: (row) => fmt(row.kilometers) },
             ]}
           />
         </Card>
@@ -235,7 +235,7 @@ export default function Home() {
         {/* GAINS (DEFITS) */}
         {defitsEnabled && <Card
           icon="💰"
-          title={<>Gains Defit <span className="text-[#D6C48A] font-bold normal-case tracking-normal ml-1">({defitPrice?.toFixed(4) ?? "…"} $)</span></>}
+          title={<>Defit earnings <span className="text-[#D6C48A] font-bold normal-case tracking-normal ml-1">({defitPrice?.toFixed(4) ?? "…"} $)</span></>}
         >
           <Filters period={selected3} onPeriod={setSelected3} act={activity3} onAct={setActivity3} />
           <LeaderboardTable

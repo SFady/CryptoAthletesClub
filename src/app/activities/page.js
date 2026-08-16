@@ -120,9 +120,9 @@ export default function Home() {
         <FaRunning className={cls} />
       </span>
     );
-    if (key === "swim" || key === "natation") return <span title="Natation" className="inline-flex scale-x-[-1]"><FaSwimmer className={cls} /></span>;
-    if (key === "bike" || key === "cyclisme") return <span title="Cyclisme"><FaBiking className={cls} /></span>;
-    if (key === "marche" || key === "walk")   return <span title="Marche"><FaWalking className={cls} /></span>;
+    if (key === "swim" || key === "natation") return <span title="Swimming" className="inline-flex scale-x-[-1]"><FaSwimmer className={cls} /></span>;
+    if (key === "bike" || key === "cyclisme") return <span title="Cycling"><FaBiking className={cls} /></span>;
+    if (key === "marche" || key === "walk")   return <span title="Walking"><FaWalking className={cls} /></span>;
     if (key.includes("bonus"))                return <span title={name}><FaStar className={cls} /></span>;
     return <span className="text-gray-200 text-sm">{name}</span>;
   };
@@ -144,7 +144,7 @@ export default function Home() {
           onChange={handleSelect}
           className="bg-white/10 text-white px-3 py-2 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#D6C48A]/40 text-sm"
         >
-          <option value="0" className="bg-[#3b2d8a]">Tous</option>
+          <option value="0" className="bg-[#3b2d8a]">All</option>
           <option value="1" className="bg-[#3b2d8a]">Usopp</option>
           <option value="3" className="bg-[#3b2d8a]">Nico Robin</option>
           <option value="2" className="bg-[#3b2d8a]">DTeach</option>
@@ -159,7 +159,7 @@ export default function Home() {
             <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${showGains ? "bg-[#D6C48A]" : "bg-white/20"}`}>
               <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showGains ? "translate-x-5" : "translate-x-0"}`} />
             </div>
-            Afficher les Defits&nbsp;
+            Show Defits&nbsp;
           </div>
         )}
       </div>
@@ -175,7 +175,7 @@ export default function Home() {
               <div className="flex items-center gap-2 mb-2">
                 <ActivityIcon name={row.activity_name} />
                 <span className="font-bold text-[#D6C48A]">
-                  {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
+                  {isClient ? new Date(row.date_claimed).toLocaleDateString("en-US") : row.date_claimed}
                 </span>
                 <span className="text-white font-semibold">— {row.user_name}</span>
               </div>
@@ -191,7 +191,7 @@ export default function Home() {
                     <span className="font-semibold">{Number(row.kilometers ?? 0).toFixed(2)} km</span>
                   </span>
                   <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
-                    <span className="opacity-70 font-normal">Vitesse</span>
+                    <span className="opacity-70 font-normal">Speed</span>
                     <span className="font-semibold">{pace(row.duration, row.kilometers, row.activity_name) ?? "—"}</span>
                   </span>
                 </div>
@@ -228,14 +228,14 @@ export default function Home() {
               <tr className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white text-xs uppercase tracking-wide">
                 <th className="py-3.5 px-5 font-semibold">Date</th>
                 <th className="py-3.5 px-5 font-semibold">Athlete</th>
-                <th className="py-3.5 px-5 font-semibold text-center">Activité</th>
+                <th className="py-3.5 px-5 font-semibold text-center">Activity</th>
                 <th className="py-3.5 px-5 font-semibold">Effort</th>
                 <th className="py-3.5 px-5 font-semibold">Distance (km)</th>
-                <th className="py-3.5 px-5 font-semibold">Vitesse</th>
+                <th className="py-3.5 px-5 font-semibold">Speed</th>
                 {defitsEnabled && showGains && (
                   <>
-                    <th className="py-3.5 px-5 font-semibold">Gain brut (Defit)</th>
-                    <th className="py-3.5 px-5 font-semibold">Gain net Defit ($)</th>
+                    <th className="py-3.5 px-5 font-semibold">Gross gain (Defit)</th>
+                    <th className="py-3.5 px-5 font-semibold">Net Defit gain ($)</th>
                   </>
                 )}
                 <th className="py-3.5 px-5 font-semibold">Boost ($)</th>
@@ -252,7 +252,7 @@ export default function Home() {
                     className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}
                   >
                     <td className="py-4 px-5 text-[#D6C48A] font-semibold whitespace-nowrap tracking-wide">
-                      {isClient ? new Date(row.date_claimed).toLocaleDateString("fr-FR") : row.date_claimed}
+                      {isClient ? new Date(row.date_claimed).toLocaleDateString("en-US") : row.date_claimed}
                     </td>
                     <td className="py-4 px-5 text-white font-semibold whitespace-nowrap">{row.user_name}</td>
                     <td className="py-4 px-5"><div className="flex justify-center"><ActivityIcon name={row.activity_name} /></div></td>
@@ -284,7 +284,7 @@ export default function Home() {
       </div>
 
       <div ref={sentinelRef} className="py-4 text-center text-white/40 text-sm">
-        {loading ? "Chargement..." : !hasMore ? "Fin des activités" : ""}
+        {loading ? "Loading..." : !hasMore ? "End of activities" : ""}
       </div>
     </main>
   );
