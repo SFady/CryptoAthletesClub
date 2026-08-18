@@ -4,6 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 import { FaRunning, FaSwimmer, FaBiking, FaWalking, FaStar } from "react-icons/fa";
 
+function fmtDate(val) {
+  const d = new Date(val);
+  return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+}
+
 function authHeader() {
   try {
     const { token } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
@@ -175,7 +180,7 @@ export default function Home() {
               <div className="flex items-center gap-2 mb-2">
                 <ActivityIcon name={row.activity_name} />
                 <span className="font-bold text-[#D6C48A]">
-                  {isClient ? new Date(row.date_claimed).toLocaleDateString("en-US") : row.date_claimed}
+                  {isClient ? fmtDate(row.date_claimed) : row.date_claimed}
                 </span>
                 <span className="text-white font-semibold">— {row.user_name}</span>
               </div>
@@ -252,7 +257,7 @@ export default function Home() {
                     className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}
                   >
                     <td className="py-4 px-5 text-[#D6C48A] font-semibold whitespace-nowrap tracking-wide">
-                      {isClient ? new Date(row.date_claimed).toLocaleDateString("en-US") : row.date_claimed}
+                      {isClient ? fmtDate(row.date_claimed) : row.date_claimed}
                     </td>
                     <td className="py-4 px-5 text-white font-semibold whitespace-nowrap">{row.user_name}</td>
                     <td className="py-4 px-5"><div className="flex justify-center"><ActivityIcon name={row.activity_name} /></div></td>
