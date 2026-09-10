@@ -5,8 +5,8 @@ import sql from "@/lib/db";
 import { ethers } from "ethers";
 
 const WALLET = process.env.WALLET_POOL;
-const NFPM   = "0x827922686190790b37229fd06084350E74485b72";
-const POOL   = "0xb2cc224c1c9fee385f8ad6a55b4d94e92359dc59";
+const NFPM   = "0xe1f8cd9AC4e4A65F54f38a5CdAfCA44f6dD68b53";
+const POOL   = "0x3fe04a59ebd38cf06080a6f60a98d124eb59392a";
 const VOTER  = "0x16613524e02ad97eDfeF371bC883F2F5d6C480A5";
 
 const VOTER_IFACE = new ethers.Interface([
