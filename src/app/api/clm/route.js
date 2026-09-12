@@ -121,7 +121,7 @@ async function scanActiveId(rpcUrl, call) {
           const hexes = await Promise.all(stakedIds.map(id => call(NFPM, "0x99fbab88" + pad64(id)).catch(() => null)));
           for (let i = 0; i < stakedIds.length; i++) {
             const h = hexes[i];
-            if (h && toAddr(word(h, 2)) === WETH_ADDR && toAddr(word(h, 3)) === USDC_ADDR && toUint(word(h, 7)) > 0n)
+            if (h && toAddr(word(h, 2)) === WETH_ADDR && toAddr(word(h, 3)) === USDC_ADDR)
               return stakedIds[i];
           }
         }
@@ -221,12 +221,14 @@ export async function GET() {
       return Response.json(data);
     }
 
-    let posHex = await call(NFPM, "0x99fbab88" + pad64(tokenId));
-    const liquidity  = toUint(word(posHex, 7));
-    const owed0check = toUint(word(posHex, 10));
-    const owed1check = toUint(word(posHex, 11));
+    let posHex = await call(NFPM, "0x99fbab88" + pad64(tokenId)).catch(() => null);
+    const liquidity  = posHex ? toUint(word(posHex, 7)) : 0n;
+    const owed0check = posHex ? toUint(word(posHex, 10)) : 0n;
+    const owed1check = posHex ? toUint(word(posHex, 11)) : 0n;
 
-    if (liquidity === 0n && owed0check === 0n && owed1check === 0n) {
+    if (!posHex || (liquidity === 0n && owed0check === 0n && owed1check === 0n)) {
+      // Position invalide ou rebalancée — reset et re-scan
+      global._clmActiveId = { id: null, time: 0 };
       const newId = await scanActiveId(rpcUrl, call).catch(() => null);
       if (newId) {
         tokenId = newId;
@@ -235,9 +237,11 @@ export async function GET() {
           INSERT INTO app_config (key, value) VALUES ('clm_position_id', ${newId.toString()})
           ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
         `.catch(() => {});
-        posHex = await call(NFPM, "0x99fbab88" + pad64(tokenId));
-      } else {
-        const data = { positions: [] };
+        posHex = await call(NFPM, "0x99fbab88" + pad64(tokenId)).catch(() => null);
+      }
+      if (!posHex) {
+        await sql`DELETE FROM app_config WHERE key = 'clm_position_id'`.catch(() => {});
+        const data = { positions: [], totalPoolUSD: null };
         global._clmCache = { data, time: Date.now() };
         return Response.json(data);
       }
