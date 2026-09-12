@@ -3,11 +3,20 @@
 import { useEffect, useState } from "react";
 import { useBackToMain } from "../useBackToMain";
 
+function authHeader() {
+  try {
+    const { token } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch { return {}; }
+}
+
 export default function Sfy1024() {
 
   const goBack = useBackToMain();
   const [today, setToday] = useState("");
   const [poolData, setPoolData] = useState(null);
+  const [sending, setSending] = useState(false);
+  const [result, setResult] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("dataEntry", "saisie");
@@ -23,6 +32,25 @@ export default function Sfy1024() {
       .catch(() => {});
   }, []);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSending(true);
+    setResult(null);
+    try {
+      const res = await fetch("/api/insert-data", {
+        method: "POST",
+        body: new FormData(e.target),
+        headers: authHeader(),
+      });
+      const data = await res.json();
+      setResult(res.ok ? { ok: true, ...data } : { ok: false, error: data.error ?? "Erreur" });
+    } catch (err) {
+      setResult({ ok: false, error: err.message });
+    } finally {
+      setSending(false);
+    }
+  };
+
   return (
     <main className="flex flex-col items-start min-h-screen text-white bg-[#5f3dc4] px-6 py-6">
       <div className="flex items-center gap-3 mb-4">
@@ -34,13 +62,9 @@ export default function Sfy1024() {
         <h1 className="text-2xl font-bold">Entry</h1>
       </div>
 
-      <form
-        action="/api/insert-data"
-        method="POST"
-        className="flex flex-col gap-4 w-full max-w-sm"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
 
-        <select name="user_id" className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20 
+        <select name="user_id" className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20
                focus:outline-none focus:ring-2 focus:ring-white/30
                md:px-4 md:py-2 md:text-base">
           <option value="1" className="bg-[#8d6bf2] text-[#f3f0ff]">Usopp</option>
@@ -77,7 +101,7 @@ export default function Sfy1024() {
           />
         </div>
 
-        <select name="activity_type" className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20 
+        <select name="activity_type" className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20
                focus:outline-none focus:ring-2 focus:ring-white/30
                md:px-4 md:py-2 md:text-base">
           <option value="1" className="bg-[#8d6bf2] text-[#f3f0ff]">Running</option>
@@ -86,7 +110,7 @@ export default function Sfy1024() {
           <option value="4" className="bg-[#8d6bf2] text-[#f3f0ff]">Swimming</option>
         </select>
 
-        <select name="participation_percentage" className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20 
+        <select name="participation_percentage" className="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/20
                focus:outline-none focus:ring-2 focus:ring-white/30
                md:px-4 md:py-2 md:text-base">
           <option value="50" className="bg-[#8d6bf2] text-[#f3f0ff]">50%</option>
@@ -145,13 +169,19 @@ export default function Sfy1024() {
 
         <button
           type="submit"
-          className="bg-white text-[#5f3dc4] font-semibold py-2 rounded hover:bg-gray-200"
+          disabled={sending}
+          className="bg-white text-[#5f3dc4] font-semibold py-2 rounded hover:bg-gray-200 disabled:opacity-50"
         >
-          Submit
+          {sending ? "Envoi…" : "Submit"}
         </button>
+
+        {result && (
+          <div className={`text-sm rounded-lg px-4 py-3 ${result.ok ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"}`}>
+            {result.ok ? (result.message ?? "✅ Insert OK") : `Erreur: ${result.error}`}
+          </div>
+        )}
 
       </form>
     </main>
   );
 }
-

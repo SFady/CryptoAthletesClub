@@ -44,11 +44,20 @@ export default function LoginGate({ children }) {
   const [showPwd, setShowPwd] = useState(false);
 
   useEffect(() => {
-    const session = getSession();
-    if (session) setAuthed(true);
     setUser(getLastUser());
-    setReady(true);
     setTimeout(() => setShow(true), 50);
+
+    const token = getSession();
+    if (!token) { setReady(true); return; }
+
+    fetch("/api/session", { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => {
+        if (d.ok) setAuthed(true);
+        else localStorage.removeItem(STORAGE_KEY);
+      })
+      .catch(() => localStorage.removeItem(STORAGE_KEY))
+      .finally(() => setReady(true));
   }, []);
 
   const handleSubmit = async (e) => {
