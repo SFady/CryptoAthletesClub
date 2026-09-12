@@ -31,7 +31,8 @@ export async function POST(req) {
     const clmData = await clmRes.json();
     const walletData = await walletRes.json();
     const walletPoolData = await walletPoolRes.json();
-    const walletPool = Number(clmData.totalPoolUSD ?? 0) + Number(walletPoolData.usdc ?? 0) + Number(walletPoolData.wethUSD ?? 0);
+    const clmPoolUSD = (!clmData.error && clmData.totalPoolUSD != null) ? Number(clmData.totalPoolUSD) : null;
+    const walletPool = (clmPoolUSD ?? 0) + Number(walletPoolData.usdc ?? 0) + Number(walletPoolData.wethUSD ?? 0);
     const walletUSDC = Number(walletData.usdc ?? 0);
 
 
@@ -190,11 +191,9 @@ export async function POST(req) {
       UPDATE USERS set defits=defits+${defitsToAdd} where id=${user_id}
     `;
 
-    const result4 = await sql`
-      UPDATE users
-      SET liquidity = ${new_liquidity}
-      WHERE id = ${user_id}
-    `;
+    if (clmPoolUSD !== null) {
+      await sql`UPDATE users SET liquidity = ${new_liquidity} WHERE id = ${user_id}`;
+    }
 
     return Response.json({ message: '✅ Insert OK', starting_offered_liquidity, initial_user_liquidity, percent_global, percent, defit_percentage, available_fees, benef, upgrade, bonus, fees: boost, new_liquidity, walletUSDC, distributed_bonus_to_credit, walletPool });
 
