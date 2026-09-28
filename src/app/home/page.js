@@ -187,7 +187,7 @@ export default function Home() {
                   const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
                   return (
                     <li key={a.id} className={`flex items-center justify-between rounded-xl px-3 py-2.5 ${alreadyIn ? "bg-white/[0.02] opacity-40" : "bg-white/5"}`}>
-                      <div className="flex items-center gap-1 min-w-0">
+                      <div className="flex items-center gap-2 min-w-0">
                         <div className="w-8 flex justify-center flex-shrink-0">{activityIcon[a.sport_type]}</div>
                         <div className="flex flex-col min-w-0">
                           <span className="text-gray-400 text-[15px] whitespace-nowrap [font-variant-numeric:tabular-nums]">
