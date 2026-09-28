@@ -195,7 +195,7 @@ export default function Home() {
                               const d = new Date(a.start_date_local);
                               const pad = (n) => String(n).padStart(2, "0");
                               const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-                              const timeStr = d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true });
+                              const timeStr = d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
                               return `${dateStr} ${timeStr}`;
                             })()}
                           </span>
