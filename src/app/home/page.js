@@ -190,7 +190,7 @@ export default function Home() {
                       <div className="flex items-center gap-1.5 min-w-0">
                         <div className="w-10 flex justify-center flex-shrink-0">{activityIcon[a.sport_type]}</div>
                         <div className="flex flex-col min-w-0">
-                          <span className="text-gray-400 text-xs truncate">
+                          <span className="text-gray-400 text-xs">
                             {(() => {
                               const d = new Date(a.start_date_local);
                               const pad = (n) => String(n).padStart(2, "0");
