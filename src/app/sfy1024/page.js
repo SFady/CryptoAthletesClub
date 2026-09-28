@@ -52,6 +52,8 @@ export default function Sfy1024() {
     }
   };
 
+  const activityIntensity = { "1": 8, "2": 3, "3": 5, "4": 9 }; // Running, Walking, Cycling, Swimming
+
   const handleTest = (e) => {
     const form = e.target.closest("form");
     const fd = new FormData(form);
@@ -59,7 +61,8 @@ export default function Sfy1024() {
     const m = Number(fd.get("duration_m") || 0);
     const s = Number(fd.get("duration_s") || 0);
     const totalHours = h + m / 60 + s / 3600;
-    const score = 100 * Math.pow(totalHours / 100, 0.179);
+    const intensity = activityIntensity[fd.get("activity_type")] ?? 1;
+    const score = intensity * 100 * Math.pow(totalHours / 100, 0.179);
     setTestScore(Math.round(score));
   };
 
