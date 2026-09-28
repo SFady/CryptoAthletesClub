@@ -202,7 +202,7 @@ export default function Home() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-[#FF8C5A] font-bold text-sm w-[78px] text-right [font-variant-numeric:tabular-nums]">{(a.distance / 1000).toFixed(2)} km</span>
+                        <span className="text-[#FF8C5A] font-bold text-[15px] w-[78px] text-right [font-variant-numeric:tabular-nums]">{(a.distance / 1000).toFixed(2)} km</span>
                         <a href={`https://www.strava.com/activities/${a.id}`} target="_blank" rel="noopener noreferrer"
                           className="flex items-center justify-center text-white/60 hover:text-white transition-colors border border-white/30 hover:border-white/60 rounded-lg p-2.5">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6">
