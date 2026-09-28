@@ -191,9 +191,13 @@ export default function Home() {
                         <div className="w-10 flex justify-center flex-shrink-0">{activityIcon[a.sport_type]}</div>
                         <div className="flex flex-col">
                           <span className="text-gray-400 text-xs">
-                            {new Date(a.start_date_local).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" })}
-                            {" · "}
-                            {new Date(a.start_date_local).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                            {(() => {
+                              const d = new Date(a.start_date_local);
+                              const pad = (n) => String(n).padStart(2, "0");
+                              const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                              const timeStr = d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true });
+                              return `${dateStr} ${timeStr}`;
+                            })()}
                           </span>
                         </div>
                       </div>
