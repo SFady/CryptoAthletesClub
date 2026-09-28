@@ -17,6 +17,7 @@ export default function Sfy1024() {
   const [poolData, setPoolData] = useState(null);
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState(null);
+  const [testScore, setTestScore] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("dataEntry", "saisie");
@@ -49,6 +50,16 @@ export default function Sfy1024() {
     } finally {
       setSending(false);
     }
+  };
+
+  const handleTest = (e) => {
+    const form = e.target.closest("form");
+    const fd = new FormData(form);
+    const h = Number(fd.get("duration_h") || 0);
+    const m = Number(fd.get("duration_m") || 0);
+    const s = Number(fd.get("duration_s") || 0);
+    const totalHours = h + m / 60 + s / 3600;
+    setTestScore((totalHours * 100).toFixed(2));
   };
 
   return (
@@ -174,6 +185,20 @@ export default function Sfy1024() {
         >
           {sending ? "Envoi…" : "Submit"}
         </button>
+
+        <button
+          type="button"
+          onClick={handleTest}
+          className="bg-white/10 text-white font-semibold py-2 rounded border border-white/20 hover:bg-white/20"
+        >
+          Test
+        </button>
+
+        {testScore !== null && (
+          <div className="text-sm rounded-lg px-4 py-3 bg-white/5 border border-white/20 text-white">
+            Score : <span className="font-bold text-[#D6C48A]">{testScore}</span>
+          </div>
+        )}
 
         {result && (
           <div className={`text-sm rounded-lg px-4 py-3 ${result.ok ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"}`}>
