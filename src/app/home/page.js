@@ -187,10 +187,10 @@ export default function Home() {
                   const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
                   return (
                     <li key={a.id} className={`flex items-center justify-between rounded-xl px-4 py-2.5 ${alreadyIn ? "bg-white/[0.02] opacity-40" : "bg-white/5"}`}>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1.5 min-w-0">
                         <div className="w-10 flex justify-center flex-shrink-0">{activityIcon[a.sport_type]}</div>
-                        <div className="flex flex-col">
-                          <span className="text-gray-400 text-xs">
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-gray-400 text-xs truncate">
                             {(() => {
                               const d = new Date(a.start_date_local);
                               const pad = (n) => String(n).padStart(2, "0");
@@ -201,8 +201,8 @@ export default function Home() {
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#FF8C5A] font-bold text-sm">{(a.distance / 1000).toFixed(2)} km</span>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="text-[#FF8C5A] font-bold text-sm w-[92px] text-right">{(a.distance / 1000).toFixed(2)} km</span>
                         <a href={`https://www.strava.com/activities/${a.id}`} target="_blank" rel="noopener noreferrer"
                           className="ml-2 flex items-center justify-center text-white/60 hover:text-white transition-colors border border-white/30 hover:border-white/60 rounded-lg p-2.5">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6">
