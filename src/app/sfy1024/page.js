@@ -60,7 +60,7 @@ export default function Sfy1024() {
     const s = Number(fd.get("duration_s") || 0);
     const totalHours = h + m / 60 + s / 3600;
     const score = 100 * Math.pow(totalHours / 100, 0.179);
-    setTestScore(score.toFixed(2));
+    setTestScore(Math.round(score));
   };
 
   return (
