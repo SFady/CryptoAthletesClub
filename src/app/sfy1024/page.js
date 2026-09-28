@@ -60,9 +60,9 @@ export default function Sfy1024() {
     const h = Number(fd.get("duration_h") || 0);
     const m = Number(fd.get("duration_m") || 0);
     const s = Number(fd.get("duration_s") || 0);
-    const totalMinutes = h * 60 + m + s / 60;
+    const totalSeconds = h * 3600 + m * 60 + s;
     const intensity = activityIntensity[fd.get("activity_type")] ?? 1;
-    const score = totalMinutes * intensity;
+    const score = totalSeconds * intensity;
     setTestScore(Math.round(score));
   };
 
