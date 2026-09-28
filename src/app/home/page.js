@@ -194,8 +194,10 @@ export default function Home() {
                             {(() => {
                               const d = new Date(a.start_date_local);
                               const pad = (n) => String(n).padStart(2, "0");
-                              const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-                              const timeStr = d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+                              // start_date_local is Strava's local wall-clock time labeled as UTC (Z) —
+                              // use UTC getters so we display it as-is, not shifted by the viewer's own timezone.
+                              const dateStr = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+                              const timeStr = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
                               return `${dateStr} ${timeStr}`;
                             })()}
                           </span>
