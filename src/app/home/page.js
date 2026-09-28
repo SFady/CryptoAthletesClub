@@ -200,8 +200,8 @@ export default function Home() {
                       <div className="flex items-center gap-2">
                         <span className="text-[#FF8C5A] font-bold text-sm">{(a.distance / 1000).toFixed(2)} km</span>
                         <a href={`https://www.strava.com/activities/${a.id}`} target="_blank" rel="noopener noreferrer"
-                          className="ml-2 text-white/60 hover:text-white transition-colors border border-white/30 hover:border-white/60 rounded p-1">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-5 h-5">
+                          className="ml-2 flex items-center justify-center text-white/60 hover:text-white transition-colors border border-white/30 hover:border-white/60 rounded-lg p-2.5">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
                           </svg>
                         </a>
