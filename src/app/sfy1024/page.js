@@ -57,13 +57,9 @@ export default function Sfy1024() {
   const handleTest = (e) => {
     const form = e.target.closest("form");
     const fd = new FormData(form);
-    const h = Number(fd.get("duration_h") || 0);
-    const m = Number(fd.get("duration_m") || 0);
-    const s = Number(fd.get("duration_s") || 0);
-    const totalSeconds = h * 3600 + m * 60 + s;
-    const intensity = activityIntensity[fd.get("activity_type")] ?? 1;
-    const score = totalSeconds * intensity;
-    setTestScore(Math.round(score));
+    const km = Number(fd.get("kilometers") || 0);
+    const y = 100 * Math.pow(km / 100, 0.179);
+    setTestScore(Math.round(y * 100) / 100);
   };
 
   return (
