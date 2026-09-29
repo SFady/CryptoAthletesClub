@@ -66,14 +66,16 @@ async function pickRpc() {
 
 async function getEthPrice() {
   try {
-    const res = await fetch(
-      "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-      { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(5000) }
-    );
-    const text = await res.text();
-    const json = JSON.parse(text);
-    const price = json?.ethereum?.usd;
-    if (price) { global._lastEthPricePool = price; return price; }
+    const price = await Promise.any([
+      fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd", { signal: AbortSignal.timeout(5000) })
+        .then(r => r.text()).then(t => { const p = JSON.parse(t)?.ethereum?.usd; if (!p) throw 0; return p; }),
+      fetch("https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT", { signal: AbortSignal.timeout(5000) })
+        .then(r => r.json()).then(j => { const p = Number(j?.price); if (!p) throw 0; return p; }),
+      fetch("https://api.coinbase.com/v2/prices/ETH-USD/spot", { signal: AbortSignal.timeout(5000) })
+        .then(r => r.json()).then(j => { const p = Number(j?.data?.amount); if (!p) throw 0; return p; }),
+    ]);
+    global._lastEthPricePool = price;
+    return price;
   } catch (_) {}
   if (global._lastEthPricePool) return global._lastEthPricePool;
   throw new Error("Prix ETH indisponible");
