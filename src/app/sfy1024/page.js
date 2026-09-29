@@ -54,18 +54,18 @@ export default function Sfy1024() {
 
   const activityIntensity = { "1": 8, "2": 3, "3": 5, "4": 9 }; // Running, Walking, Cycling, Swimming
 
-  const activityCoeff  = { "1": 1, "2": 1,  "3": 1/3, "4": 5  }; // Running, Walking, Cycling, Swimming
-  const activityKmCap  = { "1": 100, "2": 50, "3": 300, "4": 10 };
+  const activityCoeff = { "1": 1, "2": 1,   "3": 1/3, "4": 5  }; // Running, Walking, Cycling, Swimming
+  const activityKmCap = { "1": 100, "2": 100, "3": 300, "4": 20 };
 
   const handleTest = (e) => {
     const form = e.target.closest("form");
     const fd = new FormData(form);
-    const type = fd.get("activity_type");
-    const km = Number(fd.get("kilometers") || 0);
-    const coeff  = activityCoeff[type] ?? 1;
-    const kmCap  = activityKmCap[type] ?? 100;
-    const x = Math.min(km, kmCap) * coeff;
-    const y = 100 * Math.pow(x / 100, 0.179);
+    const type  = fd.get("activity_type");
+    const km    = Number(fd.get("kilometers") || 0);
+    const coeff = activityCoeff[type] ?? 1;
+    const kmCap = activityKmCap[type] ?? 100;
+    const x     = Math.min(km, kmCap) * coeff;
+    const y     = 100 * Math.pow(x / 100, 0.179);
     setTestScore(Math.round(y * 100) / 100);
   };
 
