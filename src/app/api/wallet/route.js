@@ -14,7 +14,8 @@ const RPC_URLS = [
 ];
 
 const CACHE_TTL_MS = 120_000; // 2 minutes
-if (!global._walletCache) global._walletCache = { data: null, time: 0 };
+if (!global._walletCache)    global._walletCache    = { data: null, time: 0 };
+if (!global._lastEthPrice)   global._lastEthPrice   = null;
 
 function balanceOfData(wallet) {
   return "0x70a08231" + wallet.toLowerCase().replace("0x", "").padStart(64, "0");
@@ -64,14 +65,18 @@ async function pickRpc() {
 }
 
 async function getEthPrice() {
-  const res = await fetch(
-    "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
-    { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(5000) }
-  );
-  const json = await res.json();
-  const price = json?.ethereum?.usd;
-  if (!price) throw new Error("Prix ETH indisponible");
-  return price;
+  try {
+    const res = await fetch(
+      "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
+      { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(5000) }
+    );
+    const text = await res.text();
+    const json = JSON.parse(text);
+    const price = json?.ethereum?.usd;
+    if (price) { global._lastEthPrice = price; return price; }
+  } catch (_) {}
+  if (global._lastEthPrice) return global._lastEthPrice;
+  throw new Error("Prix ETH indisponible");
 }
 
 export async function GET() {

@@ -41,7 +41,8 @@ export default function Home() {
       ]);
       const wallet = await wRes.json();
       const distrib = await dRes.json();
-      const disponible = Number(wallet.usdc);
+      const disponible = Number(wallet.usdc ?? 0);
+      if (isNaN(disponible) || wallet.error) { setBoostMax(null); return; }
       const u = distrib.byUser?.find(r => String(r.id) === String(athleteId));
       if (!u) { setBoostMax(null); return; }
       const allInvestValues = distrib.byUser.map(r => r.initial_liquidity);
@@ -345,7 +346,7 @@ export default function Home() {
       {/* Boost maximum disponible */}
       <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm md:max-w-[550px] mx-auto bg-[#5C42A6] flex items-center justify-between px-8 py-2">
         <span className="text-white text-xs font-semibold uppercase tracking-wide">Max boost available</span>
-        <span className="text-[#D6C48A] font-bold text-base">{boostMax !== null ? boostMax.toFixed(2) : "—"} $</span>
+        <span className="text-[#D6C48A] font-bold text-base">{boostMax !== null && !isNaN(boostMax) ? boostMax.toFixed(2) : "—"} $</span>
       </div>
 
       {/* Tableau des stats */}
