@@ -213,12 +213,36 @@ export default function Home() {
       const res = await fetch("/api/insert-data", { method: "POST", body: fd, headers: authHeader() });
       if (!res.ok) throw new Error("insert failed");
       const data = await res.json();
+      if (!data.activityId) throw new Error("no activityId returned");
 
-      setQuickEntryStatus(prev => ({ ...prev, [id]: "done" }));
       const km10 = Math.round(km * 10);
       const timeKey = `${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}`;
       setDbDates(prev => new Set(prev).add(`${dateClaimed}_${timeKey}_${a.sport_type}_${km10}`));
 
+      // Même opération que le transfert USDC de /position, mais ciblée précisément sur
+      // l'activité qu'on vient d'insérer (son id, retourné directement par insert-data) —
+      // pas une activité "la plus récente par date" qui pourrait être une autre ligne.
+      const transferRes = await fetch("/api/transfer-boost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeader() },
+        body: JSON.stringify({
+          userId:      stravaUserId,
+          activityId:  data.activityId,
+          boostAmount: data.fees,
+          bonusAmount: data.bonus,
+          benefAmount: data.benef,
+        }),
+      });
+      const transferData = await transferRes.json().catch(() => ({}));
+      if (!transferRes.ok || transferData.error) throw new Error(transferData.error ?? "transfer failed");
+
+      await fetch("/api/send-bonus", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeader() },
+        body: JSON.stringify({ activityId: data.activityId, minNonce: transferData.nextNonce ?? undefined }),
+      }).catch(() => {});
+
+      setQuickEntryStatus(prev => ({ ...prev, [id]: "done" }));
       const earned = Number(data.fees ?? 0);
       if (earned > 0) {
         setStravaPopup(false);

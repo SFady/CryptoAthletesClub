@@ -185,8 +185,10 @@ export async function POST(req) {
 
     const result = await sql`
       INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus, liquidity_repair, pool_usdc, pool_weth, rewards_usdc, rewards_weth, duration, bonus2, bonus3)
-        VALUES (${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${0}, ${benef}, ${upgrade}, ${bonus}, ${repair}, ${walletUSDC}, ${0}, ${0}, ${0}, ${duration}, ${bonus2}, ${bonus3});
+        VALUES (${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${0}, ${benef}, ${upgrade}, ${bonus}, ${repair}, ${walletUSDC}, ${0}, ${0}, ${0}, ${duration}, ${bonus2}, ${bonus3})
+        RETURNING id;
     `;
+    const activityId = result[0]?.id ?? null;
 
     const result2 = await sql`
       UPDATE USERS set dollars=dollars+${boost} where id=${user_id}
@@ -200,7 +202,7 @@ export async function POST(req) {
       await sql`UPDATE users SET liquidity = ${new_liquidity} WHERE id = ${user_id}`;
     }
 
-    return Response.json({ message: '✅ Insert OK', starting_offered_liquidity, initial_user_liquidity, percent_global, percent, defit_percentage, available_fees, benef, upgrade, bonus, fees: boost, new_liquidity, walletUSDC, distributed_bonus_to_credit, walletPool });
+    return Response.json({ message: '✅ Insert OK', activityId, starting_offered_liquidity, initial_user_liquidity, percent_global, percent, defit_percentage, available_fees, benef, upgrade, bonus, bonus2, bonus3, fees: boost, new_liquidity, walletUSDC, distributed_bonus_to_credit, walletPool });
 
   } catch (err) {
     console.error('❌ DB error:', err);
