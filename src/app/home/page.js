@@ -221,6 +221,7 @@ export default function Home() {
 
       const earned = Number(data.fees ?? 0);
       if (earned > 0) {
+        setStravaPopup(false);
         setEarnedToast(earned);
         import("canvas-confetti").then(({ default: confetti }) => {
           confetti({
@@ -242,7 +243,7 @@ export default function Home() {
 
       {/* Toast "Vous avez gagné X $" */}
       {earnedToast !== null && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 rounded-2xl shadow-2xl border border-[#D6C48A]/40 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-base flex items-center gap-2">
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[60] px-8 py-6 rounded-2xl shadow-2xl border border-[#D6C48A]/40 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-xl flex items-center gap-2 text-center">
           Vous avez gagné <span className="text-[#D6C48A]">{earnedToast.toFixed(2)} $</span> !
         </div>
       )}
