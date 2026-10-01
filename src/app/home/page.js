@@ -36,6 +36,7 @@ export default function Home() {
   const [stravaUsername, setStravaUsername] = useState(null);
   const [maxDefits, setMaxDefits] = useState(null);
   const [quickEntryStatus, setQuickEntryStatus] = useState({}); // { [activityId]: 'loading' | 'done' | 'error' }
+  const [earnedToast, setEarnedToast] = useState(null); // dollar amount shown in the "Vous avez gagné" toast
 
   const fetchBoostMax = async (athleteId) => {
     try {
@@ -211,12 +212,26 @@ export default function Home() {
 
       const res = await fetch("/api/insert-data", { method: "POST", body: fd, headers: authHeader() });
       if (!res.ok) throw new Error("insert failed");
-      await res.json();
+      const data = await res.json();
 
       setQuickEntryStatus(prev => ({ ...prev, [id]: "done" }));
       const km10 = Math.round(km * 10);
       const timeKey = `${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}`;
       setDbDates(prev => new Set(prev).add(`${dateClaimed}_${timeKey}_${a.sport_type}_${km10}`));
+
+      const earned = Number(data.fees ?? 0);
+      if (earned > 0) {
+        setEarnedToast(earned);
+        import("canvas-confetti").then(({ default: confetti }) => {
+          confetti({
+            particleCount: 90,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ["#D6C48A", "#ffffff", "#a78bfa", "#f472b6"],
+          });
+        }).catch(() => {});
+        setTimeout(() => setEarnedToast(null), 4000);
+      }
     } catch {
       setQuickEntryStatus(prev => ({ ...prev, [id]: "error" }));
     }
@@ -224,6 +239,13 @@ export default function Home() {
 
   return (
     <main className="relative w-full max-w-[1600px] mx-auto px-6 md:px-16 flex flex-col justify-center min-h-[calc(100svh-144px)] md:min-h-[calc(100vh-96px)] md:justify-start md:pt-0 md:pb-0">
+
+      {/* Toast "Vous avez gagné X $" */}
+      {earnedToast !== null && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 rounded-2xl shadow-2xl border border-[#D6C48A]/40 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-base flex items-center gap-2">
+          Vous avez gagné <span className="text-[#D6C48A]">{earnedToast.toFixed(2)} $</span> !
+        </div>
+      )}
 
       {/* Popup activités Strava */}
       {stravaPopup && stravaActivities && (
