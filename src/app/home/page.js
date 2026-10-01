@@ -32,6 +32,10 @@ export default function Home() {
   const [stravaActivities, setStravaActivities] = useState(null);
   const [stravaPopup, setStravaPopup] = useState(false);
   const [dbDates, setDbDates] = useState(new Set());
+  const [stravaUserId, setStravaUserId] = useState(null);
+  const [stravaUsername, setStravaUsername] = useState(null);
+  const [maxDefits, setMaxDefits] = useState(null);
+  const [quickEntryStatus, setQuickEntryStatus] = useState({}); // { [activityId]: 'loading' | 'done' | 'error' }
 
   const fetchBoostMax = async (athleteId) => {
     try {
@@ -160,6 +164,64 @@ export default function Home() {
     Walk: <FaWalking className="text-white/80 text-lg" />,
   };
 
+  // Même barème que /sfy1024 (score borné [0,100] par activité)
+  const activityTypeId = { Run: "1", Walk: "2", Ride: "3", Swim: "4" };
+  const activityCoeff  = { "1": 1, "2": 1,   "3": 1 / 3, "4": 5  };
+  const activityKmCap  = { "1": 100, "2": 100, "3": 300, "4": 20 };
+
+  const handleQuickEntry = async (a) => {
+    const id = a.id;
+    setQuickEntryStatus(prev => ({ ...prev, [id]: "loading" }));
+    try {
+      const type  = activityTypeId[a.sport_type] ?? "1";
+      const km    = a.distance / 1000;
+      const coeff = activityCoeff[type] ?? 1;
+      const kmCap = activityKmCap[type] ?? 100;
+      const x     = Math.min(km, kmCap) * coeff;
+      const score = 100 * Math.pow(x / 100, 0.179);
+      const defitAmount = maxDefits ? (score / 100) * maxDefits : 0;
+      const participationPercentage = stravaUsername === "usopp" ? 100 : 50;
+
+      const d = new Date(a.start_date_local);
+      const pad = (n) => String(n).padStart(2, "0");
+      const dateClaimed = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+      const timeClaimed = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+      const movingSeconds = Math.round(a.moving_time ?? 0);
+      const durationH = Math.floor(movingSeconds / 3600);
+      const durationM = Math.floor((movingSeconds % 3600) / 60);
+      const durationS = movingSeconds % 60;
+
+      const fd = new FormData();
+      fd.set("user_id", stravaUserId);
+      fd.set("date_claimed", dateClaimed);
+      fd.set("time_claimed", timeClaimed);
+      fd.set("defit_amount", defitAmount.toFixed(2));
+      fd.set("activity_type", type);
+      fd.set("participation_percentage", String(participationPercentage));
+      fd.set("kilometers", km.toFixed(2));
+      fd.set("duration_h", String(durationH));
+      fd.set("duration_m", String(durationM));
+      fd.set("duration_s", String(durationS));
+      fd.set("weth_value", "0");
+      fd.set("current_liquidity", "0");
+      fd.set("pool_weth", "0");
+      fd.set("pool_usdc", "0");
+      fd.set("rewards_weth", "0");
+      fd.set("rewards_usdc", "0");
+
+      const res = await fetch("/api/insert-data", { method: "POST", body: fd, headers: authHeader() });
+      if (!res.ok) throw new Error("insert failed");
+      await res.json();
+
+      setQuickEntryStatus(prev => ({ ...prev, [id]: "done" }));
+      const km10 = Math.round(km * 10);
+      const timeKey = `${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}`;
+      setDbDates(prev => new Set(prev).add(`${dateClaimed}_${timeKey}_${a.sport_type}_${km10}`));
+    } catch {
+      setQuickEntryStatus(prev => ({ ...prev, [id]: "error" }));
+    }
+  };
+
   return (
     <main className="relative w-full max-w-[1600px] mx-auto px-6 md:px-16 flex flex-col justify-center min-h-[calc(100svh-144px)] md:min-h-[calc(100vh-96px)] md:justify-start md:pt-0 md:pb-0">
 
@@ -182,8 +244,8 @@ export default function Home() {
               <ul className="flex flex-col gap-2 overflow-y-auto max-h-[55vh]">
                 {stravaActivities.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
                   const sd = new Date(a.start_date_local);
-                  const dateKey = `${sd.getFullYear()}-${String(sd.getMonth() + 1).padStart(2, "0")}-${String(sd.getDate()).padStart(2, "0")}`;
-                  const timeKey = `${String(sd.getHours()).padStart(2, "0")}${String(sd.getMinutes()).padStart(2, "0")}${String(sd.getSeconds()).padStart(2, "0")}`;
+                  const dateKey = `${sd.getUTCFullYear()}-${String(sd.getUTCMonth() + 1).padStart(2, "0")}-${String(sd.getUTCDate()).padStart(2, "0")}`;
+                  const timeKey = `${String(sd.getUTCHours()).padStart(2, "0")}${String(sd.getUTCMinutes()).padStart(2, "0")}${String(sd.getUTCSeconds()).padStart(2, "0")}`;
                   const km = Math.round((a.distance / 1000) * 10);
                   const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
                   return (
@@ -206,12 +268,35 @@ export default function Home() {
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <span className="text-[#FF8C5A] font-bold text-[15px] w-[78px] text-right [font-variant-numeric:tabular-nums]">{(a.distance / 1000).toFixed(2)} km</span>
-                        <a href={`https://www.strava.com/activities/${a.id}`} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center justify-center text-white/60 hover:text-white transition-colors border border-white/30 hover:border-white/60 rounded-lg p-2.5">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
-                          </svg>
-                        </a>
+                        <button
+                          type="button"
+                          disabled={alreadyIn || quickEntryStatus[a.id] === "loading" || quickEntryStatus[a.id] === "done"}
+                          onClick={() => handleQuickEntry(a)}
+                          title="Enregistrer cette activité"
+                          className={`flex items-center justify-center transition-colors border rounded-lg p-2.5
+                            ${quickEntryStatus[a.id] === "done"
+                              ? "text-emerald-400 border-emerald-400/40 cursor-default"
+                              : quickEntryStatus[a.id] === "error"
+                              ? "text-rose-400 border-rose-400/40 hover:border-rose-400/60"
+                              : alreadyIn
+                              ? "text-white/30 border-white/10 cursor-not-allowed"
+                              : "text-white/60 hover:text-white border-white/30 hover:border-white/60"}`}
+                        >
+                          {quickEntryStatus[a.id] === "loading" ? (
+                            <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 animate-spin">
+                              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth={3} strokeOpacity="0.25" />
+                              <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth={3} strokeLinecap="round" />
+                            </svg>
+                          ) : quickEntryStatus[a.id] === "done" ? (
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          ) : (
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
+                            </svg>
+                          )}
+                        </button>
                       </div>
                     </li>
                   );
@@ -251,6 +336,9 @@ export default function Home() {
               );
               setDbDates(dbEntries);
               setStravaActivities(stravaData);
+              setStravaUserId(userId);
+              setStravaUsername(user);
+              setMaxDefits(Number(dbData.result?.[0]?.max_defits ?? 0));
               setStravaPopup(true);
             } catch { /* ignore */ }
           }}
