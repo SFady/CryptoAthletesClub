@@ -223,14 +223,6 @@ export default function Home() {
       if (earned > 0) {
         setStravaPopup(false);
         setEarnedToast(earned);
-        import("canvas-confetti").then(({ default: confetti }) => {
-          confetti({
-            particleCount: 90,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ["#D6C48A", "#ffffff", "#a78bfa", "#f472b6"],
-          });
-        }).catch(() => {});
         setTimeout(() => setEarnedToast(null), 4000);
       }
     } catch {
