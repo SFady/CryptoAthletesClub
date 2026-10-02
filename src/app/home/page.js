@@ -32,6 +32,7 @@ export default function Home() {
   const [stravaActivities, setStravaActivities] = useState(null);
   const [stravaPopup, setStravaPopup] = useState(false);
   const [dbDates, setDbDates] = useState(new Set());
+  const [dbDays,  setDbDays]  = useState(new Set());
   const [stravaUserId, setStravaUserId] = useState(null);
   const [stravaUsername, setStravaUsername] = useState(null);
   const [maxDefits, setMaxDefits] = useState(null);
@@ -218,6 +219,7 @@ export default function Home() {
       const km10 = Math.round(km * 10);
       const timeKey = `${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00`;
       setDbDates(prev => new Set(prev).add(`${dateClaimed}_${timeKey}_${a.sport_type}_${km10}`));
+      setDbDays(prev => new Set(prev).add(dateClaimed));
 
       // Même opération que le transfert USDC de /position, mais ciblée précisément sur
       // l'activité qu'on vient d'insérer (son id, retourné directement par insert-data) —
@@ -288,8 +290,9 @@ export default function Home() {
                   const timeKey = `${String(sd.getUTCHours()).padStart(2, "0")}${String(sd.getUTCMinutes()).padStart(2, "0")}00`;
                   const km = Math.round((a.distance / 1000) * 10);
                   const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
+                  const dayUsed   = !alreadyIn && dbDays.has(dateKey);
                   return (
-                    <li key={a.id} className={`flex items-center justify-between rounded-xl px-3 py-2.5 ${alreadyIn ? "bg-white/[0.02] opacity-40" : "bg-white/5"}`}>
+                    <li key={a.id} className={`flex items-center justify-between rounded-xl px-3 py-2.5 ${(alreadyIn || dayUsed) ? "bg-white/[0.02] opacity-40" : "bg-white/5"}`}>
                       <div className="flex items-center gap-2 min-w-0">
                         <div className="w-8 flex justify-center flex-shrink-0">{activityIcon[a.sport_type]}</div>
                         <div className="flex flex-col min-w-0">
@@ -310,12 +313,14 @@ export default function Home() {
                         <span className="text-[#FF8C5A] font-bold text-[15px] w-[78px] text-right [font-variant-numeric:tabular-nums]">{(a.distance / 1000).toFixed(2)} km</span>
                         <button
                           type="button"
-                          disabled={alreadyIn || quickEntryStatus[a.id] === "loading" || quickEntryStatus[a.id] === "done"}
+                          disabled={alreadyIn || dayUsed || quickEntryStatus[a.id] === "loading" || quickEntryStatus[a.id] === "done"}
                           onClick={() => handleQuickEntry(a)}
                           title="Enregistrer cette activité"
                           className={`flex items-center justify-center transition-colors border rounded-lg p-2.5
                             ${(quickEntryStatus[a.id] === "done" || alreadyIn)
                               ? "text-emerald-400 border-emerald-400/40 cursor-default"
+                              : dayUsed
+                              ? "text-white/20 border-white/10 cursor-not-allowed"
                               : quickEntryStatus[a.id] === "error"
                               ? "text-rose-400 border-rose-400/40 hover:border-rose-400/60"
                               : "text-white/60 hover:text-white border-white/30 hover:border-white/60"}`}
@@ -325,7 +330,7 @@ export default function Home() {
                               <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth={3} strokeOpacity="0.25" />
                               <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth={3} strokeLinecap="round" />
                             </svg>
-                          ) : (quickEntryStatus[a.id] === "done" || alreadyIn) ? (
+                          ) : (quickEntryStatus[a.id] === "done" || alreadyIn) && !dayUsed ? (
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
@@ -373,6 +378,7 @@ export default function Home() {
                 })
               );
               setDbDates(dbEntries);
+              setDbDays(new Set((dbData.result ?? []).map(a => String(a.date_claimed).slice(0, 10))));
               setStravaActivities(stravaData);
               setStravaUserId(userId);
               setStravaUsername(user);
