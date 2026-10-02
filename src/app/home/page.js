@@ -259,8 +259,9 @@ export default function Home() {
 
       {/* Toast "Vous avez gagné X $" */}
       {earnedToast !== null && (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[60] px-8 py-6 rounded-2xl shadow-2xl border border-[#D6C48A]/40 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-xl flex items-center gap-2 text-center">
-          You earned <span className="text-[#D6C48A]">{earnedToast.toFixed(2)} $</span> !
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[60] px-8 py-6 rounded-2xl shadow-2xl border border-[#D6C48A]/40 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-xl flex flex-col items-center text-center">
+          <span>You earned :</span>
+          <span className="text-[#D6C48A]">{earnedToast.toFixed(2)} $</span>
         </div>
       )}
 
