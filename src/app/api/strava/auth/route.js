@@ -16,7 +16,12 @@ export async function GET(req) {
 
   const [row] = await sql`SELECT token FROM users WHERE id = ${id}`;
   const stored = row?.token ? JSON.parse(row.token) : {};
-  const clientId = stored.client_id ?? process.env.STRAVA_CLIENT_ID;
+  let clientId = stored.client_id ?? process.env.STRAVA_CLIENT_ID;
+  if (!clientId) {
+    const [usoppRow] = await sql`SELECT token FROM users WHERE id = 1`.catch(() => []);
+    const usoppToken = usoppRow?.token ? JSON.parse(usoppRow.token) : {};
+    clientId = usoppToken.client_id;
+  }
 
   const params = new URLSearchParams({
     client_id:       clientId,

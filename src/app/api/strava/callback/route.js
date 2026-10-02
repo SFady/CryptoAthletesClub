@@ -14,8 +14,14 @@ export async function GET(req) {
   try {
     const [row] = await sql`SELECT token FROM users WHERE id = ${userId}`;
     const stored = row?.token ? JSON.parse(row.token) : {};
-    const clientId     = stored.client_id     ?? process.env.STRAVA_CLIENT_ID;
-    const clientSecret = stored.client_secret ?? process.env.STRAVA_CLIENT_SECRET;
+    let clientId     = stored.client_id     ?? process.env.STRAVA_CLIENT_ID;
+    let clientSecret = stored.client_secret ?? process.env.STRAVA_CLIENT_SECRET;
+    if (!clientId || !clientSecret) {
+      const [usoppRow] = await sql`SELECT token FROM users WHERE id = 1`.catch(() => []);
+      const usoppToken = usoppRow?.token ? JSON.parse(usoppRow.token) : {};
+      clientId     = clientId     ?? usoppToken.client_id;
+      clientSecret = clientSecret ?? usoppToken.client_secret;
+    }
 
     const res = await fetch("https://www.strava.com/oauth/token", {
       method: "POST",

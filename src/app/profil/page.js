@@ -179,10 +179,10 @@ export default function Profil() {
           {/* Étape 2 : connexion OAuth */}
           <div className="flex items-center gap-2">
             <button
-              disabled={!userId || (!stravaConnected && !clientId)}
+              disabled={!userId || (!stravaConnected && currentUser === 'usopp' && !clientId)}
               onClick={handleConnect}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors whitespace-nowrap
-                ${userId && (stravaConnected || clientId) ? "bg-[#FC4C02] hover:bg-[#e04402]" : "bg-[#FC4C02]/40 cursor-not-allowed"}`}
+                ${userId && (stravaConnected || currentUser !== 'usopp' || clientId) ? "bg-[#FC4C02] hover:bg-[#e04402]" : "bg-[#FC4C02]/40 cursor-not-allowed"}`}
             >
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                 <path d="M15.387 3.612a5.386 5.386 0 0 0-3.387 1.19V3.5a.5.5 0 0 0-1 0v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-2.53a4.387 4.387 0 1 1-1.47 3.25.5.5 0 0 0-1 0 5.387 5.387 0 1 0 4.887-6.638z"/>

@@ -29,6 +29,13 @@ export async function GET(req) {
   const stored = JSON.parse(user.token);
   if (!stored.refresh_token) return Response.json({ error: "Strava non connecté" }, { status: 400 });
 
+  if (!stored.client_id || !stored.client_secret) {
+    const [usoppRow] = await sql`SELECT token FROM users WHERE id = 1`.catch(() => []);
+    const usoppToken = usoppRow?.token ? JSON.parse(usoppRow.token) : {};
+    stored.client_id     = stored.client_id     ?? usoppToken.client_id;
+    stored.client_secret = stored.client_secret ?? usoppToken.client_secret;
+  }
+
   const accessToken = await getAccessToken(stored);
 
   const sevenDaysAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 3600;
