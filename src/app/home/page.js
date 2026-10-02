@@ -314,12 +314,10 @@ export default function Home() {
                           onClick={() => handleQuickEntry(a)}
                           title="Enregistrer cette activité"
                           className={`flex items-center justify-center transition-colors border rounded-lg p-2.5
-                            ${quickEntryStatus[a.id] === "done"
+                            ${(quickEntryStatus[a.id] === "done" || alreadyIn)
                               ? "text-emerald-400 border-emerald-400/40 cursor-default"
                               : quickEntryStatus[a.id] === "error"
                               ? "text-rose-400 border-rose-400/40 hover:border-rose-400/60"
-                              : alreadyIn
-                              ? "text-white/30 border-white/10 cursor-not-allowed"
                               : "text-white/60 hover:text-white border-white/30 hover:border-white/60"}`}
                         >
                           {quickEntryStatus[a.id] === "loading" ? (
@@ -327,7 +325,7 @@ export default function Home() {
                               <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth={3} strokeOpacity="0.25" />
                               <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth={3} strokeLinecap="round" />
                             </svg>
-                          ) : quickEntryStatus[a.id] === "done" ? (
+                          ) : (quickEntryStatus[a.id] === "done" || alreadyIn) ? (
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
