@@ -31,9 +31,9 @@ export async function GET(req) {
 
   const accessToken = await getAccessToken(stored);
 
-  const after = user.strava_start_date
-    ? Math.floor(new Date(user.strava_start_date).getTime() / 1000)
-    : Math.floor(Date.now() / 1000) - 7 * 24 * 3600;
+  const sevenDaysAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 3600;
+  const startDate    = user.strava_start_date ? Math.floor(new Date(user.strava_start_date).getTime() / 1000) : 0;
+  const after        = Math.max(sevenDaysAgo, startDate);
   const res = await fetch(
     `https://www.strava.com/api/v3/athlete/activities?after=${after}&per_page=50`,
     { headers: { Authorization: `Bearer ${accessToken}` } }
