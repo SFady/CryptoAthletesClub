@@ -359,7 +359,7 @@ export default function Home() {
               if (!userId) return;
               const [stravaRes, dbRes] = await Promise.all([
                 fetch(`/api/strava/activities?userId=${userId}`),
-                fetch(`/api/get-users-activities?userId=${userId}&limit=100`),
+                fetch(`/api/get-users-activities?userId=${userId}&limit=1000`),
               ]);
               const stravaData = await stravaRes.json();
               const dbData = await dbRes.json();
@@ -368,8 +368,8 @@ export default function Home() {
                   const raw = String(a.date_claimed);
                   const date = raw.slice(0, 10);
                   const time = raw.slice(11, 19).replace(/:/g, "");
-                  const lowerName = a.activity_name?.toLowerCase() ?? "";
-                  const type = (lowerName.includes("run") || lowerName.includes("course")) ? "Run" : "Walk";
+                  const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
+                  const type = typeMap[String(a.activity_type)] ?? "Walk";
                   const km = Math.round(Number(a.kilometers) * 10);
                   return `${date}_${time}_${type}_${km}`;
                 })

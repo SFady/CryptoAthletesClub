@@ -23,7 +23,7 @@ export async function GET(req) {
   const userId = new URL(req.url).searchParams.get("userId");
   if (!userId) return Response.json({ error: "missing userId" }, { status: 400 });
 
-  const [user] = await sql`SELECT token FROM users WHERE id = ${userId}`;
+  const [user] = await sql`SELECT token, strava_start_date FROM users WHERE id = ${userId}`;
   if (!user?.token) return Response.json({ error: "Strava non connecté" }, { status: 400 });
 
   const stored = JSON.parse(user.token);
@@ -31,7 +31,9 @@ export async function GET(req) {
 
   const accessToken = await getAccessToken(stored);
 
-  const after = Math.floor(Date.now() / 1000) - 7 * 24 * 3600;
+  const after = user.strava_start_date
+    ? Math.floor(new Date(user.strava_start_date).getTime() / 1000)
+    : Math.floor(Date.now() / 1000) - 7 * 24 * 3600;
   const res = await fetch(
     `https://www.strava.com/api/v3/athlete/activities?after=${after}&per_page=50`,
     { headers: { Authorization: `Bearer ${accessToken}` } }

@@ -29,6 +29,8 @@ export default function Profil() {
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
   const [credSaved, setCredSaved] = useState(false);
+  const [stravaStartDate, setStravaStartDate] = useState("");
+  const [startDateSaved, setStartDateSaved] = useState(false);
 
   useEffect(() => {
     const s = searchParams.get("strava");
@@ -49,6 +51,7 @@ export default function Profil() {
             setStravaConnected(connected);
             if (!connected) setStravaStatus(null);
             setClientId(d.stravaClientId ?? "");
+            setStravaStartDate(d.stravaStartDate ?? "");
           });
       }
     } catch { /* ignore */ }
@@ -74,6 +77,17 @@ export default function Profil() {
     });
     setCredSaved(true);
     setTimeout(() => setCredSaved(false), 2000);
+  };
+
+  const handleSaveStartDate = async () => {
+    if (!userId) return;
+    await fetch("/api/profil", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeader() },
+      body: JSON.stringify({ id: userId, stravaStartDate }),
+    });
+    setStartDateSaved(true);
+    setTimeout(() => setStartDateSaved(false), 2000);
   };
 
   const handleConnect = async () => {
@@ -195,6 +209,23 @@ export default function Profil() {
                 Disconnect
               </button>
             )}
+          </div>
+
+          {/* Date de début Strava */}
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={stravaStartDate}
+              onChange={e => setStravaStartDate(e.target.value)}
+              className={inputCls + " flex-1"}
+            />
+            <button
+              onClick={handleSaveStartDate}
+              disabled={!userId}
+              className="flex-shrink-0 bg-white text-[#5f3dc4] font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm disabled:opacity-40"
+            >
+              {startDateSaved ? "✓" : "Start date"}
+            </button>
           </div>
 
           {stravaConnected && (
