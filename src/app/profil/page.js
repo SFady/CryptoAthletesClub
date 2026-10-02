@@ -31,6 +31,22 @@ export default function Profil() {
   const [credSaved, setCredSaved] = useState(false);
   const [stravaStartDate, setStravaStartDate] = useState("");
   const [startDateSaved, setStartDateSaved] = useState(false);
+  const [managedUserId, setManagedUserId] = useState(null);
+
+  const loadProfile = (id) => {
+    if (!id) return;
+    fetch(`/api/profil?id=${id}`, { headers: authHeader() })
+      .then(r => r.json())
+      .then(d => {
+        setEmail(d.email ?? "");
+        const connected = !!d.stravaConnected;
+        setStravaConnected(connected);
+        if (!connected) setStravaStatus(null);
+        setClientId(d.stravaClientId ?? "");
+        setStravaStartDate(d.stravaStartDate ?? "");
+        setActivities(null);
+      });
+  };
 
   useEffect(() => {
     const s = searchParams.get("strava");
@@ -41,59 +57,64 @@ export default function Profil() {
       const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
       const id = USER_ID_MAP[user];
       setUserId(id);
+      setManagedUserId(id);
       setCurrentUser(user ?? null);
-      if (id) {
-        fetch(`/api/profil?id=${id}`, { headers: authHeader() })
-          .then(r => r.json())
-          .then(d => {
-            setEmail(d.email ?? "");
-            const connected = !!d.stravaConnected;
-            setStravaConnected(connected);
-            if (!connected) setStravaStatus(null);
-            setClientId(d.stravaClientId ?? "");
-            setStravaStartDate(d.stravaStartDate ?? "");
-          });
-      }
+      loadProfile(id);
     } catch { /* ignore */ }
   }, []);
 
+  const switchUser = (id) => {
+    setManagedUserId(id);
+    setStravaStatus(null);
+    loadProfile(id);
+  };
+
+  const activeId = managedUserId;
+
   const handleSave = async () => {
-    if (!userId) return;
+    if (!activeId) return;
     await fetch("/api/profil", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...authHeader() },
-      body: JSON.stringify({ id: userId, email }),
+      body: JSON.stringify({ id: activeId, email }),
     });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
   const handleSaveCreds = async () => {
-    if (!userId || !clientId || !clientSecret) return;
+    if (!activeId || !clientId || !clientSecret) return;
     await fetch("/api/profil", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...authHeader() },
-      body: JSON.stringify({ id: userId, stravaClientId: clientId, stravaClientSecret: clientSecret }),
+      body: JSON.stringify({ id: activeId, stravaClientId: clientId, stravaClientSecret: clientSecret }),
     });
     setCredSaved(true);
     setTimeout(() => setCredSaved(false), 2000);
   };
 
   const handleSaveStartDate = async () => {
-    if (!userId) return;
+    if (!activeId) return;
     await fetch("/api/profil", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...authHeader() },
-      body: JSON.stringify({ id: userId, stravaStartDate }),
+      body: JSON.stringify({ id: activeId, stravaStartDate }),
     });
     setStartDateSaved(true);
     setTimeout(() => setStartDateSaved(false), 2000);
   };
 
+  const [oauthLink, setOauthLink] = useState(null);
+
   const handleConnect = async () => {
-    const res = await fetch(`/api/strava/auth?userId=${userId}`);
+    const res = await fetch(`/api/strava/auth?userId=${activeId}`);
     const { link } = await res.json();
-    if (link) window.location.href = link;
+    if (!link) return;
+    if (currentUser === 'usopp' && managedUserId !== userId) {
+      setOauthLink(link);
+    } else {
+      window.location.href = link;
+    }
   };
 
   return (
@@ -106,6 +127,21 @@ export default function Profil() {
         </button>
         <h1 className="text-2xl font-bold">Profile</h1>
       </div>
+
+      {currentUser === 'usopp' && (
+        <div className="w-full max-w-sm mb-4 flex items-center gap-2">
+          <label className="text-sm text-gray-400 whitespace-nowrap">Manage user :</label>
+          <select
+            value={managedUserId ?? ""}
+            onChange={e => switchUser(e.target.value)}
+            className="flex-1 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-white/30"
+          >
+            {Object.entries(USER_ID_MAP).map(([name, id]) => (
+              <option key={id} value={id} className="bg-[#1a0533] text-white">{name} (id {id})</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="w-full max-w-sm flex flex-col gap-4">
 
@@ -179,10 +215,10 @@ export default function Profil() {
           {/* Étape 2 : connexion OAuth */}
           <div className="flex items-center gap-2">
             <button
-              disabled={!userId || (!stravaConnected && currentUser === 'usopp' && !clientId)}
+              disabled={!activeId}
               onClick={handleConnect}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors whitespace-nowrap
-                ${userId && (stravaConnected || currentUser !== 'usopp' || clientId) ? "bg-[#FC4C02] hover:bg-[#e04402]" : "bg-[#FC4C02]/40 cursor-not-allowed"}`}
+                ${activeId ? "bg-[#FC4C02] hover:bg-[#e04402]" : "bg-[#FC4C02]/40 cursor-not-allowed"}`}
             >
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                 <path d="M15.387 3.612a5.386 5.386 0 0 0-3.387 1.19V3.5a.5.5 0 0 0-1 0v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-2.53a4.387 4.387 0 1 1-1.47 3.25.5.5 0 0 0-1 0 5.387 5.387 0 1 0 4.887-6.638z"/>
@@ -192,13 +228,29 @@ export default function Profil() {
             {stravaStatus === "ok"    && <span className="text-emerald-400 text-sm">✓ Connected</span>}
             {stravaStatus === "error" && <span className="text-rose-400 text-sm">Error</span>}
             {stravaConnected && !stravaStatus && <span className="text-emerald-400 text-sm">✓ Active</span>}
-            {stravaConnected && (
+          </div>
+          {oauthLink && (
+            <div className="flex flex-col gap-1 bg-white/5 rounded-xl p-3">
+              <p className="text-xs text-gray-400">Envoie ce lien à l'utilisateur — il doit l'ouvrir dans son navigateur connecté à Strava :</p>
+              <div className="flex gap-2 items-center">
+                <input readOnly value={oauthLink} className={inputCls + " text-xs"} onClick={e => e.target.select()} />
+                <button
+                  onClick={() => { navigator.clipboard.writeText(oauthLink); }}
+                  className="flex-shrink-0 bg-white text-[#5f3dc4] font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-xs whitespace-nowrap"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          )}
+          {stravaConnected && (
+            <div className="flex items-center gap-2">
               <button
                 onClick={async () => {
                   await fetch("/api/strava/disconnect", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ userId }),
+                    body: JSON.stringify({ userId: activeId }),
                   });
                   setStravaConnected(false);
                   setStravaStatus(null);
@@ -208,8 +260,8 @@ export default function Profil() {
               >
                 Disconnect
               </button>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Date de début Strava + View raw — usopp uniquement */}
           {currentUser === 'usopp' && (
@@ -222,7 +274,7 @@ export default function Profil() {
               />
               <button
                 onClick={handleSaveStartDate}
-                disabled={!userId}
+                disabled={!activeId}
                 className="flex-shrink-0 bg-white text-[#5f3dc4] font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm disabled:opacity-40"
               >
                 {startDateSaved ? "✓" : "Start date"}
@@ -235,7 +287,7 @@ export default function Profil() {
               <button
                 onClick={async () => {
                   setLoadingAct(true);
-                  const res = await fetch(`/api/strava/activities?userId=${userId}`);
+                  const res = await fetch(`/api/strava/activities?userId=${activeId}`);
                   const data = await res.json();
                   setActivities(Array.isArray(data) ? data.filter(a => ["Run","Walk","Ride","Swim"].includes(a.sport_type)) : data);
                   setLoadingAct(false);
