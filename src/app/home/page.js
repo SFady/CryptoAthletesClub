@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
-import { FaRunning, FaWalking } from "react-icons/fa";
+import { FaRunning, FaWalking, FaBiking, FaSwimmer } from "react-icons/fa";
 import { sqrtPercent } from "@/lib/percent";
 
 function authHeader() {
@@ -164,6 +164,8 @@ export default function Home() {
       </span>
     ),
     Walk: <FaWalking className="text-white/80 text-lg" />,
+    Ride: <FaBiking  className="text-white/80 text-lg" />,
+    Swim: <FaSwimmer className="text-white/80 text-lg" />,
   };
 
   // Même barème que /sfy1024 (score borné [0,100] par activité)
@@ -284,7 +286,7 @@ export default function Home() {
               <p className="text-gray-400 text-sm text-center">No activity this week</p>
             ) : (
               <ul className="flex flex-col gap-2 overflow-y-auto max-h-[55vh]">
-                {stravaActivities.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
+                {stravaActivities.filter(a => a.sport_type in activityTypeId).sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
                   const sd = new Date(a.start_date_local);
                   const dateKey = `${sd.getUTCFullYear()}-${String(sd.getUTCMonth() + 1).padStart(2, "0")}-${String(sd.getUTCDate()).padStart(2, "0")}`;
                   const timeKey = `${String(sd.getUTCHours()).padStart(2, "0")}${String(sd.getUTCMinutes()).padStart(2, "0")}00`;

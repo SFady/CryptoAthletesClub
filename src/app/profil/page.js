@@ -211,30 +211,33 @@ export default function Profil() {
             )}
           </div>
 
-          {/* Date de début Strava */}
-          <div className="flex items-center gap-2">
-            <input
-              type="date"
-              value={stravaStartDate}
-              onChange={e => setStravaStartDate(e.target.value)}
-              className={inputCls + " flex-1"}
-            />
-            <button
-              onClick={handleSaveStartDate}
-              disabled={!userId}
-              className="flex-shrink-0 bg-white text-[#5f3dc4] font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm disabled:opacity-40"
-            >
-              {startDateSaved ? "✓" : "Start date"}
-            </button>
-          </div>
+          {/* Date de début Strava + View raw — usopp uniquement */}
+          {currentUser === 'usopp' && (
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                value={stravaStartDate}
+                onChange={e => setStravaStartDate(e.target.value)}
+                className={inputCls + " flex-1"}
+              />
+              <button
+                onClick={handleSaveStartDate}
+                disabled={!userId}
+                className="flex-shrink-0 bg-white text-[#5f3dc4] font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm disabled:opacity-40"
+              >
+                {startDateSaved ? "✓" : "Start date"}
+              </button>
+            </div>
+          )}
 
-          {stravaConnected && (
+          {stravaConnected && currentUser === 'usopp' && (
             <div className="mt-1">
               <button
                 onClick={async () => {
                   setLoadingAct(true);
                   const res = await fetch(`/api/strava/activities?userId=${userId}`);
-                  setActivities(await res.json());
+                  const data = await res.json();
+                  setActivities(Array.isArray(data) ? data.filter(a => ["Run","Walk","Ride","Swim"].includes(a.sport_type)) : data);
                   setLoadingAct(false);
                 }}
                 className="text-sm text-gray-300 hover:text-white underline transition-colors"
