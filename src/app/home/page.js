@@ -216,7 +216,7 @@ export default function Home() {
       if (!data.activityId) throw new Error("no activityId returned");
 
       const km10 = Math.round(km * 10);
-      const timeKey = `${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}`;
+      const timeKey = `${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00`;
       setDbDates(prev => new Set(prev).add(`${dateClaimed}_${timeKey}_${a.sport_type}_${km10}`));
 
       // Même opération que le transfert USDC de /position, mais ciblée précisément sur
@@ -285,7 +285,7 @@ export default function Home() {
                 {stravaActivities.filter(a => a.sport_type === "Run" || a.sport_type === "Walk").sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
                   const sd = new Date(a.start_date_local);
                   const dateKey = `${sd.getUTCFullYear()}-${String(sd.getUTCMonth() + 1).padStart(2, "0")}-${String(sd.getUTCDate()).padStart(2, "0")}`;
-                  const timeKey = `${String(sd.getUTCHours()).padStart(2, "0")}${String(sd.getUTCMinutes()).padStart(2, "0")}${String(sd.getUTCSeconds()).padStart(2, "0")}`;
+                  const timeKey = `${String(sd.getUTCHours()).padStart(2, "0")}${String(sd.getUTCMinutes()).padStart(2, "0")}00`;
                   const km = Math.round((a.distance / 1000) * 10);
                   const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
                   return (
