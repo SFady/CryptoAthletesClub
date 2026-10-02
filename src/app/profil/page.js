@@ -136,9 +136,9 @@ export default function Profil() {
 
         {/* Strava */}
         <div className="relative flex flex-col gap-3">
-          {userId !== "1" && (
+          {currentUser === 'justtosee' && (
             <div className="absolute inset-0 z-10 rounded-xl backdrop-blur-[1px] bg-black/30 flex items-center justify-center">
-              <span className="text-xs text-gray-400 bg-black/60 px-3 py-1.5 rounded-lg">Strava available for Usopp only</span>
+              <span className="text-xs text-gray-400 bg-black/60 px-3 py-1.5 rounded-lg">Strava not available</span>
             </div>
           )}
           <label className="text-sm text-gray-300">&nbsp;Strava</label>
