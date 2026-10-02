@@ -26,10 +26,11 @@ export async function POST(req) {
   const { id, email, walletAddress, stravaClientId, stravaClientSecret, stravaStartDate } = await req.json();
   if (!id) return Response.json({ error: "missing id" }, { status: 400 });
 
-  if (stravaClientId && stravaClientSecret) {
+  if (stravaClientId) {
     const [row] = await sql`SELECT token FROM users WHERE id = ${id}`;
     const existing = row?.token ? JSON.parse(row.token) : {};
-    const updated = { ...existing, client_id: stravaClientId, client_secret: stravaClientSecret };
+    const updated = { ...existing, client_id: stravaClientId };
+    if (stravaClientSecret) updated.client_secret = stravaClientSecret;
     await sql`UPDATE users SET token = ${JSON.stringify(updated)} WHERE id = ${id}`;
   }
 

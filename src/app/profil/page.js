@@ -180,7 +180,7 @@ export default function Profil() {
           <label className="text-sm text-gray-300">&nbsp;Strava</label>
 
           {/* Étape 1 : credentials */}
-          {(!stravaConnected || currentUser === 'usopp') && (
+          {currentUser === 'usopp' && (
             <div className="flex flex-col gap-2 bg-white/5 rounded-xl p-3">
               <p className="text-xs text-gray-400">
                 1. Create an app at <span className="text-white">strava.com/settings/api</span><br/>

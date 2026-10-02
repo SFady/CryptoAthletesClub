@@ -38,8 +38,7 @@ export async function GET(req) {
     if (!data.refresh_token) throw new Error("No refresh_token in response");
 
     const token = JSON.stringify({
-      client_id:     clientId,
-      client_secret: clientSecret,
+      ...stored,
       refresh_token: data.refresh_token,
       access_token:  data.access_token,
       expires_at:    data.expires_at,
