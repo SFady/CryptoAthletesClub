@@ -113,14 +113,16 @@ function AppShell({ children }) {
           <header className="fixed top-0 left-0 w-full bg-[#390494]/90 p-4 shadow-md z-30 backdrop-blur-md">
             <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-between">
               {/* Burger mobile — header */}
-              <button
-                onClick={() => setShowBurger(v => !v)}
-                className="md:hidden mr-3 text-gray-300 hover:text-white transition-colors flex-shrink-0"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
+              {authed && (
+                <button
+                  onClick={() => setShowBurger(v => !v)}
+                  className="md:hidden mr-3 text-gray-300 hover:text-white transition-colors flex-shrink-0"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+              )}
 
               <div className="flex flex-col w-full">
                 <h1 className="text-xl font-bold" style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.8)" }}>
@@ -135,7 +137,7 @@ function AppShell({ children }) {
 
               {/* Nav desktop */}
               <nav className="hidden md:flex gap-8 text-sm font-medium justify-end ml-auto">
-                {[
+                {authed && [
                   { href: "/dashboard", label: "Dashboard" },
                   { href: "/activities", label: "Activities" },
                   { href: "/statistics", label: "Statistics" },
@@ -146,32 +148,34 @@ function AppShell({ children }) {
                   </Link>
                 ))}
                 {/* Divers desktop */}
-                <div className="relative">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setShowDivers(v => !v); }}
-                    className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1"
-                  >
-                    More
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3 h-3">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  {showDivers && (
-                    <div className="absolute left-0 top-full mt-2 w-40 bg-[#2a1a6e] border border-white/20 rounded-xl shadow-xl z-50 overflow-hidden">
-                      {DIVERS_ITEMS.map(({ label, href }) => href ? (
-                        <Link key={label} href={href} onClick={() => setShowDivers(false)}
-                          className={`block px-4 py-2.5 text-sm hover:bg-white/10 hover:text-white transition-colors ${pathname === href ? "text-white font-medium" : "text-gray-300"}`}>
-                          {label}
-                        </Link>
-                      ) : (
-                        <button key={label} onClick={() => setShowDivers(false)}
-                          className="w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                {authed && (
+                  <div className="relative">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowDivers(v => !v); }}
+                      className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1"
+                    >
+                      More
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3 h-3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {showDivers && (
+                      <div className="absolute left-0 top-full mt-2 w-40 bg-[#2a1a6e] border border-white/20 rounded-xl shadow-xl z-50 overflow-hidden">
+                        {DIVERS_ITEMS.map(({ label, href }) => href ? (
+                          <Link key={label} href={href} onClick={() => setShowDivers(false)}
+                            className={`block px-4 py-2.5 text-sm hover:bg-white/10 hover:text-white transition-colors ${pathname === href ? "text-white font-medium" : "text-gray-300"}`}>
+                            {label}
+                          </Link>
+                        ) : (
+                          <button key={label} onClick={() => setShowDivers(false)}
+                            className="w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
                 <button onClick={authed ? logout : openLogin} className="text-gray-400 hover:text-white transition-colors text-sm">
                   {authed ? "Logout" : "Login"}
                 </button>
@@ -195,7 +199,7 @@ function AppShell({ children }) {
           {/* FOOTER MOBILE */}
           <footer className="fixed bottom-0 left-0 w-full bg-[#390494]/95 text-xs z-30 backdrop-blur-md block md:hidden border-t border-white/20">
             <nav className="flex justify-around items-center h-14">
-              {[
+              {authed && [
                 { href: "/dashboard", label: "Dashboard", icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H5a1 1 0 01-1-1V9.75z"/><path strokeLinecap="round" strokeLinejoin="round" d="M9 22V12h6v10"/></svg>
                 )},
