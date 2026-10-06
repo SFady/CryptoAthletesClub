@@ -114,24 +114,24 @@ export default function Home() {
 
   const ActivityIcon = ({ name }) => {
     const key = (name || "").toLowerCase();
-    const pill = "inline-flex items-center justify-center rounded-full border px-2.5 py-1";
+    const pill = "inline-flex items-center justify-center rounded-full border w-9 py-0.5";
 
     if (key === "run" || key === "running")   return (
       <span title="Running" className={`${pill} bg-orange-300/20 border-orange-300/30`}>
         <span className="inline-flex items-center gap-0.5">
           <span className="flex flex-col gap-0.5">
-            <span className="block h-px w-1.5 bg-orange-300/60 rounded-full" />
-            <span className="block h-px w-1 bg-orange-300/40 rounded-full" />
-            <span className="block h-px w-1.5 bg-orange-300/60 rounded-full" />
+            <span className="block h-px w-1 bg-orange-300/60 rounded-full" />
+            <span className="block h-px w-0.5 bg-orange-300/40 rounded-full" />
+            <span className="block h-px w-1 bg-orange-300/60 rounded-full" />
           </span>
-          <FaRunning className="text-orange-300 text-lg" />
+          <FaRunning className="text-orange-300 text-sm" />
         </span>
       </span>
     );
-    if (key === "swim" || key === "natation") return <span title="Swimming" className={`${pill} bg-cyan-500/20 border-cyan-500/30`}><FaSwimmer className="text-cyan-400 text-lg scale-x-[-1]" /></span>;
-    if (key === "bike" || key === "cyclisme") return <span title="Cycling" className={`${pill} bg-green-500/20 border-green-500/30`}><FaBiking className="text-green-400 text-lg" /></span>;
-    if (key === "marche" || key === "walk")   return <span title="Walking" className={`${pill} bg-blue-500/20 border-blue-500/30`}><FaWalking className="text-blue-400 text-lg" /></span>;
-    if (key.includes("bonus"))                return <span title={name} className={`${pill} bg-[#D6C48A]/20 border-[#D6C48A]/30`}><FaStar className="text-[#D6C48A] text-lg" /></span>;
+    if (key === "swim" || key === "natation") return <span title="Swimming" className={`${pill} bg-cyan-500/20 border-cyan-500/30`}><FaSwimmer className="text-cyan-400 text-sm scale-x-[-1]" /></span>;
+    if (key === "bike" || key === "cyclisme") return <span title="Cycling" className={`${pill} bg-green-500/20 border-green-500/30`}><FaBiking className="text-green-400 text-sm" /></span>;
+    if (key === "marche" || key === "walk")   return <span title="Walking" className={`${pill} bg-blue-500/20 border-blue-500/30`}><FaWalking className="text-blue-400 text-sm" /></span>;
+    if (key.includes("bonus"))                return <span title={name} className={`${pill} bg-[#D6C48A]/20 border-[#D6C48A]/30`}><FaStar className="text-[#D6C48A] text-sm" /></span>;
     return <span className="text-gray-200 text-sm">{name}</span>;
   };
 
