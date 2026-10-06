@@ -3,6 +3,6 @@ import { useEffect } from "react";
 
 export default function RootPage() {
   useEffect(() => {
-    window.location.href = `/home`;
+    window.location.href = `/dashboard`;
   }, []);
 }

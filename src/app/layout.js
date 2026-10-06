@@ -61,7 +61,7 @@ function AppShell({ children }) {
     { label: "About",  href: "/about" },
   ];
 
-  const MAIN_PAGES = ["/home", "/activities", "/statistics", "/shop"];
+  const MAIN_PAGES = ["/dashboard", "/activities", "/statistics", "/shop"];
 
   useEffect(() => {
     try {
@@ -128,7 +128,7 @@ function AppShell({ children }) {
               {/* Nav desktop */}
               <nav className="hidden md:flex gap-8 text-sm font-medium justify-end ml-auto">
                 {[
-                  { href: "/home", label: "Dashboard" },
+                  { href: "/dashboard", label: "Dashboard" },
                   { href: "/activities", label: "Activities" },
                   { href: "/statistics", label: "Statistics" },
                   { href: "/shop", label: "Shop" },
@@ -188,7 +188,7 @@ function AppShell({ children }) {
           <footer className="fixed bottom-0 left-0 w-full bg-[#390494]/95 text-xs z-30 backdrop-blur-md block md:hidden border-t border-white/20">
             <nav className="flex justify-around items-center h-14">
               {[
-                { href: "/home", label: "Dashboard", icon: (
+                { href: "/dashboard", label: "Dashboard", icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H5a1 1 0 01-1-1V9.75z"/><path strokeLinecap="round" strokeLinejoin="round" d="M9 22V12h6v10"/></svg>
                 )},
                 { href: "/activities", label: "Activities", icon: (

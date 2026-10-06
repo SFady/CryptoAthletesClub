@@ -165,8 +165,8 @@ export default function Position() {
   useEffect(() => {
     try {
       const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
-      if (user !== "usopp") { router.replace("/home"); return; }
-    } catch { router.replace("/home"); return; }
+      if (user !== "usopp") { router.replace("/dashboard"); return; }
+    } catch { router.replace("/dashboard"); return; }
     fetch("/api/wallet").then(r => r.json()).then(setWallet).catch(() => {});
     fetch("/api/app-config?key=show_defits", { headers: authHeader() }).then(r => r.json()).then(d => setShowGains(d.value === 'true')).catch(() => {});
     fetch("/api/get-distributions", { headers: authHeader() }).then(r => r.json()).then(setDistrib).catch(() => {});
