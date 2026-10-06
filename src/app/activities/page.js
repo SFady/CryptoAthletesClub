@@ -114,32 +114,21 @@ export default function Home() {
 
   const ActivityIcon = ({ name }) => {
     const key = (name || "").toLowerCase();
-    const cls = "text-white/80 text-lg";
     if (key === "run" || key === "running")   return (
       <span title="Running" className="inline-flex items-center gap-0.5">
         <span className="flex flex-col gap-0.5">
-          <span className="block h-px w-1.5 bg-white/60 rounded-full" />
-          <span className="block h-px w-1 bg-white/40 rounded-full" />
-          <span className="block h-px w-1.5 bg-white/60 rounded-full" />
+          <span className="block h-px w-1.5 bg-red-400/60 rounded-full" />
+          <span className="block h-px w-1 bg-red-400/40 rounded-full" />
+          <span className="block h-px w-1.5 bg-red-400/60 rounded-full" />
         </span>
-        <FaRunning className={cls} />
+        <FaRunning className="text-red-400 text-lg" />
       </span>
     );
-    if (key === "swim" || key === "natation") return <span title="Swimming" className="inline-flex scale-x-[-1]"><FaSwimmer className={cls} /></span>;
-    if (key === "bike" || key === "cyclisme") return <span title="Cycling"><FaBiking className={cls} /></span>;
-    if (key === "marche" || key === "walk")   return <span title="Walking"><FaWalking className={cls} /></span>;
-    if (key.includes("bonus"))                return <span title={name}><FaStar className={cls} /></span>;
+    if (key === "swim" || key === "natation") return <span title="Swimming" className="inline-flex scale-x-[-1]"><FaSwimmer className="text-cyan-400 text-lg" /></span>;
+    if (key === "bike" || key === "cyclisme") return <span title="Cycling"><FaBiking className="text-green-400 text-lg" /></span>;
+    if (key === "marche" || key === "walk")   return <span title="Walking"><FaWalking className="text-blue-400 text-lg" /></span>;
+    if (key.includes("bonus"))                return <span title={name}><FaStar className="text-[#D6C48A] text-lg" /></span>;
     return <span className="text-gray-200 text-sm">{name}</span>;
-  };
-
-  const activityRowColor = (name) => {
-    const key = (name || "").toLowerCase();
-    if (key === "run" || key === "running")   return "bg-[#7a3b3b]";
-    if (key === "swim" || key === "natation") return "bg-[#2e6b7a]";
-    if (key === "bike" || key === "cyclisme") return "bg-[#3b7a4e]";
-    if (key === "marche" || key === "walk")   return "bg-[#3b5c7a]";
-    if (key.includes("bonus"))                return "bg-[#7a6a2e]";
-    return null;
   };
 
   return (
@@ -178,7 +167,7 @@ export default function Home() {
           const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 10000), 10000);
           const gainDefit = (defitsEnabled && showGains) ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
           return (
-            <div key={row.id} className={`rounded-2xl shadow-lg px-4 py-3 text-white border border-white/10 ${activityRowColor(row.activity_name) ?? (idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]")}`}>
+            <div key={row.id} className={`rounded-2xl shadow-lg px-4 py-3 text-white border border-white/10 ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}>
               {/* Header */}
               <div className="flex items-center gap-2 mb-2">
                 <ActivityIcon name={row.activity_name} />
@@ -252,7 +241,7 @@ export default function Home() {
                 return (
                   <tr
                     key={row.id}
-                    className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${activityRowColor(row.activity_name) ?? (idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]")}`}
+                    className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}
                   >
                     <td className="py-4 px-5 text-[#D6C48A] font-semibold whitespace-nowrap tracking-wide">
                       {isClient ? fmtDate(row.date_claimed) : row.date_claimed}
