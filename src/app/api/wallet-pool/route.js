@@ -39,7 +39,7 @@ async function getBalances(rpcUrl) {
     signal: AbortSignal.timeout(5000),
   });
   const json = await res.json();
-  if (!Array.isArray(json)) throw new Error("Réponse RPC invalide");
+  if (!Array.isArray(json)) throw new Error("Invalid RPC response");
   const r0 = json.find(r => r.id === 0);
   const r1 = json.find(r => r.id === 1);
   if (r0?.error) throw new Error(r0.error.message ?? "RPC error WETH");
@@ -61,7 +61,7 @@ async function pickRpc() {
         .then(r => r.json())
         .then(json => { if (!json.result) throw new Error("no result"); return url; })
     )
-  ).catch(() => { throw new Error("Aucun RPC disponible"); });
+  ).catch(() => { throw new Error("No RPC available"); });
 }
 
 async function getEthPrice() {
@@ -78,11 +78,11 @@ async function getEthPrice() {
     return price;
   } catch (_) {}
   if (global._lastEthPricePool) return global._lastEthPricePool;
-  throw new Error("Prix ETH indisponible");
+  throw new Error("ETH price unavailable");
 }
 
 export async function GET() {
-  if (!WALLET) return Response.json({ error: "WALLET_POOL non configuré" }, { status: 500 });
+  if (!WALLET) return Response.json({ error: "WALLET_POOL not configured" }, { status: 500 });
   const c = global._walletPoolCache;
   if (c.data && Date.now() - c.time < CACHE_TTL_MS) return Response.json(c.data);
   try {

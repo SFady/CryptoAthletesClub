@@ -75,10 +75,10 @@ export default function LoginGate({ children }) {
         saveSession(data.token, data.user);
         setAuthed(true);
       } else {
-        setError("Mot de passe incorrect");
+        setError("Incorrect password");
       }
     } catch {
-      setError("Erreur de connexion");
+      setError("Connection error");
     } finally {
       setLoading(false);
     }
@@ -116,7 +116,7 @@ export default function LoginGate({ children }) {
                 type={showPwd ? "text" : "password"}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="Mot de passe"
+                placeholder="Password"
                 autoFocus
                 className="w-full px-4 py-2.5 pr-11 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#D6C48A]/50"
               />
@@ -145,7 +145,7 @@ export default function LoginGate({ children }) {
               disabled={loading}
               className="w-full px-6 py-2.5 rounded-xl text-white font-semibold bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 active:scale-95 transition-all duration-200 shadow-lg disabled:opacity-50"
             >
-              {loading ? "Connexion…" : "Se connecter"}
+              {loading ? "Signing in…" : "Sign in"}
             </button>
           </form>
         </div>

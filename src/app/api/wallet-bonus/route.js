@@ -45,11 +45,11 @@ async function pickRpc() {
         .then(r => r.json())
         .then(json => { if (!json.result) throw new Error("no result"); return url; })
     )
-  ).catch(() => { throw new Error("Aucun RPC disponible"); });
+  ).catch(() => { throw new Error("No RPC available"); });
 }
 
 export async function GET() {
-  if (!WALLET) return Response.json({ error: "WALLET_BONUS non configuré" }, { status: 500 });
+  if (!WALLET) return Response.json({ error: "WALLET_BONUS not configured" }, { status: 500 });
   const c = global._walletBonusCache;
   if (c.data && Date.now() - c.time < CACHE_TTL_MS) return Response.json(c.data);
   try {

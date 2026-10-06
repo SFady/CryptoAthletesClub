@@ -26,7 +26,7 @@ async function pickRpc() {
         .then(r => r.json())
         .then(json => { if (!json.result) throw new Error('no result'); return url; })
     )
-  ).catch(() => { throw new Error('Aucun RPC disponible'); });
+  ).catch(() => { throw new Error('No RPC available'); });
 }
 
 async function withTimeout(promise, ms, label) {
@@ -63,19 +63,19 @@ async function sendUsdc(privateKey, toAddress, amountUsdc, nonce, feeData) {
 
 export async function POST(req) {
   const username = await requireAuth(req);
-  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
-  if (isReadOnly(username)) return Response.json({ error: 'Accès en lecture seule' }, { status: 403 });
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  if (isReadOnly(username)) return Response.json({ error: 'Read-only access' }, { status: 403 });
 
   try {
     const { activityId, minNonce } = await req.json().catch(() => ({}));
-    if (!activityId) return Response.json({ error: 'activityId requis' }, { status: 400 });
+    if (!activityId) return Response.json({ error: 'activityId required' }, { status: 400 });
 
     const privateKey = process.env.WALLET_PRIVATE_KEY;
-    if (!privateKey) return Response.json({ error: 'WALLET_PRIVATE_KEY manquant' }, { status: 500 });
+    if (!privateKey) return Response.json({ error: 'WALLET_PRIVATE_KEY missing' }, { status: 500 });
 
     const [user1Row] = await sql`SELECT wallet_address FROM users WHERE id = 1 LIMIT 1`;
     const user1Wallet = user1Row?.wallet_address ?? null;
-    if (!user1Wallet) return Response.json({ error: 'Wallet user 1 introuvable' }, { status: 400 });
+    if (!user1Wallet) return Response.json({ error: 'User 1 wallet not found' }, { status: 400 });
 
     const pending = await sql`
       SELECT id, bonus2, bonus3
@@ -88,7 +88,7 @@ export async function POST(req) {
 
     if (pending.length === 0) {
       const [row] = await sql`SELECT id, bonus2, bonus3, tx_bonus2, tx_bonus3 FROM user_activities WHERE id = ${activityId} LIMIT 1`;
-      return Response.json({ message: 'Rien à envoyer', debug: row ?? null });
+      return Response.json({ message: 'Nothing to send', debug: row ?? null });
     }
 
     const rpcUrl   = await pickRpc();

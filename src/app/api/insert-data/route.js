@@ -4,8 +4,8 @@ import { requireAuth, isReadOnly } from '@/lib/auth';
 
 export async function POST(req) {
   const username = await requireAuth(req);
-  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
-  if (isReadOnly(username)) return Response.json({ error: 'Accès en lecture seule' }, { status: 403 });
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  if (isReadOnly(username)) return Response.json({ error: 'Read-only access' }, { status: 403 });
 
   try {
 

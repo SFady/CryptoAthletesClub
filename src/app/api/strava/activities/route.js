@@ -15,7 +15,7 @@ async function getAccessToken(stored) {
     }),
   });
   const data = await res.json();
-  if (!data.access_token) throw new Error("Impossible de rafraîchir le token");
+  if (!data.access_token) throw new Error("Unable to refresh token");
   return data.access_token;
 }
 
@@ -24,10 +24,10 @@ export async function GET(req) {
   if (!userId) return Response.json({ error: "missing userId" }, { status: 400 });
 
   const [user] = await sql`SELECT token, strava_start_date FROM users WHERE id = ${userId}`;
-  if (!user?.token) return Response.json({ error: "Strava non connecté" }, { status: 400 });
+  if (!user?.token) return Response.json({ error: "Strava not connected" }, { status: 400 });
 
   const stored = JSON.parse(user.token);
-  if (!stored.refresh_token) return Response.json({ error: "Strava non connecté" }, { status: 400 });
+  if (!stored.refresh_token) return Response.json({ error: "Strava not connected" }, { status: 400 });
 
   if (!stored.client_id || !stored.client_secret) {
     const [usoppRow] = await sql`SELECT token FROM users WHERE id = 1`.catch(() => []);

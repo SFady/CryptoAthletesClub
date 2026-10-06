@@ -3,7 +3,7 @@ import { requireAuth, isReadOnly } from "@/lib/auth";
 
 export async function GET(req) {
   const username = await requireAuth(req);
-  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
   const id = new URL(req.url).searchParams.get("id");
   if (!id) return Response.json({ error: "missing id" }, { status: 400 });
@@ -20,8 +20,8 @@ export async function GET(req) {
 
 export async function POST(req) {
   const username = await requireAuth(req);
-  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
-  if (isReadOnly(username)) return Response.json({ error: 'Accès en lecture seule' }, { status: 403 });
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  if (isReadOnly(username)) return Response.json({ error: 'Read-only access' }, { status: 403 });
 
   const { id, email, walletAddress, stravaClientId, stravaClientSecret, stravaStartDate } = await req.json();
   if (!id) return Response.json({ error: "missing id" }, { status: 400 });
@@ -35,7 +35,7 @@ export async function POST(req) {
   }
 
   if (email !== undefined) {
-    if (username !== 'usopp') return Response.json({ error: 'Non autorisé' }, { status: 403 });
+    if (username !== 'usopp') return Response.json({ error: 'Unauthorized' }, { status: 403 });
     await sql`UPDATE users SET email = ${email} WHERE id = ${id}`;
   }
 

@@ -31,36 +31,36 @@ async function pickRpc() {
         .then(r => r.json())
         .then(json => { if (!json.result) throw new Error("no result"); return url; })
     )
-  ).catch(() => { throw new Error("Aucun RPC disponible"); });
+  ).catch(() => { throw new Error("No RPC available"); });
 }
 
 export async function POST(request) {
   const secret = request.headers.get("x-transfer-secret");
   if (!process.env.TRANSFER_API_SECRET || secret !== process.env.TRANSFER_API_SECRET) {
-    return Response.json({ error: "Non autorisé" }, { status: 401 });
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body;
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Body JSON invalide" }, { status: 400 });
+    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
   const { to, amount } = body ?? {};
 
   if (!ethers.isAddress(to)) {
-    return Response.json({ error: "Adresse destinataire invalide" }, { status: 400 });
+    return Response.json({ error: "Invalid recipient address" }, { status: 400 });
   }
 
   const amountNum = Number(amount);
   if (!amountNum || amountNum <= 0) {
-    return Response.json({ error: "Montant invalide" }, { status: 400 });
+    return Response.json({ error: "Invalid amount" }, { status: 400 });
   }
 
   const privateKey = process.env.WALLET_PRIVATE_KEY;
   if (!privateKey) {
-    return Response.json({ error: "Clé privée non configurée (WALLET_PRIVATE_KEY)" }, { status: 500 });
+    return Response.json({ error: "Private key not configured (WALLET_PRIVATE_KEY)" }, { status: 500 });
   }
 
   try {
@@ -74,7 +74,7 @@ export async function POST(request) {
     const balance = await usdc.balanceOf(wallet.address);
     if (balance < rawAmount) {
       return Response.json({
-        error:     "Solde USDC insuffisant",
+        error:     "Insufficient USDC balance",
         balance:   ethers.formatUnits(balance, USDC_DECIMALS),
         requested: amountNum,
       }, { status: 400 });

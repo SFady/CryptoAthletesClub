@@ -20,10 +20,10 @@ export function useDefitPrice() {
         if (tokenData?.usd) {
           setPrice(Number(tokenData.usd));
         } else {
-          setError("Prix introuvable");
+          setError("Price not found");
         }
       } catch {
-        setError("Erreur de chargement");
+        setError("Loading error");
       }
     }
 

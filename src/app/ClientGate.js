@@ -13,14 +13,14 @@ const _weekKey = `weekly_${_monday.getFullYear()}_W${String(_getISOWeek(_monday)
 
 const WEEKLY_MESSAGE = {
     key: _weekKey,
-    title: "Semaine du " + _monday.toLocaleDateString("fr-FR"),
+    title: "Week of " + _monday.toLocaleDateString("en-US"),
     startDate: _monday,
     deadline: _nextMonday,
     confetti: false,
     content: (
         <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
-            <li>Nouvelle semaine, nouveau défi !</li>
-            <li>Challenge en cours : meilleure distance de course.</li>
+            <li>New week, new challenge!</li>
+            <li>Current challenge: best running distance.</li>
         </ul>
     ),
 };
@@ -36,7 +36,7 @@ const MESSAGES = [
     //WEEKLY_MESSAGE,
     {
         key: "infoMessage_v1",
-        title: "Félicitations",
+        title: "Congratulations",
         startDate: new Date("2026-10-05T00:00:00"),
         deadline: new Date("2026-10-11T00:00:00"),
         confetti: true,
@@ -44,9 +44,9 @@ const MESSAGES = [
             <div className="flex items-start gap-4">
                 <GiTrophy className="w-16 h-16 shrink-0 mt-1 text-[#D6C48A]" />
                 <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
-                    <li>Grand vainqueur de la plus longue distance de running hebdomadaire : Nico Robin</li>
-                    <li>Distance de 34.03 km.</li>
-                    <li>Prix exceptionnel de 0.63 $ !!!</li>
+                    <li>Weekly longest running distance winner: Nico Robin</li>
+                    <li>Distance of 34.03 km.</li>
+                    <li>Exceptional prize of 0.63 $ !!!</li>
                 </ul>
             </div>
         ),
@@ -176,7 +176,7 @@ export default function ClientGate({ children }) {
                         className="mt-6 w-full px-6 py-2 rounded-lg text-white font-medium bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 active:scale-95 transition-all duration-200 shadow-lg"
                         onClick={handleContinue}
                     >
-                        {isLast ? "Continuer" : "Suivant →"}
+                        {isLast ? "Continue" : "Next →"}
                     </button>
                 </div>
             </div>

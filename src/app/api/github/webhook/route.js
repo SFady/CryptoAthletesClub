@@ -18,7 +18,7 @@ export async function POST(req) {
   const signature = req.headers.get("x-hub-signature-256");
 
   if (!verify(secret, body, signature)) {
-    return Response.json({ error: "signature invalide" }, { status: 401 });
+    return Response.json({ error: "invalid signature" }, { status: 401 });
   }
 
   const event = req.headers.get("x-github-event");

@@ -44,7 +44,7 @@ export default function PullToRefresh() {
   return (
     <div className="fixed top-16 left-0 right-0 flex justify-center z-50 md:hidden">
       <span className="text-white/70 text-xs bg-white/10 px-3 py-1 rounded-full animate-pulse">
-        Actualisation…
+        Refreshing…
       </span>
     </div>
   );

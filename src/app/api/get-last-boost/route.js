@@ -3,10 +3,10 @@ import { requireAuth } from "@/lib/auth";
 
 export async function GET(req) {
   const username = await requireAuth(req);
-  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
   const userId = new URL(req.url).searchParams.get("userId");
-  if (!userId) return Response.json({ error: "userId requis" }, { status: 400 });
+  if (!userId) return Response.json({ error: "userId required" }, { status: 400 });
 
   try {
     const [row] = await sql`

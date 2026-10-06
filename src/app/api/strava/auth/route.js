@@ -12,7 +12,7 @@ export async function GET(req) {
   }
 
   const id = decrypt(token);
-  if (!id) return Response.json({ error: "token invalide" }, { status: 400 });
+  if (!id) return Response.json({ error: "invalid token" }, { status: 400 });
 
   const [row] = await sql`SELECT token FROM users WHERE id = ${id}`;
   const stored = row?.token ? JSON.parse(row.token) : {};

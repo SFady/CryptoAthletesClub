@@ -228,7 +228,7 @@ export default function Profil() {
           </div>
           {oauthLink && (
             <div className="flex flex-col gap-1 bg-white/5 rounded-xl p-3">
-              <p className="text-xs text-gray-400">Envoie ce lien à l'utilisateur — il doit l'ouvrir dans son navigateur connecté à Strava :</p>
+              <p className="text-xs text-gray-400">Send this link to the user — they need to open it in a browser logged into their own Strava account:</p>
               <div className="flex gap-2 items-center">
                 <input readOnly value={oauthLink} className={inputCls + " text-xs"} onClick={e => e.target.select()} />
                 <button

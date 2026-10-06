@@ -34,7 +34,7 @@ export default function Sfysell() {
 
   return (
     <main className="flex flex-col items-start min-h-screen text-white bg-[#5f3dc4] px-6 py-6">
-      <h1 className="text-2xl mb-4">Ajouter une donnée</h1>
+      <h1 className="text-2xl mb-4">Add an entry</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
 
@@ -59,7 +59,7 @@ export default function Sfysell() {
           disabled={sending}
           className="bg-white text-[#5f3dc4] font-semibold py-2 rounded hover:bg-gray-200 disabled:opacity-50"
         >
-          {sending ? "Envoi…" : "Envoyer"}
+          {sending ? "Sending…" : "Send"}
         </button>
 
         {result && (

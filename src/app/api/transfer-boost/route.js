@@ -64,52 +64,52 @@ async function sendUsdc(privateKey, to, amount, nonce, feeData) {
         `transfer ${url}`
       );
     })
-  ).catch(err => { throw new Error(`Tous les RPCs ont échoué : ${err.errors?.[0]?.message ?? err.message}`); });
+  ).catch(err => { throw new Error(`All RPCs failed: ${err.errors?.[0]?.message ?? err.message}`); });
 }
 
 export async function POST(request) {
   const username = await requireAuth(request);
-  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
-  if (isReadOnly(username)) return Response.json({ error: 'Accès en lecture seule' }, { status: 403 });
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  if (isReadOnly(username)) return Response.json({ error: 'Read-only access' }, { status: 403 });
 
   try {
     let body;
     try {
       body = await request.json();
     } catch {
-      return Response.json({ error: "Body JSON invalide" }, { status: 400 });
+      return Response.json({ error: "Invalid JSON body" }, { status: 400 });
     }
 
     const { userId, activityId, boostAmount, bonusAmount, benefAmount } = body ?? {};
 
-    if (!userId)     return Response.json({ error: "userId requis" },     { status: 400 });
-    if (!activityId) return Response.json({ error: "activityId requis" }, { status: 400 });
+    if (!userId)     return Response.json({ error: "userId required" },     { status: 400 });
+    if (!activityId) return Response.json({ error: "activityId required" }, { status: 400 });
 
     const boost = Number(boostAmount);
     const bonus = Number(bonusAmount);
     const benef = Number(benefAmount);
     if (boost <= 0 && bonus <= 0 && benef <= 0) {
-      return Response.json({ error: "Montants invalides" }, { status: 400 });
+      return Response.json({ error: "Invalid amounts" }, { status: 400 });
     }
 
     const [user]  = await sql`SELECT wallet_address, name FROM users WHERE id = ${userId}`;
     const [user1] = await sql`SELECT wallet_address FROM users WHERE id = 1`;
 
     if (boost > 0 && !user?.wallet_address) {
-      return Response.json({ error: "Wallet non configuré pour cet utilisateur" }, { status: 400 });
+      return Response.json({ error: "No wallet configured for this user" }, { status: 400 });
     }
     if (benef > 0 && !user1?.wallet_address) {
-      return Response.json({ error: "Wallet non configuré pour l'utilisateur 1" }, { status: 400 });
+      return Response.json({ error: "No wallet configured for user 1" }, { status: 400 });
     }
 
     const bonusWallet = process.env.WALLET_BONUS;
     if (bonus > 0 && !bonusWallet) {
-      return Response.json({ error: "Clé WALLET_BONUS non configurée" }, { status: 400 });
+      return Response.json({ error: "WALLET_BONUS key not configured" }, { status: 400 });
     }
 
     const privateKey = process.env.WALLET_PRIVATE_KEY;
     if (!privateKey) {
-      return Response.json({ error: "Clé privée non configurée (WALLET_PRIVATE_KEY)" }, { status: 500 });
+      return Response.json({ error: "Private key not configured (WALLET_PRIVATE_KEY)" }, { status: 500 });
     }
 
     const rpcUrl   = await pickRpc();
@@ -125,7 +125,7 @@ export async function POST(request) {
     ]);
     if (balance < totalRaw) {
       return Response.json({
-        error:     "Solde USDC insuffisant",
+        error:     "Insufficient USDC balance",
         balance:   ethers.formatUnits(balance, USDC_DECIMALS),
         requested: boost + bonus + benef,
       }, { status: 400 });

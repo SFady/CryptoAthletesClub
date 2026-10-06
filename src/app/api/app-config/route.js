@@ -3,10 +3,10 @@ import { requireAuth, isReadOnly } from '@/lib/auth';
 
 export async function GET(req) {
   const username = await requireAuth(req);
-  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
   const key = new URL(req.url).searchParams.get('key');
-  if (!key) return Response.json({ error: 'key requis' }, { status: 400 });
+  if (!key) return Response.json({ error: 'key required' }, { status: 400 });
   try {
     const [row] = await sql`SELECT value FROM app_config WHERE key = ${key} LIMIT 1`;
     return Response.json({ key, value: row?.value ?? null });
@@ -17,12 +17,12 @@ export async function GET(req) {
 
 export async function POST(req) {
   const username = await requireAuth(req);
-  if (!username) return Response.json({ error: 'Non autorisé' }, { status: 401 });
-  if (isReadOnly(username)) return Response.json({ error: 'Accès en lecture seule' }, { status: 403 });
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  if (isReadOnly(username)) return Response.json({ error: 'Read-only access' }, { status: 403 });
 
   try {
     const { key, value } = await req.json();
-    if (!key) return Response.json({ error: 'key requis' }, { status: 400 });
+    if (!key) return Response.json({ error: 'key required' }, { status: 400 });
     await sql`
       INSERT INTO app_config (key, value) VALUES (${key}, ${String(value)})
       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value

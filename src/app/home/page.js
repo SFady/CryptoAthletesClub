@@ -112,42 +112,42 @@ export default function Home() {
     fetchBoostMax(id);
   };
 
-  // Liste des éléments du tableau
-  const rows = ["Personnage", "T-Shirt", "Montre", "Short", "Chaussettes", "Chaussures"];
+  // List of table rows
+  const rows = ["Character", "T-Shirt", "Watch", "Shorts", "Socks", "Shoes"];
 
-  // Valeurs pour chaque ID (1 à 4)
+  // Values for each ID (1 to 4)
   const dataBySelected = {
     "1": {
       "T-Shirt": ["A", "0"],
-      "Short": ["A", "0"],
-      "Chaussettes": ["A", "0"],
-      "Chaussures": ["A", "0"],
-      "Montre": ["A", "0"],
-      "Personnage": ["A", "0"],
+      "Shorts": ["A", "0"],
+      "Socks": ["A", "0"],
+      "Shoes": ["A", "0"],
+      "Watch": ["A", "0"],
+      "Character": ["A", "0"],
     },
     "2": {
       "T-Shirt": [,],
-      "Short": [,],
-      "Chaussettes": [,],
-      "Chaussures": [,],
-      "Montre": [,],
-      "Personnage": [,],
+      "Shorts": [,],
+      "Socks": [,],
+      "Shoes": [,],
+      "Watch": [,],
+      "Character": [,],
     },
     "3": {
       "T-Shirt": ["A", "0"],
-      "Short": ["A", "0"],
-      "Chaussettes": ["A", "0"],
-      "Chaussures": [,],
-      "Montre": [,],
-      "Personnage": [,],
+      "Shorts": ["A", "0"],
+      "Socks": ["A", "0"],
+      "Shoes": [,],
+      "Watch": [,],
+      "Character": [,],
     },
     "4": {
       "T-Shirt": [,],
-      "Short": [,],
-      "Chaussettes": ["A", "0"],
-      "Chaussures": [,],
-      "Montre": [,],
-      "Personnage": [,],
+      "Shorts": [,],
+      "Socks": ["A", "0"],
+      "Shoes": [,],
+      "Watch": [,],
+      "Character": [,],
     },
   };
 
@@ -317,7 +317,7 @@ export default function Home() {
                           type="button"
                           disabled={alreadyIn || dayUsed || quickEntryStatus[a.id] === "loading" || quickEntryStatus[a.id] === "done"}
                           onClick={() => handleQuickEntry(a)}
-                          title="Enregistrer cette activité"
+                          title="Save this activity"
                           className={`flex items-center justify-center transition-colors border rounded-lg p-2.5
                             ${(quickEntryStatus[a.id] === "done" || alreadyIn)
                               ? "text-emerald-400 border-emerald-400/40 cursor-default"
