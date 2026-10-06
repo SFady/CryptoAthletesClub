@@ -47,6 +47,7 @@ export default function LoginGate() {
       if (data.ok) {
         saveSession(data.token, data.user);
         markAuthed();
+        window.location.href = "/dashboard";
       } else {
         setError("Incorrect password");
       }
@@ -130,7 +131,7 @@ export default function LoginGate() {
               disabled={loading}
               className="w-full px-6 py-2.5 rounded-xl text-white font-semibold bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 active:scale-95 transition-all duration-200 shadow-lg disabled:opacity-50"
             >
-              {loading ? "Signing in…" : "Sign in"}
+              {loading ? "Logging in…" : "Log in"}
             </button>
           </form>
         </div>
