@@ -132,6 +132,15 @@ export default function Home() {
     return <span className="text-gray-200 text-sm">{name}</span>;
   };
 
+  const activityRowColor = (name) => {
+    const key = (name || "").toLowerCase();
+    if (key === "run" || key === "running")   return "bg-[#7a3b3b]";
+    if (key === "swim" || key === "natation") return "bg-[#2e6b7a]";
+    if (key === "bike" || key === "cyclisme") return "bg-[#3b7a4e]";
+    if (key === "marche" || key === "walk")   return "bg-[#3b5c7a]";
+    if (key.includes("bonus"))                return "bg-[#7a6a2e]";
+    return null;
+  };
 
   return (
     <main className="flex flex-col justify-start w-full max-w-[100vw] md:max-w-[1600px] mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-x-hidden overflow-y-auto">
@@ -169,7 +178,7 @@ export default function Home() {
           const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 10000), 10000);
           const gainDefit = (defitsEnabled && showGains) ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
           return (
-            <div key={row.id} className={`rounded-2xl shadow-lg px-4 py-3 text-white border border-white/10 ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}>
+            <div key={row.id} className={`rounded-2xl shadow-lg px-4 py-3 text-white border border-white/10 ${activityRowColor(row.activity_name) ?? (idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]")}`}>
               {/* Header */}
               <div className="flex items-center gap-2 mb-2">
                 <ActivityIcon name={row.activity_name} />
@@ -183,7 +192,7 @@ export default function Home() {
                 <div className="flex flex-col gap-1.5 w-1/2">
                   <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
                     <span className="opacity-70 font-normal">Score</span>
-                    <span className="font-semibold">{effort}</span>
+                    <span className="font-semibold">{(row.activity_name || "").toLowerCase().includes("bonus") ? <span className="text-white/30">—</span> : effort}</span>
                   </span>
                   <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
                     <span className="opacity-70 font-normal">Distance</span>
@@ -195,10 +204,6 @@ export default function Home() {
                   </span>
                 </div>
                 <div className="flex flex-col gap-1.5 w-1/2">
-                  <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
-                    <span className="opacity-70 font-normal">Boost</span>
-                    <span className="font-semibold">{Number(row.boost).toFixed(2)} $</span>
-                  </span>
                   {defitsEnabled && showGains && (
                     <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
                       <span className="opacity-70 font-normal">Defits</span>
@@ -207,10 +212,10 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              {/* Total */}
+              {/* Reward */}
               <div className="border-t border-white/10 pt-2 mt-1">
                 <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-rose-400 text-white flex justify-between">
-                  <span className="font-normal">Total</span>
+                  <span className="font-normal">REWARD ($)</span>
                   <span className="font-semibold">{(Number(row.boost) + gainDefit).toFixed(2)} $</span>
                 </span>
               </div>
@@ -237,8 +242,7 @@ export default function Home() {
                     <th className="py-3.5 px-5 font-semibold">Net Defit gain ($)</th>
                   </>
                 )}
-                <th className="py-3.5 px-5 font-semibold">Boost ($)</th>
-                <th className="py-3.5 px-5 font-semibold">Total ($)</th>
+                <th className="py-3.5 px-5 font-semibold">REWARD ($)</th>
               </tr>
             </thead>
             <tbody>
@@ -248,7 +252,7 @@ export default function Home() {
                 return (
                   <tr
                     key={row.id}
-                    className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}
+                    className={`border-b border-white/10 transition-colors hover:bg-white/10 text-sm ${activityRowColor(row.activity_name) ?? (idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]")}`}
                   >
                     <td className="py-4 px-5 text-[#D6C48A] font-semibold whitespace-nowrap tracking-wide">
                       {isClient ? fmtDate(row.date_claimed) : row.date_claimed}
@@ -256,7 +260,7 @@ export default function Home() {
                     <td className="py-4 px-5 text-white font-semibold whitespace-nowrap">{row.user_name}</td>
                     <td className="py-4 px-5"><div className="flex justify-center"><ActivityIcon name={row.activity_name} /></div></td>
                     <td className="py-4 px-5 text-gray-200">
-                      {effort}
+                      {(row.activity_name || "").toLowerCase().includes("bonus") ? <span className="text-white/30">—</span> : effort}
                     </td>
                     <td className="py-4 px-5 text-gray-200">{Number(row.kilometers ?? 0).toFixed(2)}</td>
                     <td className="py-4 px-5 text-gray-200 whitespace-nowrap">
@@ -270,7 +274,6 @@ export default function Home() {
                         </td>
                       </>
                     )}
-                    <td className="py-4 px-5 text-gray-100">{Number(row.boost).toFixed(2)}</td>
                     <td className="py-4 px-5 text-[#D6C48A] font-bold">{(Number(row.boost) + gainDefit).toFixed(2)}</td>
                   </tr>
                 );
