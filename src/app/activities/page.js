@@ -132,12 +132,6 @@ export default function Home() {
     return <span className="text-gray-200 text-sm">{name}</span>;
   };
 
-  const effortBadge = (pct) => {
-    if (pct >= 90) return "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
-    if (pct >= 60) return "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30";
-    return "bg-rose-500/30 text-rose-200 border border-rose-400/50";
-  };
-
 
   return (
     <main className="flex flex-col justify-start w-full max-w-[100vw] md:max-w-[1600px] mx-auto px-6 md:px-16 pt-6 pb-6 min-h-[calc(100vh-96px)] overflow-x-hidden overflow-y-auto">
@@ -172,7 +166,7 @@ export default function Home() {
       {/* CARDS — mobile uniquement */}
       <div className="flex flex-col gap-5 mb-6 w-full md:hidden">
         {currentRows.map((row, idx) => {
-          const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100);
+          const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 10000), 10000);
           const gainDefit = (defitsEnabled && showGains) ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
           return (
             <div key={row.id} className={`rounded-2xl shadow-lg px-4 py-3 text-white border border-white/10 ${idx % 2 === 0 ? "bg-[#5C42A6]" : "bg-[#4e3899]"}`}>
@@ -187,9 +181,9 @@ export default function Home() {
               {/* Bulles */}
               <div className="flex items-start gap-2 mb-2">
                 <div className="flex flex-col gap-1.5 w-1/2">
-                  <span className={`w-full text-xs px-2.5 py-0.5 rounded-full flex justify-between ${effortBadge(effort)}`}>
-                    <span className="opacity-70 font-normal">Effort</span>
-                    <span className="font-semibold">{effort} %</span>
+                  <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                    <span className="opacity-70 font-normal">Score</span>
+                    <span className="font-semibold">{effort}</span>
                   </span>
                   <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
                     <span className="opacity-70 font-normal">Distance</span>
@@ -234,7 +228,7 @@ export default function Home() {
                 <th className="py-3.5 px-5 font-semibold">Date</th>
                 <th className="py-3.5 px-5 font-semibold">Athlete</th>
                 <th className="py-3.5 px-5 font-semibold text-center">Activity</th>
-                <th className="py-3.5 px-5 font-semibold">Effort</th>
+                <th className="py-3.5 px-5 font-semibold">Score</th>
                 <th className="py-3.5 px-5 font-semibold">Distance (km)</th>
                 <th className="py-3.5 px-5 font-semibold">Speed</th>
                 {defitsEnabled && showGains && (
@@ -249,7 +243,7 @@ export default function Home() {
             </thead>
             <tbody>
               {currentRows.map((row, idx) => {
-                const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 100), 100);
+                const effort = Math.min(Math.round((row.defit_amount / row.max_defits) * 10000), 10000);
                 const gainDefit = (defitsEnabled && showGains) ? (row.defit_amount * row.participation_percentage * defitPrice) / 100 : 0;
                 return (
                   <tr
@@ -261,10 +255,8 @@ export default function Home() {
                     </td>
                     <td className="py-4 px-5 text-white font-semibold whitespace-nowrap">{row.user_name}</td>
                     <td className="py-4 px-5"><div className="flex justify-center"><ActivityIcon name={row.activity_name} /></div></td>
-                    <td className="py-4 px-5">
-                      <span className={`inline-flex items-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-xs font-semibold ${effortBadge(effort)}`}>
-                        {effort} %
-                      </span>
+                    <td className="py-4 px-5 text-gray-200">
+                      {effort}
                     </td>
                     <td className="py-4 px-5 text-gray-200">{Number(row.kilometers ?? 0).toFixed(2)}</td>
                     <td className="py-4 px-5 text-gray-200 whitespace-nowrap">
