@@ -1,4 +1,5 @@
 import sql from "@/lib/db";
+import { requireAuth } from "@/lib/auth";
 
 async function getAccessToken(stored) {
   const clientId     = stored.client_id     ?? process.env.STRAVA_CLIENT_ID;
@@ -20,6 +21,9 @@ async function getAccessToken(stored) {
 }
 
 export async function GET(req) {
+  const username = await requireAuth(req);
+  if (!username) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
   const userId = new URL(req.url).searchParams.get("userId");
   if (!userId) return Response.json({ error: "missing userId" }, { status: 400 });
 

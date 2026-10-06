@@ -43,7 +43,7 @@ export default function Home() {
     try {
       const [wRes, dRes] = await Promise.all([
         fetch("/api/wallet"),
-        fetch("/api/get-distributions"),
+        fetch("/api/get-distributions", { headers: authHeader() }),
       ]);
       const wallet = await wRes.json();
       const distrib = await dRes.json();
@@ -62,7 +62,7 @@ export default function Home() {
 
   const fetchDefitAmount = async (athleteId) => {
     try {
-      const res = await fetch(`/api/get-user-defit-amount?id=${athleteId}`);
+      const res = await fetch(`/api/get-user-defit-amount?id=${athleteId}`, { headers: authHeader() });
       const data = await res.json();
       setDefitAmount(Number(data.defits) ?? 0);
       setDollarAmount(Number(data.dollars) ?? 0);
@@ -363,8 +363,8 @@ export default function Home() {
               const userId = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" }[user];
               if (!userId) return;
               const [stravaRes, dbRes] = await Promise.all([
-                fetch(`/api/strava/activities?userId=${userId}`),
-                fetch(`/api/get-users-activities?userId=${userId}&limit=1000`),
+                fetch(`/api/strava/activities?userId=${userId}`, { headers: authHeader() }),
+                fetch(`/api/get-users-activities?userId=${userId}&limit=1000`, { headers: authHeader() }),
               ]);
               const stravaData = await stravaRes.json();
               const dbData = await dbRes.json();

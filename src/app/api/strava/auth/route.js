@@ -1,5 +1,8 @@
 import { encrypt, decrypt } from "@/lib/crypto";
 import sql from "@/lib/db";
+import { requireAuth } from "@/lib/auth";
+
+const USER_ID_MAP = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" };
 
 export async function GET(req) {
   const url    = new URL(req.url);
@@ -7,6 +10,14 @@ export async function GET(req) {
   const token  = url.searchParams.get("token");
 
   if (userId) {
+    // Generating a link is the sensitive step: it must only be handed out to
+    // Usopp (who manages everyone's Strava link) or to the athlete themselves.
+    const username = await requireAuth(req);
+    if (!username) return Response.json({ error: "Unauthorized" }, { status: 401 });
+    if (username !== "usopp" && USER_ID_MAP[username] !== String(userId)) {
+      return Response.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
     const encrypted = encrypt(userId);
     return Response.json({ link: `${url.origin}/api/strava/auth?token=${encrypted}` });
   }

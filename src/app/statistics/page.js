@@ -37,21 +37,21 @@ export default function Home() {
 
   const fetchTotals = async (period, act) => {
     try {
-      const res = await fetch(`/api/get-user-totals?id=${period}&activity=${act}`);
+      const res = await fetch(`/api/get-user-totals?id=${period}&activity=${act}`, { headers: authHeader() });
       setTotals((await res.json()) || []);
     } catch (e) { console.error("Erreur fetchTotals:", e); }
   };
 
   const fetchTotals2 = async (period, act) => {
     try {
-      const res = await fetch(`/api/get-user-totals?id=${period}&activity=${act}`);
+      const res = await fetch(`/api/get-user-totals?id=${period}&activity=${act}`, { headers: authHeader() });
       setTotals2((await res.json()) || []);
     } catch (e) { console.error("Erreur fetchTotals2:", e); }
   };
 
   const fetchTotals3 = async (period, act) => {
     try {
-      const res = await fetch(`/api/get-user-totals?id=${period}&activity=${act}`);
+      const res = await fetch(`/api/get-user-totals?id=${period}&activity=${act}`, { headers: authHeader() });
       setTotals3((await res.json()) || []);
     } catch (e) { console.error("Erreur fetchTotals3:", e); }
   };

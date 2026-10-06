@@ -39,7 +39,7 @@ export default function Home() {
     loadingRef.current = true;
     setLoading(true);
     try {
-      const res = await fetch(`/api/get-users-activities?userId=${userId}&page=${pageNum}&limit=${rowsPerPage}`);
+      const res = await fetch(`/api/get-users-activities?userId=${userId}&page=${pageNum}&limit=${rowsPerPage}`, { headers: authHeader() });
       const data = await res.json();
       setRows(prev => {
         if (reset) return data.result;

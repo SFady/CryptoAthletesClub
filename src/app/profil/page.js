@@ -107,7 +107,7 @@ export default function Profil() {
   const [oauthLink, setOauthLink] = useState(null);
 
   const handleConnect = async () => {
-    const res = await fetch(`/api/strava/auth?userId=${activeId}`);
+    const res = await fetch(`/api/strava/auth?userId=${activeId}`, { headers: authHeader() });
     const { link } = await res.json();
     if (!link) return;
     if (currentUser === 'usopp' && managedUserId !== userId) {
@@ -246,7 +246,7 @@ export default function Profil() {
                 onClick={async () => {
                   await fetch("/api/strava/disconnect", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "application/json", ...authHeader() },
                     body: JSON.stringify({ userId: activeId }),
                   });
                   setStravaConnected(false);
@@ -284,7 +284,7 @@ export default function Profil() {
               <button
                 onClick={async () => {
                   setLoadingAct(true);
-                  const res = await fetch(`/api/strava/activities?userId=${activeId}`);
+                  const res = await fetch(`/api/strava/activities?userId=${activeId}`, { headers: authHeader() });
                   const data = await res.json();
                   setActivities(Array.isArray(data) ? data.filter(a => ["Run","Walk","Ride","Swim"].includes(a.sport_type)) : data);
                   setLoadingAct(false);

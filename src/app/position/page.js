@@ -169,8 +169,8 @@ export default function Position() {
     } catch { router.replace("/home"); return; }
     fetch("/api/wallet").then(r => r.json()).then(setWallet).catch(() => {});
     fetch("/api/app-config?key=show_defits", { headers: authHeader() }).then(r => r.json()).then(d => setShowGains(d.value === 'true')).catch(() => {});
-    fetch("/api/get-distributions").then(r => r.json()).then(setDistrib).catch(() => {});
-    fetch("/api/get-user-boost?userId=1").then(r => r.json()).then(d => setBoostPending(d.boost_pending ?? 0)).catch(() => {});
+    fetch("/api/get-distributions", { headers: authHeader() }).then(r => r.json()).then(setDistrib).catch(() => {});
+    fetch("/api/get-user-boost?userId=1", { headers: authHeader() }).then(r => r.json()).then(d => setBoostPending(d.boost_pending ?? 0)).catch(() => {});
     fetch("/api/get-users", { headers: authHeader() }).then(r => r.json()).then(list => {
       setUsers(list);
       if (list.length > 0) {

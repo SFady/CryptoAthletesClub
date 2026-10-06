@@ -1,6 +1,10 @@
 import sql from '@/lib/db';
+import { requireAuth } from '@/lib/auth';
 
 export async function GET(req) {
+  const username = await requireAuth(req);
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const url = new URL(req.url);
     const userId = Number(url.searchParams.get('userId')) || 1;

@@ -1,6 +1,10 @@
 import sql from '@/lib/db';
+import { requireAuth } from '@/lib/auth';
 
-export async function GET() {
+export async function GET(req) {
+  const username = await requireAuth(req);
+  if (!username) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const [row] = await sql`
       SELECT COALESCE(SUM(amount), 0) AS total
