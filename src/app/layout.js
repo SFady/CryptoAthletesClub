@@ -8,6 +8,7 @@ import ClientGate from "./ClientGate";
 import LoginGate from "./LoginGate";
 import PullToRefresh from "./PullToRefresh";
 import { useEffect, useState } from "react";
+import { AuthProvider, useAuth } from "./AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,11 +21,31 @@ const geistMono = Geist_Mono({
 });
 
 export default function RootLayout({ children }) {
+  return (
+    <html lang="fr" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Crypto Athletes Club</title>
+        <meta name="description" content="Dashboard de suivi des performances & actifs" />
+        <meta charSet="UTF-8" />
+      </head>
+
+      <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] overflow-hidden md:h-auto md:overflow-visible`}>
+        <AuthProvider>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}
+
+function AppShell({ children }) {
   const centralWidth = 1600;
   const [showLink, setShowLink] = useState(false);
   const [showDivers, setShowDivers] = useState(false);
   const [showBurger, setShowBurger] = useState(false);
   const pathname = usePathname();
+  const { authed, openLogin, logout } = useAuth();
 
   useEffect(() => {
     if (!showDivers) return;
@@ -39,11 +60,6 @@ export default function RootLayout({ children }) {
     ...(showLink ? [{ label: "Position", href: "/position" }] : []),
     { label: "About",  href: "/about" },
   ];
-
-  const logout = () => {
-    localStorage.removeItem("auth_session");
-    window.location.reload();
-  };
 
   const MAIN_PAGES = ["/home", "/activities", "/statistics", "/shop"];
 
@@ -61,15 +77,6 @@ export default function RootLayout({ children }) {
   }, [pathname]);
 
   return (
-    <html lang="fr" suppressHydrationWarning>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>The Crypto Athletes Club</title>
-        <meta name="description" content="Dashboard de suivi des performances & actifs" />
-        <meta charSet="UTF-8" />
-      </head>
-
-      <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} antialiased h-[100dvh] overflow-hidden md:h-auto md:overflow-visible`}>
         <div className="relative flex flex-col h-[100dvh] md:min-h-screen text-white">
 
           {/* IMAGE DE FOND FIXE */}
@@ -157,7 +164,9 @@ export default function RootLayout({ children }) {
                     </div>
                   )}
                 </div>
-                <button onClick={logout} className="text-gray-400 hover:text-white transition-colors text-sm">Logout</button>
+                <button onClick={authed ? logout : openLogin} className="text-gray-400 hover:text-white transition-colors text-sm">
+                  {authed ? "Logout" : "Login"}
+                </button>
               </nav>
             </div>
           </header>
@@ -167,13 +176,13 @@ export default function RootLayout({ children }) {
           {/* ZONE CENTRALE - scroll global */}
           <main className="relative flex flex-col pt-16 md:pt-24 pb-20 flex-1 overflow-x-hidden overflow-y-auto">
             <div className="relative z-20 flex flex-col w-full md:max-w-[1600px] md:mx-auto px-0 md:px-12">
-              <LoginGate>
-                <ClientGate>
-                  {children}
-                </ClientGate>
-              </LoginGate>
+              <ClientGate>
+                {children}
+              </ClientGate>
             </div>
           </main>
+
+          <LoginGate />
 
           {/* FOOTER MOBILE */}
           <footer className="fixed bottom-0 left-0 w-full bg-[#390494]/95 text-xs z-30 backdrop-blur-md block md:hidden border-t border-white/20">
@@ -197,9 +206,9 @@ export default function RootLayout({ children }) {
                   <span>{label}</span>
                 </Link>
               ))}
-              <button onClick={logout} className="flex flex-col items-center justify-center gap-1 h-full px-2 text-gray-400 hover:text-white transition-colors">
+              <button onClick={authed ? logout : openLogin} className="flex flex-col items-center justify-center gap-1 h-full px-2 text-gray-400 hover:text-white transition-colors">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
-                <span>Logout</span>
+                <span>{authed ? "Logout" : "Login"}</span>
               </button>
             </nav>
           </footer>
@@ -224,7 +233,5 @@ export default function RootLayout({ children }) {
           )}
 
         </div>
-      </body>
-    </html>
   );
 }

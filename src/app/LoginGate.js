@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const STORAGE_KEY = "auth_session";
-const TTL_DAYS    = 365;
+import { useAuth, saveSession } from "./AuthContext";
 
 const ATHLETES = [
   { id: "usopp",     label: "Usopp" },
@@ -13,29 +11,13 @@ const ATHLETES = [
   { id: "justtosee", label: "Just To See" },
 ];
 
-function getSession() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const { token, expiry } = JSON.parse(raw);
-    if (Date.now() > expiry) { localStorage.removeItem(STORAGE_KEY); return null; }
-    return token;
-  } catch { return null; }
-}
-
-function saveSession(token, user) {
-  const expiry = Date.now() + TTL_DAYS * 24 * 3600 * 1000;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, user, expiry }));
-  localStorage.setItem("last_user", user);
-}
-
 function getLastUser() {
-  return localStorage.getItem("last_user") ?? "usopp";
+  try { return localStorage.getItem("last_user") ?? "usopp"; } catch { return "usopp"; }
 }
 
-export default function LoginGate({ children }) {
-  const [ready, setReady]     = useState(false);
-  const [authed, setAuthed]   = useState(false);
+export default function LoginGate() {
+  const { showModal, closeLogin, markAuthed } = useAuth();
+
   const [user, setUser]       = useState("usopp");
   const [password, setPassword] = useState("");
   const [error, setError]     = useState("");
@@ -44,21 +26,12 @@ export default function LoginGate({ children }) {
   const [showPwd, setShowPwd] = useState(false);
 
   useEffect(() => {
+    if (!showModal) { setShow(false); return; }
     setUser(getLastUser());
+    setPassword("");
+    setError("");
     setTimeout(() => setShow(true), 50);
-
-    const token = getSession();
-    if (!token) { setReady(true); return; }
-
-    fetch("/api/session", { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then(d => {
-        if (d.ok) setAuthed(true);
-        else localStorage.removeItem(STORAGE_KEY);
-      })
-      .catch(() => localStorage.removeItem(STORAGE_KEY))
-      .finally(() => setReady(true));
-  }, []);
+  }, [showModal]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,7 +46,7 @@ export default function LoginGate({ children }) {
       const data = await res.json();
       if (data.ok) {
         saveSession(data.token, data.user);
-        setAuthed(true);
+        markAuthed();
       } else {
         setError("Incorrect password");
       }
@@ -84,18 +57,30 @@ export default function LoginGate({ children }) {
     }
   };
 
-  if (!ready) return null;
-  if (authed) return children;
+  if (!showModal) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 z-50">
-      <div className="relative w-full max-w-sm">
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 z-50"
+      onClick={closeLogin}
+    >
+      <div className="relative w-full max-w-sm" onClick={e => e.stopPropagation()}>
 
         {/* Glow */}
         <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 opacity-50 blur-3xl animate-pulse" />
 
         {/* Modale */}
         <div className={`relative bg-white/20 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-2xl p-6 text-white transform transition-all duration-500 ease-out ${show ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}>
+          <button
+            type="button"
+            onClick={closeLogin}
+            className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
           <h2 className="text-xl font-bold text-center mb-6 drop-shadow-md">
             The Crypto Athletes Club
           </h2>
