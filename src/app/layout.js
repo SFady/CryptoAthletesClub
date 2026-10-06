@@ -3,7 +3,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import ClientGate from "./ClientGate";
 import LoginGate from "./LoginGate";
 import PullToRefresh from "./PullToRefresh";
@@ -45,7 +45,15 @@ function AppShell({ children }) {
   const [showDivers, setShowDivers] = useState(false);
   const [showBurger, setShowBurger] = useState(false);
   const pathname = usePathname();
-  const { authed, openLogin, logout } = useAuth();
+  const router = useRouter();
+  const { ready, authed, openLogin, logout } = useAuth();
+
+  useEffect(() => {
+    if (!ready || authed) return;
+    if (pathname !== "/home" && pathname !== "/") {
+      router.replace("/home");
+    }
+  }, [ready, authed, pathname, router]);
 
   useEffect(() => {
     if (!showDivers) return;

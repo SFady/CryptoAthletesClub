@@ -1,8 +1,15 @@
-"use client"; // must be client-side
+"use client";
+
 import { useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 export default function RootPage() {
+  const { ready, authed } = useAuth();
+
   useEffect(() => {
-    window.location.href = `/dashboard`;
-  }, []);
+    if (!ready) return;
+    window.location.href = authed ? "/dashboard" : "/home";
+  }, [ready, authed]);
+
+  return null;
 }

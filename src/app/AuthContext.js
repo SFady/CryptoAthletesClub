@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem(STORAGE_KEY);
-    window.location.reload();
+    window.location.href = "/home";
   };
 
   const value = {
