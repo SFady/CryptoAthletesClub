@@ -181,29 +181,27 @@ export default function Home() {
                 <span className="text-white font-semibold">— {row.user_name}</span>
               </div>
               {/* Bulles */}
-              <div className="flex items-start gap-2 mb-2">
-                <div className="flex flex-col gap-1.5 w-1/2">
-                  <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
-                    <span className="opacity-70 font-normal">Score</span>
-                    <span className="font-semibold">{(row.activity_name || "").toLowerCase().includes("bonus") ? <span className="text-white/30">—</span> : effort}</span>
-                  </span>
-                  <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+              <div className="flex flex-col gap-1.5 mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="flex-1 text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
                     <span className="opacity-70 font-normal">Distance</span>
                     <span className="font-semibold">{Number(row.kilometers ?? 0).toFixed(2)} km</span>
                   </span>
-                  <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                  <span className="flex-1 text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
                     <span className="opacity-70 font-normal">Speed</span>
                     <span className="font-semibold">{pace(row.duration, row.kilometers, row.activity_name) ?? "—"}</span>
                   </span>
                 </div>
-                <div className="flex flex-col gap-1.5 w-1/2">
-                  {defitsEnabled && showGains && (
-                    <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
-                      <span className="opacity-70 font-normal">Defits</span>
-                      <span className="font-semibold">{((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})</span>
-                    </span>
-                  )}
-                </div>
+                <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                  <span className="opacity-70 font-normal">Score</span>
+                  <span className="font-semibold">{(row.activity_name || "").toLowerCase().includes("bonus") ? <span className="text-white/30">—</span> : effort}</span>
+                </span>
+                {defitsEnabled && showGains && (
+                  <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                    <span className="opacity-70 font-normal">Defits</span>
+                    <span className="font-semibold">{((row.defit_amount * row.participation_percentage * defitPrice) / 100).toFixed(2)} $ ({row.defit_amount})</span>
+                  </span>
+                )}
               </div>
               {/* Reward */}
               <div className="border-t border-white/10 pt-2 mt-1">
