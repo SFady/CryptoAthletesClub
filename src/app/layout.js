@@ -48,9 +48,11 @@ function AppShell({ children }) {
   const router = useRouter();
   const { ready, authed, openLogin, logout } = useAuth();
 
+  const PUBLIC_PAGES = ["/home", "/", "/profil"];
+
   useEffect(() => {
     if (!ready || authed) return;
-    if (pathname !== "/home" && pathname !== "/") {
+    if (!PUBLIC_PAGES.includes(pathname)) {
       router.replace("/home");
     }
   }, [ready, authed, pathname, router]);
@@ -188,9 +190,11 @@ function AppShell({ children }) {
           {/* ZONE CENTRALE - scroll global */}
           <main className="relative flex flex-col pt-16 md:pt-24 pb-20 flex-1 overflow-x-hidden overflow-y-auto">
             <div className="relative z-20 flex flex-col w-full md:max-w-[1600px] md:mx-auto px-0 md:px-12">
-              <ClientGate>
-                {children}
-              </ClientGate>
+              {(PUBLIC_PAGES.includes(pathname) || (ready && authed)) && (
+                <ClientGate>
+                  {children}
+                </ClientGate>
+              )}
             </div>
           </main>
 

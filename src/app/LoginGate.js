@@ -133,6 +133,14 @@ export default function LoginGate() {
             >
               {loading ? "Logging in…" : "Log in"}
             </button>
+
+            <button
+              type="button"
+              onClick={() => { window.location.href = "/profil"; }}
+              className="w-full px-6 py-2.5 rounded-xl text-white font-semibold bg-white/10 border border-white/20 hover:bg-white/20 transition-all duration-200"
+            >
+              No account / Create
+            </button>
           </form>
         </div>
       </div>

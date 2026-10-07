@@ -32,6 +32,10 @@ export default function Profil() {
   const [stravaStartDate, setStravaStartDate] = useState("");
   const [startDateSaved, setStartDateSaved] = useState(false);
   const [managedUserId, setManagedUserId] = useState(null);
+  const [newUsername, setNewUsername] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [signupStatus, setSignupStatus] = useState(null); // null | "sending" | "sent" | error string
+  const [verifyNotice, setVerifyNotice] = useState(null);
 
   const loadProfile = (id) => {
     if (!id) return;
@@ -52,6 +56,11 @@ export default function Profil() {
     const s = searchParams.get("strava");
     if (s === "ok")    setStravaStatus("ok");
     if (s === "error") setStravaStatus("error");
+
+    const v = searchParams.get("verify");
+    if (v === "ok")      setVerifyNotice("Email verified! You can now log in once your account is approved.");
+    if (v === "expired") setVerifyNotice("This verification link has expired. Please sign up again.");
+    if (v === "error")   setVerifyNotice("Something went wrong while verifying your email.");
 
     try {
       const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
@@ -116,6 +125,110 @@ export default function Profil() {
       window.location.href = link;
     }
   };
+
+  const handleSignup = async () => {
+    if (!newUsername.trim() || !newEmail.trim()) return;
+    setSignupStatus("sending");
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: newUsername, email: newEmail }),
+      });
+      const data = await res.json();
+      setSignupStatus(data.ok ? "sent" : (data.error || "Something went wrong"));
+    } catch {
+      setSignupStatus("Connection error");
+    }
+  };
+
+  // Visiteur non connecté — formulaire de création de compte (public)
+  if (!currentUser) {
+    if (signupStatus === "sent") {
+      return (
+        <main className="flex flex-col items-start min-h-[60vh] text-white px-6 py-6">
+          <div className="flex items-center gap-3 mb-8">
+            <button onClick={goBack} className="text-gray-300 hover:text-white transition-colors">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-8 h-8">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <h1 className="text-2xl font-bold">Check your inbox</h1>
+          </div>
+          <p className="text-gray-300 max-w-sm">
+            We sent a verification link to <span className="text-white font-medium">{newEmail}</span>.
+            Click it to confirm your email address.
+          </p>
+        </main>
+      );
+    }
+
+    return (
+      <main className="flex flex-col items-start min-h-[60vh] text-white px-6 py-6">
+        <div className="flex items-center gap-3 mb-8">
+          <button onClick={goBack} className="text-gray-300 hover:text-white transition-colors">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-8 h-8">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <h1 className="text-2xl font-bold">Create account</h1>
+        </div>
+
+        <div className="w-full max-w-sm flex flex-col gap-4">
+          {verifyNotice && (
+            <p className="text-sm text-amber-200 bg-amber-900/30 border border-amber-500/30 rounded-lg px-3 py-2">
+              {verifyNotice}
+            </p>
+          )}
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-300">&nbsp;Username</label>
+            <input
+              type="text"
+              value={newUsername}
+              onChange={e => setNewUsername(e.target.value)}
+              placeholder="Your name"
+              className={inputCls}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-300">&nbsp;Email address</label>
+            <input
+              type="email"
+              value={newEmail}
+              onChange={e => setNewEmail(e.target.value)}
+              placeholder="example@mail.com"
+              className={inputCls}
+            />
+          </div>
+
+          <button
+            disabled
+            title="Connect your Strava account after your account is created"
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-white text-sm bg-[#FC4C02]/40 cursor-not-allowed"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+              <path d="M15.387 3.612a5.386 5.386 0 0 0-3.387 1.19V3.5a.5.5 0 0 0-1 0v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-2.53a4.387 4.387 0 1 1-1.47 3.25.5.5 0 0 0-1 0 5.387 5.387 0 1 0 4.887-6.638z"/>
+            </svg>
+            Connect Strava
+          </button>
+
+          {signupStatus && signupStatus !== "sending" && (
+            <p className="text-rose-300 text-sm text-center">{signupStatus}</p>
+          )}
+
+          <button
+            onClick={handleSignup}
+            disabled={signupStatus === "sending"}
+            className="bg-white text-[#5f3dc4] font-semibold py-2.5 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+          >
+            {signupStatus === "sending" ? "Sending…" : "Create account"}
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex flex-col items-start min-h-[60vh] text-white px-6 py-6">
