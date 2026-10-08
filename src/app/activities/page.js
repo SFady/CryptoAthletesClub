@@ -4,6 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 import { FaRunning, FaSwimmer, FaBiking, FaWalking, FaStar } from "react-icons/fa";
 
+function fmtDuration(seconds) {
+  const s = Number(seconds) || 0;
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = Math.floor(s % 60);
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+}
+
 function fmtDate(val) {
   const d = new Date(val);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -192,10 +200,16 @@ export default function Home() {
                     <span className="font-semibold">{pace(row.duration, row.kilometers, row.activity_name) ?? "—"}</span>
                   </span>
                 </div>
-                <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
-                  <span className="opacity-70 font-normal">Score</span>
-                  <span className="font-semibold">{(row.activity_name || "").toLowerCase().includes("bonus") ? <span className="text-white/30">—</span> : effort}</span>
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="flex-1 text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                    <span className="opacity-70 font-normal">Time</span>
+                    <span className="font-semibold">{fmtDuration(row.duration)}</span>
+                  </span>
+                  <span className="flex-1 text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
+                    <span className="opacity-70 font-normal">Score</span>
+                    <span className="font-semibold">{(row.activity_name || "").toLowerCase().includes("bonus") ? <span className="text-white/30">—</span> : effort}</span>
+                  </span>
+                </div>
                 {defitsEnabled && showGains && (
                   <span className="w-full text-xs px-2.5 py-0.5 rounded-full bg-purple-400/20 text-white border border-purple-400/30 flex justify-between">
                     <span className="opacity-70 font-normal">Defits</span>
