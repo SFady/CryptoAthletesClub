@@ -125,14 +125,14 @@ export default function Home() {
     const pill = "inline-flex items-center justify-center rounded-full border w-9 py-0.5";
 
     if (key === "run" || key === "running")   return (
-      <span title="Running" className={`${pill} bg-orange-300/20 border-orange-300/30`}>
+      <span title="Running" className={`${pill} bg-red-400/20 border-red-400/30`}>
         <span className="inline-flex items-center gap-0.5">
           <span className="flex flex-col gap-0.5">
-            <span className="block h-px w-1 bg-orange-300/60 rounded-full" />
-            <span className="block h-px w-0.5 bg-orange-300/40 rounded-full" />
-            <span className="block h-px w-1 bg-orange-300/60 rounded-full" />
+            <span className="block h-px w-1 bg-red-400/60 rounded-full" />
+            <span className="block h-px w-0.5 bg-red-400/40 rounded-full" />
+            <span className="block h-px w-1 bg-red-400/60 rounded-full" />
           </span>
-          <FaRunning className="text-orange-300 text-sm" />
+          <FaRunning className="text-red-400 text-sm" />
         </span>
       </span>
     );
