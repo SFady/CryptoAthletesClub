@@ -479,7 +479,7 @@ export default function Home() {
 
       {/* Boost maximum disponible */}
       <div className="rounded-xl overflow-hidden shadow-lg border border-white/10 mb-4 w-full max-w-sm md:max-w-[550px] mx-auto bg-[#5C42A6] flex items-center justify-between px-8 py-2">
-        <span className="text-white text-xs font-semibold uppercase tracking-wide">Max boost available</span>
+        <span className="text-white text-xs font-semibold uppercase tracking-wide">Max reward available</span>
         <span className="text-[#D6C48A] font-bold text-base">{boostMax !== null && !isNaN(boostMax) ? boostMax.toFixed(2) : "—"} $</span>
       </div>
 
@@ -524,7 +524,7 @@ export default function Home() {
               </td>
             </tr>}
             <tr className="border-b border-white/20">
-              <td className="py-2 px-2">Upgrades</td>
+              <td className="py-2 px-2">Items</td>
               <td className="py-2 px-2 text-right font-semibold">
                 {Number(user_liquidity)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
@@ -533,7 +533,7 @@ export default function Home() {
               </td>
             </tr>
             <tr className="border-b border-white/20">
-              <td className="py-2 px-2">Available</td>
+              <td className="py-2 px-2">Earned</td>
               <td className="py-2 px-2 text-right font-semibold">
                 {Number(dollarAmount)?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
