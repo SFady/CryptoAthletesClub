@@ -105,23 +105,22 @@ function AppShell({ children }) {
           {/* HEADER FIXE */}
           <header className="fixed top-0 left-0 w-full bg-[#390494]/90 py-0.5 px-4 shadow-md z-30 backdrop-blur-md">
             <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-between">
-              <div className="flex items-center gap-3">
-                {/* Burger mobile — gauche */}
-                {authed && (
-                  <button
-                    onClick={() => setShowBurger(v => !v)}
-                    className="md:hidden text-gray-300 hover:text-white transition-colors flex-shrink-0"
-                  >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                  </button>
-                )}
+              {/* Burger mobile — gauche */}
+              {authed && (
+                <button
+                  onClick={() => setShowBurger(v => !v)}
+                  className="md:hidden text-gray-300 hover:text-white transition-colors flex-shrink-0"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+              )}
 
-                <Link href="/" className="group flex items-center gap-1">
-                  <img src="/images/move4x-logo-futuriste.png" alt="Move4X" className="h-14 w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
-                </Link>
-              </div>
+              {/* Logo — gauche desktop / droite mobile */}
+              <Link href="/" className="group flex items-center gap-1 ml-auto md:ml-0">
+                <img src="/images/move4x-logo-futuriste.png" alt="Move4X" className="h-14 w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
+              </Link>
 
               {/* Nav desktop */}
               <nav className="hidden md:flex gap-8 text-sm font-medium justify-end ml-auto">
