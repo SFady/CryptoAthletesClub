@@ -105,21 +105,38 @@ function AppShell({ children }) {
           {/* HEADER FIXE */}
           <header className="fixed top-0 left-0 w-full bg-[#390494]/90 py-0.5 px-4 shadow-md z-30 backdrop-blur-md">
             <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-end md:justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
                 <Link href="/" className="group flex items-center gap-1">
                   <img src="/images/move4x-logo-futuriste.png" alt="Move4X" className="h-14 w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
                 </Link>
 
-                {/* Burger mobile — après le logo */}
+                {/* Burger mobile — droite */}
                 {authed && (
-                  <button
-                    onClick={() => setShowBurger(v => !v)}
-                    className="md:hidden text-gray-300 hover:text-white transition-colors flex-shrink-0"
-                  >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                  </button>
+                  <div className="relative md:hidden">
+                    <button
+                      onClick={() => setShowBurger(v => !v)}
+                      className="text-gray-300 hover:text-white transition-colors flex-shrink-0"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                      </svg>
+                    </button>
+                    {showBurger && (
+                      <div className="absolute right-0 top-full mt-2 w-48 bg-[#2a1a6e]/95 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl overflow-hidden z-50" onClick={e => e.stopPropagation()}>
+                        {DIVERS_ITEMS.map(({ label, href }) => href ? (
+                          <Link key={label} href={href} onClick={() => setShowBurger(false)}
+                            className={`block px-5 py-3 text-sm hover:bg-white/10 hover:text-white transition-colors border-b border-white/10 last:border-0 ${pathname === href ? "text-white font-medium" : "text-gray-300"}`}>
+                            {label}
+                          </Link>
+                        ) : (
+                          <button key={label} onClick={() => setShowBurger(false)}
+                            className="w-full text-left px-5 py-3 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors border-b border-white/10 last:border-0">
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -216,22 +233,9 @@ function AppShell({ children }) {
           </footer>
 
           {/* Drawer burger mobile */}
+          {/* overlay fermeture burger mobile */}
           {showBurger && (
-            <div className="fixed inset-0 z-40 md:hidden" onClick={() => setShowBurger(false)}>
-              <div className="absolute top-16 left-6 w-48 bg-[#2a1a6e]/95 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl overflow-hidden" onClick={e => e.stopPropagation()}>
-                {DIVERS_ITEMS.map(({ label, href }) => href ? (
-                  <Link key={label} href={href} onClick={() => setShowBurger(false)}
-                    className={`block px-5 py-3 text-sm hover:bg-white/10 hover:text-white transition-colors border-b border-white/10 last:border-0 ${pathname === href ? "text-white font-medium" : "text-gray-300"}`}>
-                    {label}
-                  </Link>
-                ) : (
-                  <button key={label} onClick={() => setShowBurger(false)}
-                    className="w-full text-left px-5 py-3 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors border-b border-white/10 last:border-0">
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <div className="fixed inset-0 z-40 md:hidden" onClick={() => setShowBurger(false)} />
           )}
 
         </div>
