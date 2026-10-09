@@ -104,7 +104,7 @@ function AppShell({ children }) {
 
           {/* HEADER FIXE */}
           <header className="fixed top-0 left-0 w-full bg-[#390494]/90 py-0.5 px-4 shadow-md z-30 backdrop-blur-md">
-            <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-between">
+            <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-end md:justify-between">
               <div className="flex items-center gap-3">
                 <Link href="/" className="group flex items-center gap-1">
                   <img src="/images/move4x-logo-futuriste.png" alt="Move4X" className="h-14 w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
