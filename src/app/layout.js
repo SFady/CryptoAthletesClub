@@ -95,21 +95,12 @@ function AppShell({ children }) {
             style={{ backgroundImage: "url('/images/banner.webp')" }}
           ></div>
 
-          {/* OVERLAY VIOLET FULL SCREEN */}
-          <div
-            className="fixed inset-0 z-10"
-            style={{
-              background: `
-                linear-gradient(
-                  to right,
-                  rgba(74,46,163,0) 0%,
-                  rgba(74,46,163,0.95) calc((100% - ${centralWidth}px)/2),
-                  rgba(74,46,163,0.95) calc((100% + ${centralWidth}px)/2),
-                  rgba(74,46,163,0) 100%
-                )
-              `,
-            }}
-          ></div>
+          {/* OVERLAYS — full viewport, toutes les pages */}
+          <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[1] bg-[#2d1b69]" />
+          <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[2] bg-cover bg-center bg-no-repeat opacity-35" style={{ backgroundImage: "url('/images/banner.webp')" }} />
+          <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[3] bg-[#2d1b69]/45" />
+          <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 z-[4] top-[22%] bottom-[8%] mx-auto w-[min(92vw,58rem)] rounded-[50%]" style={{ background: "linear-gradient(180deg, rgba(45,27,105,0.98) 0%, rgba(57,24,137,0.96) 30%, rgba(72,29,166,0.9) 58%, rgba(45,27,105,0.5) 88%, rgba(45,27,105,0.08) 100%)", filter: "blur(18px)" }} />
+          <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[5]" style={{ background: "radial-gradient(ellipse 68% 58% at 50% 52%, rgba(45,27,105,0.76) 0%, rgba(72,29,166,0.62) 42%, rgba(45,27,105,0.2) 72%, rgba(45,27,105,0) 88%)" }} />
 
           {/* HEADER FIXE */}
           <header className="fixed top-0 left-0 w-full bg-[#390494]/90 p-4 shadow-md z-30 backdrop-blur-md">

@@ -7,9 +7,9 @@ export default function PublicHome() {
   const { authed, openLogin } = useAuth();
 
   return (
-    <section className="relative flex w-full max-w-7xl mx-auto flex-col items-center px-6 py-16 text-center lg:px-12 lg:py-24 min-h-[calc(100svh-144px)] md:min-h-[calc(100vh-96px)] justify-center">
+    <section className="flex w-full flex-col items-center min-h-[calc(100svh-144px)] md:min-h-[calc(100vh-96px)] justify-center">
 
-
+      <div className="relative z-10 flex flex-col items-center w-full max-w-7xl mx-auto px-6 py-16 text-center lg:px-12 lg:py-24">
       <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.22em] text-white/70 backdrop-blur-sm">
         <span className="size-2 rounded-full bg-[#e2c35b] shadow-[0_0_12px_#e2c35b]" />
         Move. Compete. Earn.
@@ -55,6 +55,7 @@ export default function PublicHome() {
             <p className="mt-1 text-sm text-white/55">{text}</p>
           </div>
         ))}
+      </div>
       </div>
     </section>
   );
