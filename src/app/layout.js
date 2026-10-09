@@ -118,7 +118,7 @@ function AppShell({ children }) {
               )}
 
               <Link href="/" className="group flex items-center gap-1">
-                <img src="/images/move4x-logo-white.svg" alt="Logo M4X" className="h-[1.1rem] w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
+                <img src="/images/move4x-logo-white.svg" alt="Logo M4X" className="hidden md:block h-[1.1rem] w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
                 <span className="text-xl font-bold tracking-tight text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.55)" }}>Move4X</span>
               </Link>
 
