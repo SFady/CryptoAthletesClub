@@ -9,17 +9,20 @@ export default function PublicHome() {
   return (
     <section className="flex w-full flex-col items-center min-h-[calc(100svh-144px)] md:min-h-[calc(100vh-96px)] justify-center">
 
-      <div className="relative z-10 flex flex-col items-center w-full max-w-7xl mx-auto px-6 py-16 text-center lg:px-12 lg:py-24">
-      <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.22em] text-white/70 backdrop-blur-sm">
+      <div className="relative z-10 flex flex-col items-center w-full max-w-7xl mx-auto px-6 py-8 text-center lg:px-12 lg:py-12">
+      <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.22em] text-white/70 backdrop-blur-sm">
         <span className="size-2 rounded-full bg-[#e2c35b] shadow-[0_0_12px_#e2c35b]" />
         Move. Compete. Earn.
       </div>
 
-      <h1 className="max-w-4xl text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.9), 0 4px 24px rgba(0,0,0,0.7), 0 0 60px rgba(180,140,255,0.5)" }}>
-        Move4X
-      </h1>
+      <img
+        src="/images/move4x-logo-futuriste.png"
+        alt="Move4X"
+        className="w-[min(80vw,520px)] h-auto"
+        style={{ filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.9)) drop-shadow(0 4px 24px rgba(0,0,0,0.7)) drop-shadow(0 0 40px rgba(180,140,255,0.6))" }}
+      />
 
-      <p className="mt-7 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">
+      <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">
         Track your workouts, earn rewards, and compete with the club — powered by real on-chain USDC.
       </p>
 

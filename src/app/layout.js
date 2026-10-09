@@ -103,7 +103,7 @@ function AppShell({ children }) {
           <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[5]" style={{ background: "radial-gradient(ellipse 68% 58% at 50% 52%, rgba(45,27,105,0.76) 0%, rgba(72,29,166,0.62) 42%, rgba(45,27,105,0.2) 72%, rgba(45,27,105,0) 88%)" }} />
 
           {/* HEADER FIXE */}
-          <header className="fixed top-0 left-0 w-full bg-[#390494]/90 p-4 shadow-md z-30 backdrop-blur-md">
+          <header className="fixed top-0 left-0 w-full bg-[#390494]/90 py-0.5 px-4 shadow-md z-30 backdrop-blur-md">
             <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-between">
               {/* Burger mobile — header */}
               {authed && (
@@ -118,8 +118,7 @@ function AppShell({ children }) {
               )}
 
               <Link href="/" className="group flex items-center gap-1">
-                <img src="/images/move4x-logo-white.svg" alt="Logo M4X" className="hidden md:block h-[1.1rem] w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
-                <span className="text-xl font-bold tracking-tight text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.55)" }}>Move4X</span>
+                <img src="/images/move4x-logo-futuriste.png" alt="Move4X" className="h-14 w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
               </Link>
 
               {/* Nav desktop */}
