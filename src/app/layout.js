@@ -102,9 +102,9 @@ function AppShell({ children }) {
               background: `
                 linear-gradient(
                   to right,
-                  rgba(74,46,163,0) 0%, 
-                  rgba(74,46,163,0.95) calc((100% - ${centralWidth}px)/2), 
-                  rgba(74,46,163,0.95) calc((100% + ${centralWidth}px)/2), 
+                  rgba(74,46,163,0) 0%,
+                  rgba(74,46,163,0.95) calc((100% - ${centralWidth}px)/2),
+                  rgba(74,46,163,0.95) calc((100% + ${centralWidth}px)/2),
                   rgba(74,46,163,0) 100%
                 )
               `,
@@ -126,16 +126,10 @@ function AppShell({ children }) {
                 </button>
               )}
 
-              <div className="flex flex-col w-full">
-                <h1 className="text-xl font-bold" style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.8)" }}>
-                  The Crypto Athletes Club
-                </h1>
-                <span className="hidden text-[10px] text-gray-500 text-right md:text-left md:ml-0 self-end md:self-auto">
-                  {process.env.NEXT_PUBLIC_BUILD_DATE
-                    ? (() => { const d = new Date(process.env.NEXT_PUBLIC_BUILD_DATE); return String(d.getUTCDate()).padStart(2,"0") + "/" + String(d.getUTCMonth()+1).padStart(2,"0") + "/" + String(d.getUTCFullYear()).slice(-2) + "-" + String(d.getUTCHours()).padStart(2,"0") + ":" + String(d.getUTCMinutes()).padStart(2,"0") + ":" + String(d.getUTCSeconds()).padStart(2,"0"); })()
-                    : ""}
-                </span>
-              </div>
+              <Link href="/" className="group flex items-center gap-1">
+                <img src="/images/move4x-logo-white.svg" alt="Logo M4X" className="h-[1.1rem] w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
+                <span className="text-xl font-bold tracking-tight text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.55)" }}>Move4X</span>
+              </Link>
 
               {/* Nav desktop */}
               <nav className="hidden md:flex gap-8 text-sm font-medium justify-end ml-auto">
