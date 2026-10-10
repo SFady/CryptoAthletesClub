@@ -186,7 +186,7 @@ function AppShell({ children }) {
           <LoginGate />
 
           {/* FOOTER MOBILE */}
-          <footer className="fixed bottom-0 left-0 w-full bg-[#390494]/95 text-xs z-30 backdrop-blur-md block md:hidden border-t border-white/20">
+          <footer className="fixed bottom-0 left-0 w-full bg-[#2d1b69] text-xs z-30 block md:hidden border-t border-white/20">
             <nav className="flex justify-around items-center h-14">
               {authed && [
                 { href: "/dashboard", label: "Dashboard", icon: (
