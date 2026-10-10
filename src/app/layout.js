@@ -103,7 +103,7 @@ function AppShell({ children }) {
           <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[5]" style={{ background: "radial-gradient(ellipse 68% 58% at 50% 52%, rgba(45,27,105,0.76) 0%, rgba(72,29,166,0.62) 42%, rgba(45,27,105,0.2) 72%, rgba(45,27,105,0) 88%)" }} />
 
           {/* HEADER FIXE */}
-          <header className="fixed top-0 left-0 w-full bg-[#390494]/90 py-0.5 px-4 shadow-md z-30 backdrop-blur-md">
+          <header className="fixed top-0 left-0 w-full bg-black/20 md:bg-[#390494]/90 py-0.5 px-4 shadow-md z-30 backdrop-blur-md">
             <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-between">
               {/* Burger mobile — gauche */}
               {authed && (
