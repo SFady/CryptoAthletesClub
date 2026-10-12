@@ -380,7 +380,7 @@ export default function Home() {
                 })
               );
               setDbDates(dbEntries);
-              setDbDays(new Set((dbData.result ?? []).map(a => String(a.date_claimed).slice(0, 10))));
+              setDbDays(new Set((dbData.result ?? []).filter(a => a.tx_boost).map(a => String(a.date_claimed).slice(0, 10))));
               setStravaActivities(stravaData);
               setStravaUserId(userId);
               setStravaUsername(user);

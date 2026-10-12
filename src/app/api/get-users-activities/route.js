@@ -30,7 +30,8 @@ export async function GET(req) {
           uac.boost,
           uac.kilometers,
           uac.duration,
-          usr.max_defits
+          usr.max_defits,
+          uac.tx_boost
         FROM user_activities uac
         INNER JOIN users usr ON uac.user_id = usr.id
         INNER JOIN activity_type act ON uac.activity_type = act.id
@@ -53,7 +54,8 @@ export async function GET(req) {
           uac.boost,
           uac.kilometers,
           uac.duration,
-          usr.max_defits
+          usr.max_defits,
+          uac.tx_boost
         FROM user_activities uac
         INNER JOIN users usr ON uac.user_id = usr.id
         INNER JOIN activity_type act ON uac.activity_type = act.id
