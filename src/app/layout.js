@@ -119,7 +119,12 @@ function AppShell({ children }) {
 
               {/* Logo — gauche desktop / droite mobile */}
               <Link href="/" className="group flex items-center gap-1 ml-auto md:ml-0">
-                <img src="/images/move4x-logo-futuriste.png" alt="Move4X" className="h-14 w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105" />
+                <img
+                  src="/images/move4x-logo-futuriste.png"
+                  alt="Move4X"
+                  className="h-14 w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105"
+                  style={{ filter: "drop-shadow(2px 2px 6px rgba(0,0,0,0.8))" }}
+                />
               </Link>
 
               {/* Nav desktop */}
