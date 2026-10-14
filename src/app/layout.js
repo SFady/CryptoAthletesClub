@@ -102,85 +102,84 @@ function AppShell({ children }) {
           <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 z-[4] top-[22%] bottom-[8%] mx-auto w-[min(92vw,58rem)] rounded-[50%]" style={{ background: "linear-gradient(180deg, rgba(45,27,105,0.98) 0%, rgba(57,24,137,0.96) 30%, rgba(72,29,166,0.9) 58%, rgba(45,27,105,0.5) 88%, rgba(45,27,105,0.08) 100%)", filter: "blur(18px)" }} />
           <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[5]" style={{ background: "radial-gradient(ellipse 68% 58% at 50% 52%, rgba(45,27,105,0.76) 0%, rgba(72,29,166,0.62) 42%, rgba(45,27,105,0.2) 72%, rgba(45,27,105,0) 88%)" }} />
 
+          {/* HEADER FIXE */}
+          <header className="fixed top-0 left-0 w-full bg-black/20 md:bg-[#390494]/90 py-0.5 px-4 shadow-md z-30 backdrop-blur-md">
+            <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-between">
+              {/* Burger mobile — gauche */}
+              {authed && (
+                <button
+                  onClick={() => setShowBurger(v => !v)}
+                  className="md:hidden text-gray-300 hover:text-white transition-colors flex-shrink-0"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Logo — gauche desktop / droite mobile */}
+              <Link href="/" className="group flex items-center gap-1 ml-auto md:ml-0">
+                <img
+                  src="/images/move4x-logo-futuriste.png"
+                  alt="Move4X"
+                  className="h-14 w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105"
+                  style={{ filter: "drop-shadow(2px 2px 6px rgba(0,0,0,0.8))" }}
+                />
+              </Link>
+
+              {/* Nav desktop */}
+              <nav className="hidden md:flex gap-8 text-sm font-medium justify-end ml-auto">
+                {authed && [
+                  { href: "/dashboard", label: "Dashboard" },
+                  { href: "/activities", label: "Activities" },
+                  { href: "/statistics", label: "Statistics" },
+                  { href: "/shop", label: "Shop" },
+                ].map(({ href, label }) => (
+                  <Link key={href} href={href} className={`transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-white"}`}>
+                    {label}
+                  </Link>
+                ))}
+                {/* Divers desktop */}
+                {authed && (
+                  <div className="relative">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowDivers(v => !v); }}
+                      className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1"
+                    >
+                      More
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3 h-3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {showDivers && (
+                      <div className="absolute left-0 top-full mt-2 w-40 bg-[#2a1a6e] border border-white/20 rounded-xl shadow-xl z-50 overflow-hidden">
+                        {DIVERS_ITEMS.map(({ label, href }) => href ? (
+                          <Link key={label} href={href} onClick={() => setShowDivers(false)}
+                            className={`block px-4 py-2.5 text-sm hover:bg-white/10 hover:text-white transition-colors ${pathname === href ? "text-white font-medium" : "text-gray-300"}`}>
+                            {label}
+                          </Link>
+                        ) : (
+                          <button key={label} onClick={() => setShowDivers(false)}
+                            className="w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <button onClick={authed ? logout : openLogin} className="text-gray-400 hover:text-white transition-colors text-sm">
+                  {authed ? "Logout" : "Login"}
+                </button>
+              </nav>
+            </div>
+          </header>
+
           <PullToRefresh />
 
           {/* ZONE CENTRALE - scroll global */}
-          <main className="relative flex flex-col pb-20 md:pt-24 flex-1 overflow-x-hidden overflow-y-auto">
+          <main className="relative flex flex-col pt-16 md:pt-24 pb-20 flex-1 overflow-x-hidden overflow-y-auto">
             <div className="relative z-20 flex flex-col w-full md:max-w-[1600px] md:mx-auto px-0 md:px-12">
-
-              {/* HEADER — défile avec le contenu sur mobile, fixe sur desktop */}
-              <header className="static md:fixed md:top-0 md:left-0 w-full md:bg-[#390494]/90 pt-8 pb-0.5 px-4 md:shadow-md z-30 md:backdrop-blur-md">
-                <div className="flex w-full max-w-[1600px] px-6 md:px-12 mx-auto items-center justify-between">
-                  {/* Burger mobile — gauche */}
-                  {authed && (
-                    <button
-                      onClick={() => setShowBurger(v => !v)}
-                      className="md:hidden text-gray-300 hover:text-white transition-colors flex-shrink-0"
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                      </svg>
-                    </button>
-                  )}
-
-                  {/* Logo — gauche desktop / droite mobile */}
-                  <Link href="/" className="group flex items-center gap-1 ml-auto md:ml-0">
-                    <img
-                      src="/images/move4x-logo-futuriste.png"
-                      alt="Move4X"
-                      className="h-14 w-auto object-contain opacity-95 transition-transform duration-200 group-hover:scale-105"
-                      style={{ filter: "drop-shadow(2px 2px 6px rgba(0,0,0,0.8))" }}
-                    />
-                  </Link>
-
-                  {/* Nav desktop */}
-                  <nav className="hidden md:flex gap-8 text-sm font-medium justify-end ml-auto">
-                    {authed && [
-                      { href: "/dashboard", label: "Dashboard" },
-                      { href: "/activities", label: "Activities" },
-                      { href: "/statistics", label: "Statistics" },
-                      { href: "/shop", label: "Shop" },
-                    ].map(({ href, label }) => (
-                      <Link key={href} href={href} className={`transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-white"}`}>
-                        {label}
-                      </Link>
-                    ))}
-                    {/* Divers desktop */}
-                    {authed && (
-                      <div className="relative">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setShowDivers(v => !v); }}
-                          className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1"
-                        >
-                          More
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3 h-3">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        {showDivers && (
-                          <div className="absolute left-0 top-full mt-2 w-40 bg-[#2a1a6e] border border-white/20 rounded-xl shadow-xl z-50 overflow-hidden">
-                            {DIVERS_ITEMS.map(({ label, href }) => href ? (
-                              <Link key={label} href={href} onClick={() => setShowDivers(false)}
-                                className={`block px-4 py-2.5 text-sm hover:bg-white/10 hover:text-white transition-colors ${pathname === href ? "text-white font-medium" : "text-gray-300"}`}>
-                                {label}
-                              </Link>
-                            ) : (
-                              <button key={label} onClick={() => setShowDivers(false)}
-                                className="w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
-                                {label}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    <button onClick={authed ? logout : openLogin} className="text-gray-400 hover:text-white transition-colors text-sm">
-                      {authed ? "Logout" : "Login"}
-                    </button>
-                  </nav>
-                </div>
-              </header>
-
               {(PUBLIC_PAGES.includes(pathname) || (ready && authed)) && (
                 <ClientGate>
                   {children}
