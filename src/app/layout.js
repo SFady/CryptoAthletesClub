@@ -203,7 +203,7 @@ function AppShell({ children }) {
           <PullToRefresh />
 
           {/* ZONE CENTRALE - scroll global */}
-          <main className="relative flex flex-col pb-20 md:pt-24 flex-1 overflow-x-hidden overflow-y-auto">
+          <main className="relative flex flex-col pt-20 md:pt-24 pb-20 flex-1 overflow-x-hidden overflow-y-auto">
             <div className="relative z-20 flex flex-col w-full md:max-w-[1600px] md:mx-auto px-0 md:px-12">
               {(PUBLIC_PAGES.includes(pathname) || (ready && authed)) && (
                 <ClientGate>
