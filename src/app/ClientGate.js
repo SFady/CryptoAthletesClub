@@ -45,8 +45,8 @@ const MESSAGES = [
                 <GiTrophy className="w-16 h-16 shrink-0 mt-1 text-[#D6C48A]" />
                 <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
                     <li>Weekly longest running distance winner: Nico Robin</li>
-                    <li>Distance of 36.61 km.</li>
-                    <li>Exceptional prize of 1.14 $ !!!</li>
+                    <li>Distance of 15.26 km.</li>
+                    <li>Exceptional prize of 0.30 $ !!!</li>
                 </ul>
             </div>
         ),
