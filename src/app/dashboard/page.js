@@ -280,9 +280,9 @@ export default function Home() {
       const pad = (n) => String(n).padStart(2, "0");
       const dbEntries = new Set(
         (dbData.result ?? []).map(a => {
-          const raw = String(a.date_claimed);
-          const date = raw.slice(0, 10);
-          const time = raw.slice(11, 16).replace(":", "") + "00";
+          const date = String(a.date_claimed).slice(0, 10);
+          const rawT = String(a.time_claimed ?? "").replace(/:/g, "");
+          const time = (rawT + "000000").slice(0, 6);
           const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
           const type = typeMap[String(a.activity_type)] ?? "Walk";
           const km = Math.round(Number(a.kilometers) * 10);
@@ -445,9 +445,9 @@ export default function Home() {
                 const dbData = await dbRes.json();
                 const dbEntries = new Set(
                   (dbData.result ?? []).map(a => {
-                    const raw = String(a.date_claimed);
-                    const date = raw.slice(0, 10);
-                    const time = raw.slice(11, 16).replace(":", "") + "00";
+                    const date = String(a.date_claimed).slice(0, 10);
+                    const rawT = String(a.time_claimed ?? "").replace(/:/g, "");
+                    const time = (rawT + "000000").slice(0, 6);
                     const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
                     const type = typeMap[String(a.activity_type)] ?? "Walk";
                     const km = Math.round(Number(a.kilometers) * 10);
