@@ -39,14 +39,14 @@ export async function hcCheckAvailability() {
 export async function hcCheckPermissions() {
   const p = getPlugin();
   if (!p) return { hasAllPermissions: false };
-  try { return await p.checkPermissions(); }
+  try { return await p.checkHCPermissions(); }
   catch { return { hasAllPermissions: false }; }
 }
 
 export async function hcRequestPermissions() {
   const p = getPlugin();
   if (!p) return { hasAllPermissions: false };
-  try { return await p.requestPermissions(); }
+  try { return await p.requestHCPermissions(); }
   catch { return { hasAllPermissions: false }; }
 }
 
