@@ -278,17 +278,19 @@ export default function Home() {
       ]);
       const dbData = await dbRes.json();
       const pad = (n) => String(n).padStart(2, "0");
-      const dbEntries = new Set(
-        (dbData.result ?? []).map(a => {
-          const date = String(a.date_claimed).slice(0, 10);
-          const rawT = String(a.time_claimed ?? "").replace(/:/g, "");
+      const dbEntries = new Set();
+      (dbData.result ?? []).forEach(a => {
+        const date = String(a.date_claimed).slice(0, 10);
+        const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
+        const type = typeMap[String(a.activity_type)] ?? "Walk";
+        const km = Math.round(Number(a.kilometers) * 10);
+        if (a.time_claimed) {
+          const rawT = String(a.time_claimed).replace(/:/g, "");
           const time = (rawT + "000000").slice(0, 6);
-          const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
-          const type = typeMap[String(a.activity_type)] ?? "Walk";
-          const km = Math.round(Number(a.kilometers) * 10);
-          return `${date}_${time}_${type}_${km}`;
-        })
-      );
+          dbEntries.add(`${date}_${time}_${type}_${km}`);
+        }
+        dbEntries.add(`${date}_${type}_${km}`);
+      });
       setDbDates(dbEntries);
       setDbDays(new Set((dbData.result ?? []).filter(a => a.tx_boost).map(a => String(a.date_claimed).slice(0, 10))));
       setMaxDefits(Number(dbData.result?.[0]?.max_defits ?? 0));
@@ -351,7 +353,8 @@ export default function Home() {
                   const dateKey = `${sdKey.getUTCFullYear()}-${String(sdKey.getUTCMonth() + 1).padStart(2, "0")}-${String(sdKey.getUTCDate()).padStart(2, "0")}`;
                   const timeKey = `${String(sdKey.getUTCHours()).padStart(2, "0")}${String(sdKey.getUTCMinutes()).padStart(2, "0")}00`;
                   const km = Math.round((a.distance / 1000) * 10);
-                  const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
+                  const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`)
+                                 || dbDates.has(`${dateKey}_${a.sport_type}_${km}`);
                   const dayUsed   = !alreadyIn && dbDays.has(dateKey);
                   return (
                     <li key={a.id} className={`flex items-center justify-between rounded-xl px-3 py-2.5 ${dayUsed ? "bg-white/[0.02] opacity-40" : "bg-white/5"}`}>
@@ -442,17 +445,19 @@ export default function Home() {
                 ]);
                 const stravaData = await stravaRes.json();
                 const dbData = await dbRes.json();
-                const dbEntries = new Set(
-                  (dbData.result ?? []).map(a => {
-                    const date = String(a.date_claimed).slice(0, 10);
-                    const rawT = String(a.time_claimed ?? "").replace(/:/g, "");
+                const dbEntries = new Set();
+                (dbData.result ?? []).forEach(a => {
+                  const date = String(a.date_claimed).slice(0, 10);
+                  const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
+                  const type = typeMap[String(a.activity_type)] ?? "Walk";
+                  const km = Math.round(Number(a.kilometers) * 10);
+                  if (a.time_claimed) {
+                    const rawT = String(a.time_claimed).replace(/:/g, "");
                     const time = (rawT + "000000").slice(0, 6);
-                    const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
-                    const type = typeMap[String(a.activity_type)] ?? "Walk";
-                    const km = Math.round(Number(a.kilometers) * 10);
-                    return `${date}_${time}_${type}_${km}`;
-                  })
-                );
+                    dbEntries.add(`${date}_${time}_${type}_${km}`);
+                  }
+                  dbEntries.add(`${date}_${type}_${km}`);
+                });
                 setDbDates(dbEntries);
                 setDbDays(new Set((dbData.result ?? []).filter(a => a.tx_boost).map(a => String(a.date_claimed).slice(0, 10))));
                 setStravaActivities(stravaData);
