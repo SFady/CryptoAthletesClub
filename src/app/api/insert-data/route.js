@@ -14,7 +14,8 @@ export async function POST(req) {
     const user_id = formData.get("user_id");
     const rawDate = formData.get("date_claimed"); // "2025-12-25"
     const rawTime = formData.get("time_claimed") ?? "00:00";
-    const date_claimed = `${rawDate}T${rawTime}:00`;
+    const date_claimed = rawDate;
+    const time_claimed = rawTime;
     const defit_amount = Number(formData.get("defit_amount"));
     const activity_type = formData.get("activity_type");
     const participation_percentage = formData.get("participation_percentage");
@@ -184,8 +185,8 @@ export async function POST(req) {
     // Insert
 
     const result = await sql`
-      INSERT INTO user_activities (user_id, date_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus, liquidity_repair, pool_usdc, pool_weth, rewards_usdc, rewards_weth, duration, bonus2, bonus3)
-        VALUES (${user_id}, ${date_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${0}, ${benef}, ${upgrade}, ${bonus}, ${repair}, ${walletUSDC}, ${0}, ${0}, ${0}, ${duration}, ${bonus2}, ${bonus3})
+      INSERT INTO user_activities (user_id, date_claimed, time_claimed, defit_amount, activity_type, participation_percentage, kilometers, current_liquidity, boost, weth_value, benef, upgrade, bonus, liquidity_repair, pool_usdc, pool_weth, rewards_usdc, rewards_weth, duration, bonus2, bonus3)
+        VALUES (${user_id}, ${date_claimed}, ${time_claimed}, ${defit_amount}, ${activity_type}, ${participation_percentage}, ${kilometers}, ${current_liquidity}, ${boost}, ${0}, ${benef}, ${upgrade}, ${bonus}, ${repair}, ${walletUSDC}, ${0}, ${0}, ${0}, ${duration}, ${bonus2}, ${bonus3})
         RETURNING id;
     `;
     const activityId = result[0]?.id ?? null;

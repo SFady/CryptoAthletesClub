@@ -190,7 +190,7 @@ export default function Home() {
       const defitAmount = maxDefits ? (score / 100) * maxDefits : 0;
       const participationPercentage = stravaUsername === "usopp" ? 100 : 50;
 
-      const d = new Date(a.start_date_local);
+      const d = new Date(a.start_date ?? a.start_date_local);
       const pad = (n) => String(n).padStart(2, "0");
       const dateClaimed = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
       const timeClaimed = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
@@ -223,7 +223,8 @@ export default function Home() {
       if (!data.activityId) throw new Error("no activityId returned");
 
       const km10 = Math.round(km * 10);
-      setDbDates(prev => new Set(prev).add(`${dateClaimed}_${a.sport_type}_${km10}`));
+      const timeKey = `${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00`;
+      setDbDates(prev => new Set(prev).add(`${dateClaimed}_${timeKey}_${a.sport_type}_${km10}`));
       setDbDays(prev => new Set(prev).add(dateClaimed));
 
       // Même opération que le transfert USDC de /position, mais ciblée précisément sur
@@ -280,10 +281,12 @@ export default function Home() {
       const dbEntries = new Set(
         (dbData.result ?? []).map(a => {
           const date = String(a.date_claimed).slice(0, 10);
+          const rawT = String(a.time_claimed ?? "").replace(/:/g, "");
+          const time = (rawT + "000000").slice(0, 6);
           const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
           const type = typeMap[String(a.activity_type)] ?? "Walk";
           const km = Math.round(Number(a.kilometers) * 10);
-          return `${date}_${type}_${km}`;
+          return `${date}_${time}_${type}_${km}`;
         })
       );
       setDbDates(dbEntries);
@@ -346,8 +349,9 @@ export default function Home() {
                   const sd = new Date(a.start_date_local);
                   const sdKey = new Date(a.start_date ?? a.start_date_local);
                   const dateKey = `${sdKey.getUTCFullYear()}-${String(sdKey.getUTCMonth() + 1).padStart(2, "0")}-${String(sdKey.getUTCDate()).padStart(2, "0")}`;
+                  const timeKey = `${String(sdKey.getUTCHours()).padStart(2, "0")}${String(sdKey.getUTCMinutes()).padStart(2, "0")}00`;
                   const km = Math.round((a.distance / 1000) * 10);
-                  const alreadyIn = dbDates.has(`${dateKey}_${a.sport_type}_${km}`);
+                  const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
                   const dayUsed   = !alreadyIn && dbDays.has(dateKey);
                   return (
                     <li key={a.id} className={`flex items-center justify-between rounded-xl px-3 py-2.5 ${dayUsed ? "bg-white/[0.02] opacity-40" : "bg-white/5"}`}>
@@ -441,10 +445,12 @@ export default function Home() {
                 const dbEntries = new Set(
                   (dbData.result ?? []).map(a => {
                     const date = String(a.date_claimed).slice(0, 10);
+                    const rawT = String(a.time_claimed ?? "").replace(/:/g, "");
+                    const time = (rawT + "000000").slice(0, 6);
                     const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
                     const type = typeMap[String(a.activity_type)] ?? "Walk";
                     const km = Math.round(Number(a.kilometers) * 10);
-                    return `${date}_${type}_${km}`;
+                    return `${date}_${time}_${type}_${km}`;
                   })
                 );
                 setDbDates(dbEntries);
