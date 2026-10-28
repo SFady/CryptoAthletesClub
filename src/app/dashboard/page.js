@@ -273,7 +273,7 @@ export default function Home() {
         return;
       }
       const [hcData, dbRes] = await Promise.all([
-        hcReadActivities(30),
+        hcReadActivities(7),
         fetch(`/api/get-users-activities?userId=${userId}&limit=1000`, { headers: authHeader() }),
       ]);
       const dbData = await dbRes.json();
