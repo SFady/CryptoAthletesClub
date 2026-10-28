@@ -2,7 +2,7 @@ import sql from "@/lib/db";
 import { randomBytes } from "crypto";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => new Resend(process.env.RESEND_API_KEY);
 const EMAIL_FROM = process.env.EMAIL_FROM || "Crypto Athletes Club <onboarding@resend.dev>";
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -33,7 +33,7 @@ export async function POST(req) {
     const origin = new URL(req.url).origin;
     const verifyUrl = `${origin}/api/verify-email?token=${token}`;
 
-    await resend.emails.send({
+    await getResend().emails.send({
       from: EMAIL_FROM,
       to: email.trim(),
       subject: "Verify your email — Crypto Athletes Club",
