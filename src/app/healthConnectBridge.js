@@ -45,9 +45,8 @@ export async function hcCheckPermissions() {
 
 export async function hcRequestPermissions() {
   const p = getPlugin();
-  if (!p) return { hasAllPermissions: false };
-  try { return await p.requestHCPermissions(); }
-  catch { return { hasAllPermissions: false }; }
+  if (!p) throw new Error("plugin not available");
+  return await p.requestHCPermissions(); // let errors bubble up for debugging
 }
 
 export async function hcReadActivities(daysBack = 30) {

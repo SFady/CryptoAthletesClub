@@ -474,8 +474,15 @@ export default function Profil() {
               {!hcPermissions ? (
                 <button
                   onClick={async () => {
-                    const { hasAllPermissions } = await hcRequestPermissions();
-                    setHcPermissions(hasAllPermissions);
+                    try {
+                      console.log("HC: requesting permissions...");
+                      const result = await hcRequestPermissions();
+                      console.log("HC: result", JSON.stringify(result));
+                      setHcPermissions(result.hasAllPermissions);
+                    } catch(e) {
+                      console.log("HC: error", String(e));
+                      alert("HC error: " + String(e));
+                    }
                   }}
                   className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-white text-sm bg-emerald-600 hover:bg-emerald-500 transition-colors"
                 >

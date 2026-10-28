@@ -1,6 +1,5 @@
 package com.move3k.app
 
-import androidx.activity.result.ActivityResult
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -13,7 +12,6 @@ import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin
 import com.getcapacitor.PluginCall
 import com.getcapacitor.PluginMethod
-import com.getcapacitor.annotation.ActivityCallback
 import com.getcapacitor.annotation.CapacitorPlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +29,22 @@ class HealthConnectPlugin : Plugin() {
         )
     }
 
+    private var launchPermissions: (() -> Unit)? = null
+    private var pendingPermissionCall: PluginCall? = null
+
+    override fun load() {
+        val launcher = activity.registerForActivityResult(
+            PermissionController.createRequestPermissionResultContract()
+        ) { granted ->
+            val call = pendingPermissionCall ?: return@registerForActivityResult
+            pendingPermissionCall = null
+            val ret = JSObject()
+            ret.put("hasAllPermissions", granted.containsAll(PERMISSIONS))
+            call.resolve(ret)
+        }
+        launchPermissions = { launcher.launch(PERMISSIONS) }
+    }
+
     @PluginMethod
     fun checkAvailability(call: PluginCall) {
         val status = when (HealthConnectClient.getSdkStatus(context)) {
@@ -44,7 +58,7 @@ class HealthConnectPlugin : Plugin() {
     }
 
     @PluginMethod
-    override fun checkPermissions(call: PluginCall) {
+    fun checkHCPermissions(call: PluginCall) {
         val client = HealthConnectClient.getOrCreate(context)
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -59,24 +73,13 @@ class HealthConnectPlugin : Plugin() {
     }
 
     @PluginMethod
-    override fun requestPermissions(call: PluginCall) {
-        val intent = PermissionController.createRequestPermissionResultContract()
-            .createIntent(context, PERMISSIONS)
-        startActivityForResult(call, intent, "handlePermissionResult")
-    }
-
-    @ActivityCallback
-    private fun handlePermissionResult(call: PluginCall, @Suppress("UNUSED_PARAMETER") result: ActivityResult) {
-        val client = HealthConnectClient.getOrCreate(context)
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val granted = client.permissionController.getGrantedPermissions()
-                val ret = JSObject()
-                ret.put("hasAllPermissions", granted.containsAll(PERMISSIONS))
-                call.resolve(ret)
-            } catch (e: Exception) {
-                call.reject("Error: ${e.message}")
-            }
+    fun requestHCPermissions(call: PluginCall) {
+        try {
+            pendingPermissionCall = call
+            launchPermissions?.invoke() ?: call.reject("launcher not ready")
+        } catch (e: Exception) {
+            pendingPermissionCall = null
+            call.reject("requestHCPermissions error: ${e.message}")
         }
     }
 
