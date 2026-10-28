@@ -45,6 +45,7 @@ export default function Profil() {
   const [verifyNotice, setVerifyNotice] = useState(null);
 
   // Health Connect (Android native only)
+  const [isAndroid, setIsAndroid] = useState(false);
   const [hcAvailability, setHcAvailability] = useState(null); // null | "Available" | "NeedsUpdate" | "NotAvailable" | "NotSupported"
   const [hcPermissions, setHcPermissions] = useState(false);
   const [hcActivities, setHcActivities] = useState(null);
@@ -86,7 +87,9 @@ export default function Profil() {
     } catch { /* ignore */ }
 
     // Init Health Connect on Android
-    if (isAndroidNative()) {
+    const android = isAndroidNative();
+    setIsAndroid(android);
+    if (android) {
       hcCheckAvailability().then(({ availability }) => {
         setHcAvailability(availability);
         if (availability === "Available") {
@@ -442,7 +445,7 @@ export default function Profil() {
       </div>
 
       {/* ── Health Connect (Android native only) ── */}
-      {isAndroidNative() && (
+      {isAndroid && (
         <div className="w-full max-w-sm mt-6 px-6 flex flex-col gap-3">
           <h2 className="text-base font-semibold text-white/80 flex items-center gap-2">
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-emerald-400">
