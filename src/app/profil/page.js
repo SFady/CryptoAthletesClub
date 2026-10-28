@@ -444,6 +444,9 @@ export default function Profil() {
 
       </div>
 
+      {/* DEBUG — remove after testing */}
+      <p className="text-xs text-yellow-400 px-6">isAndroid: {String(isAndroid)} | hcAvail: {String(hcAvailability)}</p>
+
       {/* ── Health Connect (Android native only) ── */}
       {isAndroid && (
         <div className="w-full max-w-sm mt-6 px-6 flex flex-col gap-3">
