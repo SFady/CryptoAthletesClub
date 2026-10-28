@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useDefitPrice } from "../api/useDefitPrice/useDefitPrice";
 import { FaRunning, FaWalking, FaBiking, FaSwimmer } from "react-icons/fa";
 import { sqrtPercent } from "@/lib/percent";
+import { isAndroidNative, hcCheckPermissions, hcReadActivities } from "../healthConnectBridge";
 
 function authHeader() {
   try {
@@ -38,6 +39,8 @@ export default function Home() {
   const [maxDefits, setMaxDefits] = useState(null);
   const [quickEntryStatus, setQuickEntryStatus] = useState({}); // { [activityId]: 'loading' | 'done' | 'error' }
   const [earnedToast, setEarnedToast] = useState(null); // dollar amount shown in the "Vous avez gagné" toast
+  const [isAndroid, setIsAndroid] = useState(false);
+  const [activitySource, setActivitySource] = useState("strava"); // "strava" | "hc"
 
   const fetchBoostMax = async (athleteId) => {
     try {
@@ -86,6 +89,7 @@ export default function Home() {
     }
     finalId = finalId ?? "1";
 
+    setIsAndroid(isAndroidNative());
     setSelected(finalId);
     localStorage.setItem("selectedAthlete", finalId);
     fetchDefitAmount(finalId);
@@ -258,6 +262,55 @@ export default function Home() {
     }
   };
 
+  const handleHCButton = async () => {
+    try {
+      const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+      const userId = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" }[user];
+      if (!userId) return;
+      const { hasAllPermissions } = await hcCheckPermissions();
+      if (!hasAllPermissions) {
+        alert("Autorise d'abord Health Connect dans la page Profil");
+        return;
+      }
+      const [hcData, dbRes] = await Promise.all([
+        hcReadActivities(30),
+        fetch(`/api/get-users-activities?userId=${userId}&limit=1000`, { headers: authHeader() }),
+      ]);
+      const dbData = await dbRes.json();
+      const pad = (n) => String(n).padStart(2, "0");
+      const dbEntries = new Set(
+        (dbData.result ?? []).map(a => {
+          const raw = String(a.date_claimed);
+          const date = raw.slice(0, 10);
+          const time = raw.slice(11, 16).replace(":", "") + "00";
+          const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
+          const type = typeMap[String(a.activity_type)] ?? "Walk";
+          const km = Math.round(Number(a.kilometers) * 10);
+          return `${date}_${time}_${type}_${km}`;
+        })
+      );
+      setDbDates(dbEntries);
+      setDbDays(new Set((dbData.result ?? []).filter(a => a.tx_boost).map(a => String(a.date_claimed).slice(0, 10))));
+      setMaxDefits(Number(dbData.result?.[0]?.max_defits ?? 0));
+      setStravaUserId(userId);
+      setStravaUsername(user);
+      // Normalize HC activities to Strava-compatible format
+      const normalized = (hcData.activities ?? []).map(a => ({
+        id: a.id,
+        sport_type: a.type,
+        start_date: a.startTime,
+        start_date_local: a.startTime,
+        distance: a.distanceKm * 1000,
+        moving_time: Math.round(a.durationMin * 60),
+      }));
+      setStravaActivities(normalized);
+      setActivitySource("hc");
+      setStravaPopup(true);
+    } catch (e) {
+      console.error("HC activities error:", e);
+    }
+  };
+
   return (
     <main className="relative w-full max-w-[1600px] mx-auto px-6 md:px-16 flex flex-col justify-center min-h-[calc(100svh-144px)] md:min-h-[calc(100vh-96px)] md:justify-start md:pt-0 md:pb-0">
 
@@ -275,9 +328,15 @@ export default function Home() {
           <div className="bg-[#2a1a6e] border border-white/20 rounded-2xl shadow-2xl p-5 w-full max-w-sm" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-bold text-lg flex items-center gap-2">
-                <svg viewBox="0 0 24 24" fill="#FC4C02" className="w-5 h-5">
-                  <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169" />
-                </svg>
+                {activitySource === "hc" ? (
+                  <svg viewBox="0 0 24 24" fill="#34d399" className="w-5 h-5">
+                    <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="#FC4C02" className="w-5 h-5">
+                    <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169" />
+                  </svg>
+                )}
                 Recent activities
               </h2>
               <button onClick={() => setStravaPopup(false)} className="text-gray-400 hover:text-white text-xl leading-none">×</button>
@@ -356,53 +415,69 @@ export default function Home() {
 
       {/* Sélecteur d’athlète centré au-dessus de l’image */}
       <div className="relative w-full max-w-sm md:max-w-[550px] mx-auto flex justify-center items-end gap-3 mb-2 mt-1 md:mt-10">
-        <button
-          disabled={!stravaConnected}
-          onClick={async () => {
-            if (!stravaConnected) return;
-            try {
-              const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
-              const userId = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" }[user];
-              if (!userId) return;
-              const [stravaRes, dbRes] = await Promise.all([
-                fetch(`/api/strava/activities?userId=${userId}`, { headers: authHeader() }),
-                fetch(`/api/get-users-activities?userId=${userId}&limit=1000`, { headers: authHeader() }),
-              ]);
-              const stravaData = await stravaRes.json();
-              const dbData = await dbRes.json();
-              const dbEntries = new Set(
-                (dbData.result ?? []).map(a => {
-                  const raw = String(a.date_claimed);
-                  const date = raw.slice(0, 10);
-                  const time = raw.slice(11, 16).replace(":", "") + "00";
-                  const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
-                  const type = typeMap[String(a.activity_type)] ?? "Walk";
-                  const km = Math.round(Number(a.kilometers) * 10);
-                  return `${date}_${time}_${type}_${km}`;
-                })
-              );
-              setDbDates(dbEntries);
-              setDbDays(new Set((dbData.result ?? []).filter(a => a.tx_boost).map(a => String(a.date_claimed).slice(0, 10))));
-              setStravaActivities(stravaData);
-              setStravaUserId(userId);
-              setStravaUsername(user);
-              setMaxDefits(Number(dbData.result?.[0]?.max_defits ?? 0));
-              setStravaPopup(true);
-            } catch { /* ignore */ }
-          }}
-          title="Fetch Strava activities"
-          className={`absolute left-2 inset-y-0 my-auto h-fit flex items-center gap-0.5 transition-all rounded-lg border p-1
-            ${stravaConnected
-              ? "text-[#FC4C02] border-white/20 hover:border-[#FC4C02]/60 bg-white/5 hover:bg-white/10 cursor-pointer"
-              : "text-[#FC4C02]/30 border-white/10 bg-white/5 cursor-not-allowed"}`}
-        >
-          <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-            <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169" />
-          </svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6 -ml-2 text-white/60">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
-          </svg>
-        </button>
+        {isAndroid ? (
+          <button
+            onClick={handleHCButton}
+            title="Fetch Health Connect activities"
+            className="absolute left-2 inset-y-0 my-auto h-fit flex items-center gap-0.5 transition-all rounded-lg border p-1 text-emerald-400 border-white/20 hover:border-emerald-400/60 bg-white/5 hover:bg-white/10 cursor-pointer"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+              <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6 -ml-2 text-white/60">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+          </button>
+        ) : (
+          <button
+            disabled={!stravaConnected}
+            onClick={async () => {
+              if (!stravaConnected) return;
+              try {
+                const { user } = JSON.parse(localStorage.getItem("auth_session") ?? "{}");
+                const userId = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" }[user];
+                if (!userId) return;
+                const [stravaRes, dbRes] = await Promise.all([
+                  fetch(`/api/strava/activities?userId=${userId}`, { headers: authHeader() }),
+                  fetch(`/api/get-users-activities?userId=${userId}&limit=1000`, { headers: authHeader() }),
+                ]);
+                const stravaData = await stravaRes.json();
+                const dbData = await dbRes.json();
+                const dbEntries = new Set(
+                  (dbData.result ?? []).map(a => {
+                    const raw = String(a.date_claimed);
+                    const date = raw.slice(0, 10);
+                    const time = raw.slice(11, 16).replace(":", "") + "00";
+                    const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
+                    const type = typeMap[String(a.activity_type)] ?? "Walk";
+                    const km = Math.round(Number(a.kilometers) * 10);
+                    return `${date}_${time}_${type}_${km}`;
+                  })
+                );
+                setDbDates(dbEntries);
+                setDbDays(new Set((dbData.result ?? []).filter(a => a.tx_boost).map(a => String(a.date_claimed).slice(0, 10))));
+                setStravaActivities(stravaData);
+                setStravaUserId(userId);
+                setStravaUsername(user);
+                setMaxDefits(Number(dbData.result?.[0]?.max_defits ?? 0));
+                setActivitySource("strava");
+                setStravaPopup(true);
+              } catch { /* ignore */ }
+            }}
+            title="Fetch Strava activities"
+            className={`absolute left-2 inset-y-0 my-auto h-fit flex items-center gap-0.5 transition-all rounded-lg border p-1
+              ${stravaConnected
+                ? "text-[#FC4C02] border-white/20 hover:border-[#FC4C02]/60 bg-white/5 hover:bg-white/10 cursor-pointer"
+                : "text-[#FC4C02]/30 border-white/10 bg-white/5 cursor-not-allowed"}`}
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+              <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.169" />
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} className="w-6 h-6 -ml-2 text-white/60">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+          </button>
+        )}
         <select
           value={selected}
           onChange={handleSelect}

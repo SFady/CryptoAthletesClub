@@ -152,7 +152,7 @@ class HealthConnectPlugin : Plugin() {
         ExerciseSessionRecord.EXERCISE_TYPE_RUNNING_TREADMILL -> "Run"
         ExerciseSessionRecord.EXERCISE_TYPE_WALKING -> "Walk"
         ExerciseSessionRecord.EXERCISE_TYPE_BIKING,
-        ExerciseSessionRecord.EXERCISE_TYPE_BIKING_STATIONARY -> "Bike"
+        ExerciseSessionRecord.EXERCISE_TYPE_BIKING_STATIONARY -> "Ride"
         ExerciseSessionRecord.EXERCISE_TYPE_SWIMMING_POOL,
         ExerciseSessionRecord.EXERCISE_TYPE_SWIMMING_OPEN_WATER -> "Swim"
         else -> "Other"
