@@ -22,7 +22,6 @@ export async function GET(req) {
         SELECT
           uac.id,
           uac.date_claimed,
-          uac.time_claimed,
           usr.name AS user_name,
           act.name AS activity_name,
           uac.activity_type,
@@ -47,7 +46,6 @@ export async function GET(req) {
         SELECT
           uac.id,
           uac.date_claimed,
-          uac.time_claimed,
           usr.name AS user_name,
           act.name AS activity_name,
           uac.activity_type,
