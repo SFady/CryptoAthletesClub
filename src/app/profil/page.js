@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useBackToMain } from "../useBackToMain";
+import {
+  isAndroidNative,
+  hcCheckAvailability,
+  hcCheckPermissions,
+  hcRequestPermissions,
+  hcReadActivities,
+} from "../healthConnectBridge";
 
 const USER_ID_MAP = { usopp: "1", dteach: "2", nicor: "3", jinbe: "4" };
 
@@ -37,6 +44,13 @@ export default function Profil() {
   const [signupStatus, setSignupStatus] = useState(null); // null | "sending" | "sent" | error string
   const [verifyNotice, setVerifyNotice] = useState(null);
 
+  // Health Connect (Android native only)
+  const [hcAvailability, setHcAvailability] = useState(null); // null | "Available" | "NeedsUpdate" | "NotAvailable" | "NotSupported"
+  const [hcPermissions, setHcPermissions] = useState(false);
+  const [hcActivities, setHcActivities] = useState(null);
+  const [hcLoading, setHcLoading] = useState(false);
+  const [hcError, setHcError] = useState(null);
+
   const loadProfile = (id) => {
     if (!id) return;
     fetch(`/api/profil?id=${id}`, { headers: authHeader() })
@@ -70,6 +84,16 @@ export default function Profil() {
       setCurrentUser(user ?? null);
       loadProfile(id);
     } catch { /* ignore */ }
+
+    // Init Health Connect on Android
+    if (isAndroidNative()) {
+      hcCheckAvailability().then(({ availability }) => {
+        setHcAvailability(availability);
+        if (availability === "Available") {
+          hcCheckPermissions().then(({ hasAllPermissions }) => setHcPermissions(hasAllPermissions));
+        }
+      });
+    }
   }, []);
 
   const switchUser = (id) => {
@@ -415,8 +439,101 @@ export default function Profil() {
           )}
         </div>
 
-
       </div>
+
+      {/* ── Health Connect (Android native only) ── */}
+      {isAndroidNative() && (
+        <div className="w-full max-w-sm mt-6 px-6 flex flex-col gap-3">
+          <h2 className="text-base font-semibold text-white/80 flex items-center gap-2">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-emerald-400">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53L12 21.35z"/>
+            </svg>
+            Health Connect
+          </h2>
+
+          {hcAvailability === "NotAvailable" && (
+            <p className="text-sm text-amber-300 bg-amber-900/20 rounded-lg px-3 py-2">
+              Health Connect n&apos;est pas disponible sur cet appareil.
+            </p>
+          )}
+
+          {hcAvailability === "NeedsUpdate" && (
+            <p className="text-sm text-amber-300 bg-amber-900/20 rounded-lg px-3 py-2">
+              Mets à jour Health Connect depuis le Play Store.
+            </p>
+          )}
+
+          {hcAvailability === "Available" && (
+            <>
+              {!hcPermissions ? (
+                <button
+                  onClick={async () => {
+                    const { hasAllPermissions } = await hcRequestPermissions();
+                    setHcPermissions(hasAllPermissions);
+                  }}
+                  className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-white text-sm bg-emerald-600 hover:bg-emerald-500 transition-colors"
+                >
+                  Autoriser Health Connect
+                </button>
+              ) : (
+                <button
+                  disabled={hcLoading}
+                  onClick={async () => {
+                    setHcLoading(true);
+                    setHcError(null);
+                    try {
+                      const { activities } = await hcReadActivities(30);
+                      setHcActivities(activities);
+                    } catch (e) {
+                      setHcError(e?.message ?? "Erreur de lecture");
+                    } finally {
+                      setHcLoading(false);
+                    }
+                  }}
+                  className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold text-white text-sm bg-emerald-600 hover:bg-emerald-500 transition-colors disabled:opacity-50"
+                >
+                  {hcLoading ? "Chargement…" : "Charger les activités (30j)"}
+                </button>
+              )}
+
+              {hcError && <p className="text-sm text-rose-300">{hcError}</p>}
+
+              {hcActivities && hcActivities.length === 0 && (
+                <p className="text-sm text-gray-400">Aucune activité trouvée.</p>
+              )}
+
+              {hcActivities && hcActivities.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  {hcActivities.map((a) => {
+                    const date = new Date(a.startTime);
+                    const label = { Run: "🏃 Course", Walk: "🚶 Marche", Bike: "🚴 Vélo", Swim: "🏊 Natation" }[a.type] ?? a.type;
+                    return (
+                      <div key={a.id} className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2 text-sm">
+                        <div>
+                          <span className="font-medium text-white">{label}</span>
+                          <span className="text-gray-400 text-xs ml-2">
+                            {date.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" })}
+                          </span>
+                          {a.title ? <span className="text-gray-500 text-xs ml-2 italic">{a.title}</span> : null}
+                        </div>
+                        <div className="text-right">
+                          {a.distanceKm > 0 && (
+                            <span className="text-emerald-400 font-semibold">{a.distanceKm.toFixed(2)} km</span>
+                          )}
+                          {a.durationMin > 0 && (
+                            <span className="text-gray-400 text-xs ml-2">{Math.round(a.durationMin)} min</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
     </main>
   );
 }

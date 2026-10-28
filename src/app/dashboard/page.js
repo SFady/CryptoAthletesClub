@@ -288,8 +288,10 @@ export default function Home() {
               <ul className="flex flex-col gap-2 overflow-y-auto max-h-[55vh]">
                 {stravaActivities.filter(a => a.sport_type in activityTypeId).sort((a, b) => new Date(b.start_date) - new Date(a.start_date)).map(a => {
                   const sd = new Date(a.start_date_local);
-                  const dateKey = `${sd.getUTCFullYear()}-${String(sd.getUTCMonth() + 1).padStart(2, "0")}-${String(sd.getUTCDate()).padStart(2, "0")}`;
-                  const timeKey = `${String(sd.getUTCHours()).padStart(2, "0")}${String(sd.getUTCMinutes()).padStart(2, "0")}00`;
+                  // Use start_date (actual UTC) for key matching — DB stores UTC after timezone conversion
+                  const sdKey = new Date(a.start_date ?? a.start_date_local);
+                  const dateKey = `${sdKey.getUTCFullYear()}-${String(sdKey.getUTCMonth() + 1).padStart(2, "0")}-${String(sdKey.getUTCDate()).padStart(2, "0")}`;
+                  const timeKey = `${String(sdKey.getUTCHours()).padStart(2, "0")}${String(sdKey.getUTCMinutes()).padStart(2, "0")}00`;
                   const km = Math.round((a.distance / 1000) * 10);
                   const alreadyIn = dbDates.has(`${dateKey}_${timeKey}_${a.sport_type}_${km}`);
                   const dayUsed   = !alreadyIn && dbDays.has(dateKey);
@@ -372,7 +374,7 @@ export default function Home() {
                 (dbData.result ?? []).map(a => {
                   const raw = String(a.date_claimed);
                   const date = raw.slice(0, 10);
-                  const time = raw.slice(11, 19).replace(/:/g, "");
+                  const time = raw.slice(11, 16).replace(":", "") + "00";
                   const typeMap = { "1": "Run", "2": "Walk", "3": "Ride", "4": "Swim" };
                   const type = typeMap[String(a.activity_type)] ?? "Walk";
                   const km = Math.round(Number(a.kilometers) * 10);
