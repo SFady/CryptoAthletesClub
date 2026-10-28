@@ -1,5 +1,6 @@
 package com.move3k.app
 
+import android.util.Log
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -33,16 +34,23 @@ class HealthConnectPlugin : Plugin() {
     private var pendingPermissionCall: PluginCall? = null
 
     override fun load() {
-        val launcher = activity.registerForActivityResult(
-            PermissionController.createRequestPermissionResultContract()
-        ) { granted ->
-            val call = pendingPermissionCall ?: return@registerForActivityResult
-            pendingPermissionCall = null
-            val ret = JSObject()
-            ret.put("hasAllPermissions", granted.containsAll(PERMISSIONS))
-            call.resolve(ret)
+        Log.d("HC", "load() called")
+        try {
+            val launcher = activity.registerForActivityResult(
+                PermissionController.createRequestPermissionResultContract()
+            ) { granted ->
+                Log.d("HC", "permission result: $granted")
+                val call = pendingPermissionCall ?: return@registerForActivityResult
+                pendingPermissionCall = null
+                val ret = JSObject()
+                ret.put("hasAllPermissions", granted.containsAll(PERMISSIONS))
+                call.resolve(ret)
+            }
+            launchPermissions = { launcher.launch(PERMISSIONS) }
+            Log.d("HC", "launcher registered OK")
+        } catch (e: Exception) {
+            Log.e("HC", "load() error: ${e.message}", e)
         }
-        launchPermissions = { launcher.launch(PERMISSIONS) }
     }
 
     @PluginMethod
@@ -74,10 +82,18 @@ class HealthConnectPlugin : Plugin() {
 
     @PluginMethod
     fun requestHCPermissions(call: PluginCall) {
+        Log.d("HC", "requestHCPermissions called, launcher=${launchPermissions != null}")
         try {
             pendingPermissionCall = call
-            launchPermissions?.invoke() ?: call.reject("launcher not ready")
+            if (launchPermissions != null) {
+                launchPermissions!!.invoke()
+                Log.d("HC", "launcher.launch() called")
+            } else {
+                Log.e("HC", "launchPermissions is null!")
+                call.reject("launcher not ready")
+            }
         } catch (e: Exception) {
+            Log.e("HC", "launch error: ${e.message}", e)
             pendingPermissionCall = null
             call.reject("requestHCPermissions error: ${e.message}")
         }
