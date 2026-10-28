@@ -474,10 +474,8 @@ export default function Profil() {
               {!hcPermissions ? (
                 <button
                   onClick={async () => {
-                    alert("v2 - appel HC...");
                     try {
                       const result = await hcRequestPermissions();
-                      alert("HC result: " + JSON.stringify(result));
                       setHcPermissions(result.hasAllPermissions);
                     } catch(e) {
                       alert("HC error: " + String(e));
