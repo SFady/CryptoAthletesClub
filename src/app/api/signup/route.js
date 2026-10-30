@@ -7,6 +7,8 @@ const EMAIL_FROM = process.env.EMAIL_FROM || "Crypto Athletes Club <onboarding@r
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
 export async function POST(req) {
+  return Response.json({ error: "Inscriptions fermées pour le moment." }, { status: 503 });
+
   const { username, email } = await req.json();
 
   if (!username?.trim() || !email?.trim()) {
