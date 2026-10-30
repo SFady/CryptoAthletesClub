@@ -52,7 +52,7 @@ export default function PublicHome() {
           <svg viewBox="0 0 24 24" fill="currentColor" className="size-5">
             <path d="M17.523 15.341a.75.75 0 0 1 0 1.06l-4.773 4.773a.75.75 0 0 1-1.06 0L6.917 16.4a.75.75 0 1 1 1.06-1.06l3.273 3.272V4.75a.75.75 0 0 1 1.5 0v13.862l3.273-3.272a.75.75 0 0 1 1.06 0z"/>
           </svg>
-          Android APK
+          Application mobile Android
         </a>
       </div>
 
