@@ -136,8 +136,8 @@ export default function LoginGate() {
 
             <button
               type="button"
-              onClick={() => { window.location.href = "/profil"; }}
-              className="w-full px-6 py-2.5 rounded-xl text-white font-semibold bg-white/10 border border-white/20 hover:bg-white/20 transition-all duration-200"
+              disabled
+              className="w-full px-6 py-2.5 rounded-xl text-white/30 font-semibold bg-white/5 border border-white/10 cursor-not-allowed"
             >
               No account / Create
             </button>
