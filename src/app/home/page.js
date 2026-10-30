@@ -44,6 +44,16 @@ export default function PublicHome() {
             <FaArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
           </button>
         )}
+        <a
+          href="/crypto-athletes-club.apk"
+          download
+          className="inline-flex items-center gap-2 h-12 rounded-lg border border-white/20 bg-white/10 px-7 text-base font-semibold text-white hover:bg-white/20 transition-colors"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" className="size-5">
+            <path d="M17.523 15.341a.75.75 0 0 1 0 1.06l-4.773 4.773a.75.75 0 0 1-1.06 0L6.917 16.4a.75.75 0 1 1 1.06-1.06l3.273 3.272V4.75a.75.75 0 0 1 1.5 0v13.862l3.273-3.272a.75.75 0 0 1 1.06 0z"/>
+          </svg>
+          Android APK
+        </a>
       </div>
 
       <div className="mt-16 grid w-full max-w-3xl gap-4 sm:grid-cols-3">
