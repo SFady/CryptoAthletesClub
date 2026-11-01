@@ -297,14 +297,20 @@ export default function Home() {
       setStravaUserId(userId);
       setStravaUsername(user);
       // Normalize HC activities to Strava-compatible format
-      const normalized = (hcData.activities ?? []).map(a => ({
-        id: a.id,
-        sport_type: a.type,
-        start_date: a.startTime,
-        start_date_local: a.startTime,
-        distance: a.distanceKm * 1000,
-        moving_time: Math.round(a.durationMin * 60),
-      }));
+      // start_date stays UTC (for key matching); start_date_local is local wall-clock (no Z) for display
+      const normalized = (hcData.activities ?? []).map(a => {
+        const utc = new Date(a.startTime);
+        const localISO = new Date(utc.getTime() - utc.getTimezoneOffset() * 60000)
+          .toISOString().slice(0, 19);
+        return {
+          id: a.id,
+          sport_type: a.type,
+          start_date: a.startTime,
+          start_date_local: localISO,
+          distance: a.distanceKm * 1000,
+          moving_time: Math.round(a.durationMin * 60),
+        };
+      });
       setStravaActivities(normalized);
       setActivitySource("hc");
       setStravaPopup(true);
