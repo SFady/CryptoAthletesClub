@@ -120,8 +120,13 @@ class HealthConnectPlugin : Plugin() {
 
                 val array = JSArray()
                 for (session in sessions.sortedByDescending { it.startTime }) {
+                    val sessionPkg = session.metadata.dataOrigin.packageName
                     val meters = distances
-                        .filter { it.startTime >= session.startTime && it.endTime <= session.endTime }
+                        .filter {
+                            it.startTime >= session.startTime &&
+                            it.endTime <= session.endTime &&
+                            it.metadata.dataOrigin.packageName == sessionPkg
+                        }
                         .sumOf { it.distance.inMeters }
 
                     val durationMin = ChronoUnit.SECONDS.between(session.startTime, session.endTime) / 60.0
