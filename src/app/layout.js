@@ -9,6 +9,7 @@ import LoginGate from "./LoginGate";
 import PullToRefresh from "./PullToRefresh";
 import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "./AuthContext";
+import { isAndroidNative, APP_VERSION_CODE } from "./healthConnectBridge";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,55 @@ export default function RootLayout({ children }) {
         </AuthProvider>
       </body>
     </html>
+  );
+}
+
+function UpdateBanner() {
+  const [updateUrl, setUpdateUrl] = useState(null);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    if (!isAndroidNative()) return;
+    try {
+      if (sessionStorage.getItem("update_banner_dismissed")) return;
+    } catch { /* ignore */ }
+    fetch("/api/latest-version")
+      .then(r => r.json())
+      .then(data => {
+        if (data.versionCode > APP_VERSION_CODE) {
+          setUpdateUrl(data.downloadUrl);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  if (!updateUrl || dismissed) return null;
+
+  return (
+    <div className="fixed top-0 left-0 w-full z-50 flex items-center justify-between gap-3 bg-yellow-500/95 text-black px-4 py-2.5 text-sm font-semibold backdrop-blur-sm shadow-lg">
+      <span>Mise à jour disponible !</span>
+      <div className="flex items-center gap-2">
+        <a
+          href={updateUrl}
+          download
+          className="bg-black/15 hover:bg-black/25 transition-colors rounded-lg px-3 py-1 text-xs font-bold"
+        >
+          Télécharger
+        </a>
+        <button
+          onClick={() => {
+            try { sessionStorage.setItem("update_banner_dismissed", "1"); } catch { /* ignore */ }
+            setDismissed(true);
+          }}
+          className="text-black/60 hover:text-black transition-colors ml-1"
+          aria-label="Fermer"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-4 h-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -88,6 +138,7 @@ function AppShell({ children }) {
 
   return (
         <div className="relative flex flex-col h-[100dvh] md:min-h-screen text-white">
+          <UpdateBanner />
 
           {/* IMAGE DE FOND FIXE */}
           <div
