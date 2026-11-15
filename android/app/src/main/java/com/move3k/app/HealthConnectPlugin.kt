@@ -143,7 +143,10 @@ class HealthConnectPlugin : Plugin() {
                     obj.put("title", session.title ?: "")
                     obj.put("distanceKm", Math.round(meters / 10.0) / 100.0)
                     obj.put("durationMin", Math.round(durationMin * 10.0) / 10.0)
-                    obj.put("_dbg", "pkg=$sessionPkg overlapping=${overlapping.size} samePkg=${overlapping.count { it.metadata.dataOrigin.packageName == sessionPkg }} totalDist=${distances.size}")
+                    val firstDist = distances.minByOrNull { it.startTime }
+                    val lastDist = distances.maxByOrNull { it.endTime }
+                    Log.d("HC_DBG", "sess=${session.startTime}→${session.endTime} overlapping=${overlapping.size} distRange=${firstDist?.startTime}→${lastDist?.endTime} total=${distances.size}")
+                    obj.put("_dbg", "ov=${overlapping.size} tot=${distances.size}")
                     array.put(obj)
                 }
 

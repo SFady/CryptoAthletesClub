@@ -1,6 +1,6 @@
 export async function GET() {
   return Response.json({
-    versionCode: 6,
+    versionCode: 7,
     downloadUrl: "/crypto-athletes-club.apk",
   });
 }

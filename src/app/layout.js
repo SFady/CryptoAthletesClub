@@ -67,7 +67,7 @@ function UpdateBanner() {
   if (!updateUrl || dismissed) return null;
 
   return (
-    <div className="relative z-50 w-full flex items-center justify-between gap-3 bg-yellow-500 text-black px-4 py-2.5 text-sm font-semibold shadow-lg">
+    <div className="relative z-50 w-full flex items-center justify-between gap-3 bg-yellow-500 text-black px-4 py-3 mt-2 mx-3 rounded-xl text-sm font-semibold shadow-lg" style={{ width: "calc(100% - 1.5rem)" }}>
       <span>Mise à jour disponible !</span>
       <div className="flex items-center gap-2">
         <a
