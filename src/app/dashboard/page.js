@@ -315,6 +315,8 @@ export default function Home() {
       setStravaActivities(normalized);
       setActivitySource("hc");
       setStravaPopup(true);
+      const zero = normalized.find(a => a.distance === 0);
+      if (zero) alert(`0km debug:\nstartTime=${zero.start_date}\nlocal=${zero.start_date_local}\ndbg=${zero._dbg}`);
     } catch (e) {
       console.error("HC activities error:", e);
     }
