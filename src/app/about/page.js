@@ -1,9 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useBackToMain } from "../useBackToMain";
+import { isAndroidNative } from "../healthConnectBridge";
 
 export default function About() {
   const goBack = useBackToMain();
+  const [nativeVersion, setNativeVersion] = useState(null);
+
+  useEffect(() => {
+    if (!isAndroidNative()) return;
+    import("@capacitor/app").then(({ App }) =>
+      App.getInfo().then(info => setNativeVersion(`${info.version} (build ${info.build})`))
+    ).catch(() => {});
+  }, []);
 
   const buildDate = process.env.NEXT_PUBLIC_BUILD_DATE
     ? (() => {
@@ -35,8 +45,9 @@ export default function About() {
           The Crypto Athletes Club is a platform dedicated to tracking
           DEFIT athletes&apos; sports performance and digital assets.
         </p>
-        <div className="bg-white/10 border border-white/20 rounded-xl px-6 py-3 text-sm text-gray-300">
-          Build date: <span className="text-white font-semibold">{buildDate}</span>
+        <div className="bg-white/10 border border-white/20 rounded-xl px-6 py-3 text-sm text-gray-300 flex flex-col gap-1">
+          <div>Build date: <span className="text-white font-semibold">{buildDate}</span></div>
+          {nativeVersion && <div>Version APK: <span className="text-white font-semibold">{nativeVersion}</span></div>}
         </div>
       </div>
     </main>
