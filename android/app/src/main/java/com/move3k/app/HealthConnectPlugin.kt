@@ -121,13 +121,17 @@ class HealthConnectPlugin : Plugin() {
                 val array = JSArray()
                 for (session in sessions.sortedByDescending { it.startTime }) {
                     val sessionPkg = session.metadata.dataOrigin.packageName
-                    val meters = distances
-                        .filter {
-                            it.startTime < session.endTime &&
-                            it.endTime > session.startTime &&
-                            it.metadata.dataOrigin.packageName == sessionPkg
-                        }
+                    val overlapping = distances.filter {
+                        it.startTime < session.endTime && it.endTime > session.startTime
+                    }
+                    val samePkgMeters = overlapping
+                        .filter { it.metadata.dataOrigin.packageName == sessionPkg }
                         .sumOf { it.distance.inMeters }
+                    val meters = if (samePkgMeters > 0) samePkgMeters else {
+                        // Fallback: group by package, take the largest source to avoid double-counting
+                        overlapping.groupBy { it.metadata.dataOrigin.packageName }
+                            .values.maxOfOrNull { group -> group.sumOf { it.distance.inMeters } } ?: 0.0
+                    }
 
                     val durationMin = ChronoUnit.SECONDS.between(session.startTime, session.endTime) / 60.0
 
