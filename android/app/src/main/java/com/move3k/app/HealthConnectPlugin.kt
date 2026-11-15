@@ -123,8 +123,8 @@ class HealthConnectPlugin : Plugin() {
                     val sessionPkg = session.metadata.dataOrigin.packageName
                     val meters = distances
                         .filter {
-                            it.startTime >= session.startTime &&
-                            it.endTime <= session.endTime &&
+                            it.startTime < session.endTime &&
+                            it.endTime > session.startTime &&
                             it.metadata.dataOrigin.packageName == sessionPkg
                         }
                         .sumOf { it.distance.inMeters }
