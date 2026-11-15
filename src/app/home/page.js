@@ -46,7 +46,8 @@ export default function PublicHome() {
         )}
         <a
           href="/crypto-athletes-club.apk"
-          download
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex items-center gap-2 h-12 rounded-lg border border-white/20 bg-white/10 px-7 text-base font-semibold text-white hover:bg-white/20 transition-colors"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="size-5">
