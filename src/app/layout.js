@@ -67,7 +67,7 @@ function UpdateBanner() {
   if (!updateUrl || dismissed) return null;
 
   return (
-    <div className="fixed top-0 left-0 w-full z-50 flex items-center justify-between gap-3 bg-yellow-500/95 text-black px-4 py-2.5 text-sm font-semibold backdrop-blur-sm shadow-lg">
+    <div className="relative z-50 w-full flex items-center justify-between gap-3 bg-yellow-500 text-black px-4 py-2.5 text-sm font-semibold shadow-lg">
       <span>Mise à jour disponible !</span>
       <div className="flex items-center gap-2">
         <a
@@ -143,7 +143,6 @@ function AppShell({ children }) {
 
   return (
         <div className="relative flex flex-col h-[100dvh] md:min-h-screen text-white">
-          <UpdateBanner />
 
           {/* IMAGE DE FOND FIXE */}
           <div
@@ -260,6 +259,7 @@ function AppShell({ children }) {
 
           {/* ZONE CENTRALE - scroll global */}
           <main className="relative flex flex-col pt-20 md:pt-24 pb-20 flex-1 overflow-x-hidden overflow-y-auto">
+            <UpdateBanner />
             <div className="relative z-20 flex flex-col w-full md:max-w-[1600px] md:mx-auto px-0 md:px-12">
               {(PUBLIC_PAGES.includes(pathname) || (ready && authed)) && (
                 <ClientGate>
