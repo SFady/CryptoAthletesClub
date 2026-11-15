@@ -9,7 +9,7 @@ import LoginGate from "./LoginGate";
 import PullToRefresh from "./PullToRefresh";
 import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "./AuthContext";
-import { isAndroidNative, APP_VERSION_CODE } from "./healthConnectBridge";
+import { isAndroidNative } from "./healthConnectBridge";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,14 +49,19 @@ function UpdateBanner() {
     try {
       if (sessionStorage.getItem("update_banner_dismissed")) return;
     } catch { /* ignore */ }
-    fetch("/api/latest-version")
-      .then(r => r.json())
-      .then(data => {
-        if (data.versionCode > APP_VERSION_CODE) {
+
+    const check = async () => {
+      try {
+        const { App } = await import("@capacitor/app");
+        const info = await App.getInfo();
+        const nativeBuild = parseInt(info.build, 10);
+        const data = await fetch("/api/latest-version").then(r => r.json());
+        if (data.versionCode > nativeBuild) {
           setUpdateUrl(data.downloadUrl);
         }
-      })
-      .catch(() => {});
+      } catch { /* ignore */ }
+    };
+    check();
   }, []);
 
   if (!updateUrl || dismissed) return null;
