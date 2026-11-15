@@ -45,11 +45,8 @@ export default function PublicHome() {
           </button>
         )}
         <a
-          href="/crypto-athletes-club.apk"
-          onClick={(e) => {
-            e.preventDefault();
-            window.location.href = "intent://crypto-athletes-club.vercel.app/crypto-athletes-club.apk#Intent;scheme=https;package=com.android.chrome;end";
-          }}
+          href="https://crypto-athletes-club.vercel.app/crypto-athletes-club.apk"
+          download="crypto-athletes-club.apk"
           className="inline-flex items-center gap-2 h-12 rounded-lg border border-white/20 bg-white/10 px-7 text-base font-semibold text-white hover:bg-white/20 transition-colors"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="size-5">
