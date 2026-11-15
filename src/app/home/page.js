@@ -1,10 +1,37 @@
 "use client";
 
+import { useState } from "react";
 import { useAuth } from "../AuthContext";
+import { isAndroidNative } from "../healthConnectBridge";
 import { FaTrophy, FaWallet, FaBolt, FaArrowRight } from "react-icons/fa";
+
+const APK_URL = "https://crypto-athletes-club.vercel.app/crypto-athletes-club.apk";
+
+function ApkModal({ onClose }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard?.writeText(APK_URL).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }).catch(() => {});
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6" onClick={onClose}>
+      <div className="bg-[#2a1a6e] border border-white/20 rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+        <p className="text-white font-semibold mb-2">Télécharger l'APK</p>
+        <p className="text-white/60 text-sm mb-4">Ouvre Chrome sur ton téléphone et colle ce lien :</p>
+        <div className="bg-black/30 rounded-lg px-3 py-2 text-xs text-white/80 break-all mb-4 select-all">{APK_URL}</div>
+        <div className="flex gap-3">
+          <button onClick={copy} className="flex-1 bg-purple-600 hover:bg-purple-500 transition-colors text-white font-semibold py-2 rounded-xl text-sm">
+            {copied ? "Copié !" : "Copier le lien"}
+          </button>
+          <button onClick={onClose} className="px-4 text-white/50 hover:text-white text-sm">Fermer</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function PublicHome() {
   const { authed, openLogin } = useAuth();
+  const [showApkModal, setShowApkModal] = useState(false);
 
   return (
     <section className="flex w-full flex-col items-center min-h-[calc(100svh-144px)] md:min-h-[calc(100vh-96px)] justify-center">
@@ -45,8 +72,9 @@ export default function PublicHome() {
           </button>
         )}
         <a
-          href="https://crypto-athletes-club.vercel.app/crypto-athletes-club.apk"
+          href={APK_URL}
           download="crypto-athletes-club.apk"
+          onClick={isAndroidNative() ? (e) => { e.preventDefault(); setShowApkModal(true); } : undefined}
           className="inline-flex items-center gap-2 h-12 rounded-lg border border-white/20 bg-white/10 px-7 text-base font-semibold text-white hover:bg-white/20 transition-colors"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="size-5">
@@ -70,6 +98,7 @@ export default function PublicHome() {
         ))}
       </div>
       </div>
+      {showApkModal && <ApkModal onClose={() => setShowApkModal(false)} />}
     </section>
   );
 }
