@@ -1,7 +1,7 @@
 "use client";
 
 // Keep in sync with android/app/build.gradle versionCode
-export const APP_VERSION_CODE = 4;
+export const APP_VERSION_CODE = 8;
 
 // Lazy-initialized plugin reference — safe for Next.js SSR
 let _plugin = null;
