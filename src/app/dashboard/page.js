@@ -309,14 +309,11 @@ export default function Home() {
           start_date_local: localISO,
           distance: a.distanceKm * 1000,
           moving_time: Math.round(a.durationMin * 60),
-          _dbg: a._dbg,
         };
       });
       setStravaActivities(normalized);
       setActivitySource("hc");
       setStravaPopup(true);
-      const zero = normalized.find(a => a.distance === 0);
-      if (zero) alert(`0km debug:\nstartTime=${zero.start_date}\nlocal=${zero.start_date_local}\ndbg=${zero._dbg}`);
     } catch (e) {
       console.error("HC activities error:", e);
     }
@@ -385,7 +382,6 @@ export default function Home() {
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <span className="text-[#FF8C5A] font-bold text-[15px] w-[78px] text-right [font-variant-numeric:tabular-nums]">{(a.distance / 1000).toFixed(2)} km</span>
-                        {a._dbg && a.distance === 0 && <span className="text-[8px] text-yellow-300 max-w-[140px] break-all leading-tight">{a._dbg}</span>}
                         <button
                           type="button"
                           disabled={alreadyIn || dayUsed || quickEntryStatus[a.id] === "loading" || quickEntryStatus[a.id] === "done"}

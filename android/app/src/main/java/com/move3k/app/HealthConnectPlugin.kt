@@ -114,23 +114,20 @@ class HealthConnectPlugin : Plugin() {
                     ReadRecordsRequest(ExerciseSessionRecord::class, timeFilter)
                 ).records
 
-                val distances = client.readRecords(
-                    ReadRecordsRequest(DistanceRecord::class, timeFilter)
-                ).records
-
                 val array = JSArray()
                 for (session in sessions.sortedByDescending { it.startTime }) {
                     val sessionPkg = session.metadata.dataOrigin.packageName
-                    val overlapping = distances.filter {
-                        it.startTime < session.endTime && it.endTime > session.startTime
-                    }
-                    val samePkgMeters = overlapping
+                    // Query distances scoped to this session to avoid 1000-record global cap
+                    val sessionFilter = TimeRangeFilter.between(session.startTime, session.endTime)
+                    val sessionDistances = client.readRecords(
+                        ReadRecordsRequest(DistanceRecord::class, sessionFilter)
+                    ).records
+                    val samePkgMeters = sessionDistances
                         .filter { it.metadata.dataOrigin.packageName == sessionPkg }
                         .sumOf { it.distance.inMeters }
                     val meters = if (samePkgMeters > 0) samePkgMeters else {
-                        // Fallback: group by package, take the largest source to avoid double-counting
-                        overlapping.groupBy { it.metadata.dataOrigin.packageName }
-                            .values.maxOfOrNull { group -> group.sumOf { it.distance.inMeters } } ?: 0.0
+                        sessionDistances.groupBy { it.metadata.dataOrigin.packageName }
+                            .values.maxOfOrNull { g -> g.sumOf { it.distance.inMeters } } ?: 0.0
                     }
 
                     val durationMin = ChronoUnit.SECONDS.between(session.startTime, session.endTime) / 60.0
@@ -143,10 +140,6 @@ class HealthConnectPlugin : Plugin() {
                     obj.put("title", session.title ?: "")
                     obj.put("distanceKm", Math.round(meters / 10.0) / 100.0)
                     obj.put("durationMin", Math.round(durationMin * 10.0) / 10.0)
-                    val firstDist = distances.minByOrNull { it.startTime }
-                    val lastDist = distances.maxByOrNull { it.endTime }
-                    Log.d("HC_DBG", "sess=${session.startTime}→${session.endTime} overlapping=${overlapping.size} distRange=${firstDist?.startTime}→${lastDist?.endTime} total=${distances.size}")
-                    obj.put("_dbg", "ov=${overlapping.size} tot=${distances.size}")
                     array.put(obj)
                 }
 
