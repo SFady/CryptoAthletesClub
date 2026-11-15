@@ -48,7 +48,7 @@ export default function PublicHome() {
           href="/crypto-athletes-club.apk"
           onClick={(e) => {
             e.preventDefault();
-            window.open("https://crypto-athletes-club.vercel.app/crypto-athletes-club.apk", "_system");
+            window.location.href = "intent://crypto-athletes-club.vercel.app/crypto-athletes-club.apk#Intent;scheme=https;package=com.android.chrome;end";
           }}
           className="inline-flex items-center gap-2 h-12 rounded-lg border border-white/20 bg-white/10 px-7 text-base font-semibold text-white hover:bg-white/20 transition-colors"
         >
