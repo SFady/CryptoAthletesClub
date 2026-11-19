@@ -46,7 +46,7 @@ const MESSAGES = [
                 <ul className="text-left list-disc pl-4 space-y-2 text-white/80 text-sm sm:text-base">
                     <li>Weekly longest running distance winner: Nico Robin</li>
                     <li>Distance of 30.62 km.</li>
-                    <li>Exceptional prize of 0.84 $ !!!</li>
+                    <li>Exceptional prize of 0.79 $ !!!</li>
                 </ul>
             </div>
         ),
