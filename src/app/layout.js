@@ -94,6 +94,14 @@ function UpdateBanner() {
   );
 }
 
+function NewBadge({ className = "" }) {
+  return (
+    <span className={`pointer-events-none rounded-full bg-red-500 px-1.5 py-px text-[9px] font-bold uppercase leading-tight tracking-wide text-white shadow ${className}`}>
+      New
+    </span>
+  );
+}
+
 function AppShell({ children }) {
   const centralWidth = 1600;
   const [showLink, setShowLink] = useState(false);
@@ -213,10 +221,11 @@ function AppShell({ children }) {
                   { href: "/dashboard", label: "Dashboard" },
                   { href: "/activities", label: "Activities" },
                   { href: "/statistics", label: "Statistics" },
-                  { href: "/shop", label: "Shop" },
-                ].map(({ href, label }) => (
-                  <Link key={href} href={href} className={`transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-white"}`}>
+                  { href: "/shop", label: "Shop", isNew: true },
+                ].map(({ href, label, isNew }) => (
+                  <Link key={href} href={href} className={`relative transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-white"}`}>
                     {label}
+                    {isNew && <NewBadge className="absolute -top-2.5 -right-7" />}
                   </Link>
                 ))}
                 {/* Divers desktop */}
@@ -284,12 +293,15 @@ function AppShell({ children }) {
                 { href: "/statistics", label: "Stats", icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 20V14m4 6V10m4 10V4m4 16v-6m4 6v-9"/></svg>
                 )},
-                { href: "/shop", label: "Shop", icon: (
+                { href: "/shop", label: "Shop", isNew: true, icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>
                 )},
-              ].map(({ href, label, icon }) => (
+              ].map(({ href, label, icon, isNew }) => (
                 <Link key={href} href={href} className={`flex flex-col items-center justify-center gap-1 h-full px-2 transition-colors ${pathname === href ? "text-white" : "text-gray-400 hover:text-gray-200"}`}>
-                  {icon}
+                  <span className="relative">
+                    {icon}
+                    {isNew && <NewBadge className="absolute -top-2 -right-6" />}
+                  </span>
                   <span>{label}</span>
                 </Link>
               ))}
