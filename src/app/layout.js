@@ -96,7 +96,7 @@ function UpdateBanner() {
 
 function NewBadge({ className = "" }) {
   return (
-    <span className={`pointer-events-none rounded-full bg-red-500 px-1.5 py-px text-[9px] font-bold uppercase leading-tight tracking-wide text-white shadow ${className}`}>
+    <span className={`pointer-events-none inline-flex h-4 items-center justify-center rounded-full bg-red-500 px-1.5 text-[9px] font-bold uppercase leading-none tracking-wide text-white shadow ${className}`}>
       New
     </span>
   );
