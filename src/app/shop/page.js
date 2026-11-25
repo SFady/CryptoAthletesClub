@@ -45,8 +45,8 @@ export default function Home() {
                     <img
                       src={CARD_IMG}
                       alt={`Carte cadeau Amazon ${item.amount}€`}
-                      width={250}
-                      height={158}
+                      width={244}
+                      height={153}
                       className="w-full max-w-[220px] h-auto drop-shadow-xl transition-transform duration-200 group-hover:scale-105"
                     />
                   </div>
@@ -86,7 +86,7 @@ export default function Home() {
             <h3 className="text-white text-lg font-bold mb-4">Confirm purchase</h3>
             <div className="flex items-center gap-4 mb-6">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={CARD_IMG} alt="" width={250} height={158} className="w-28 h-auto" />
+              <img src={CARD_IMG} alt="" width={244} height={153} className="w-28 h-auto" />
               <div>
                 <p className="text-white font-semibold text-sm">Amazon Gift Card</p>
                 <p className="text-[#D6C48A] text-lg font-bold">{pending.amount} €</p>
