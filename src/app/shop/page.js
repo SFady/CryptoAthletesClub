@@ -15,11 +15,27 @@ export default function Home() {
     <main className="flex flex-col w-full max-w-[1600px] mx-auto px-4 md:px-8 pt-6 pb-10">
       <div className="w-full md:max-w-[900px] xl:max-w-[1100px] mx-auto flex flex-col gap-6">
         <Card icon="🛍️" title="Shop (Coming soon)">
-          <div className="flex justify-center p-6">
+          <div className="flex flex-col items-center gap-6 p-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/amazon-25.png"
               alt="Carte cadeau Amazon 25€"
+              width={241}
+              height={145}
+              className="w-full max-w-[241px] h-auto"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/amazon-50.png"
+              alt="Carte cadeau Amazon 50€"
+              width={240}
+              height={145}
+              className="w-full max-w-[240px] h-auto"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/amazon-100.png"
+              alt="Carte cadeau Amazon 100€"
               width={241}
               height={145}
               className="w-full max-w-[241px] h-auto"
