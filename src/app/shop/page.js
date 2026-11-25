@@ -3,10 +3,12 @@
 import { useState } from "react";
 
 export default function Home() {
+  const CARD_IMG = "/images/amazon.png";
+
   const items = [
-    { amount: 25,  src: "/images/amazon-25.png",  width: 241 },
-    { amount: 50,  src: "/images/amazon-50.png",  width: 240 },
-    { amount: 100, src: "/images/amazon-100.png", width: 241 },
+    { amount: 25 },
+    { amount: 50 },
+    { amount: 100 },
   ];
 
   const [pending, setPending] = useState(null);
@@ -41,10 +43,10 @@ export default function Home() {
                   <div className="flex items-center justify-center bg-gradient-to-br from-white/[0.08] to-transparent px-6 py-8">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={item.src}
+                      src={CARD_IMG}
                       alt={`Carte cadeau Amazon ${item.amount}€`}
-                      width={item.width}
-                      height={145}
+                      width={250}
+                      height={158}
                       className="w-full max-w-[220px] h-auto drop-shadow-xl transition-transform duration-200 group-hover:scale-105"
                     />
                   </div>
@@ -84,7 +86,7 @@ export default function Home() {
             <h3 className="text-white text-lg font-bold mb-4">Confirm purchase</h3>
             <div className="flex items-center gap-4 mb-6">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={pending.src} alt="" width={pending.width} height={145} className="w-28 h-auto" />
+              <img src={CARD_IMG} alt="" width={250} height={158} className="w-28 h-auto" />
               <div>
                 <p className="text-white font-semibold text-sm">Amazon Gift Card</p>
                 <p className="text-[#D6C48A] text-lg font-bold">{pending.amount} €</p>
