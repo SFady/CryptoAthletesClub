@@ -34,7 +34,7 @@ export default function Home() {
             {items.map((item, idx) => (
               <div
                 key={item.amount}
-                className={`flex items-center justify-between gap-4 px-4 sm:px-6 py-4 ${idx < items.length - 1 ? "border-b border-white/10" : ""}`}
+                className={`flex items-center gap-4 px-4 sm:px-6 py-4 ${idx < items.length - 1 ? "border-b border-white/10" : ""}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -44,12 +44,14 @@ export default function Home() {
                   height={145}
                   className="w-1/2 sm:w-auto max-w-[241px] h-auto"
                 />
-                <button
-                  onClick={() => setPending(item)}
-                  className="bg-purple-500/80 hover:bg-purple-600 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap"
-                >
-                  Buy
-                </button>
+                <div className="flex-1 flex justify-center">
+                  <button
+                    onClick={() => setPending(item)}
+                    className="bg-purple-500/80 hover:bg-purple-600 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors whitespace-nowrap"
+                  >
+                    Buy
+                  </button>
+                </div>
               </div>
             ))}
           </div>
