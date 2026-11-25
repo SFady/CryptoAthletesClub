@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function Home() {
   const items = [
     { amount: 25,  src: "/images/amazon-25.png",  width: 241 },
-    { amount: 50,  src: "/images/amazon-50.png",  width: 240, popular: true },
+    { amount: 50,  src: "/images/amazon-50.png",  width: 240 },
     { amount: 100, src: "/images/amazon-100.png", width: 241 },
   ];
 
@@ -36,13 +36,8 @@ export default function Home() {
               {items.map((item) => (
                 <div
                   key={item.amount}
-                  className="group relative flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:border-purple-400/50 hover:shadow-lg hover:shadow-purple-500/20"
+                  className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:border-purple-400/50 hover:shadow-lg hover:shadow-purple-500/20"
                 >
-                  {item.popular && (
-                    <span className="absolute top-3 right-3 z-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                      Popular
-                    </span>
-                  )}
                   <div className="flex items-center justify-center bg-gradient-to-br from-white/[0.08] to-transparent px-6 py-8">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -57,7 +52,7 @@ export default function Home() {
                     <div className="flex items-baseline justify-between gap-2">
                       <div>
                         <p className="text-white font-semibold">Amazon Gift Card</p>
-                        <p className="text-white/50 text-xs">Digital code · Delivered by email</p>
+                        <p className="text-white/50 text-xs">Delivered by email</p>
                       </div>
                       <p className="text-[#D6C48A] text-xl font-bold whitespace-nowrap">{item.amount} €</p>
                     </div>
